@@ -46,10 +46,10 @@ public class ProxyScraper {
 	public static void main(String... args) {
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 		ProxyScraper ps = new ProxyScraper();
-
+		//ProxyChceker pc = new ProxyChceker();
 		//ps.ocrScraper("https://www.torvpn.com/en/proxy-list");
 		//ps.normalScrape("http://proxylist.hidemyass.com/");
-		ps.checkProxy("66.182.125.8:16318", 10000);
+		ProxyChceker.checkProxy("66.182.125.8:16318", 10000);
 		WebDriver driver = Browser.getBrowser(null, BrowserVersion.random(), "p");
 		ps.cssScrape("http://proxylist.hidemyass.com/", driver);
 	}
@@ -65,7 +65,7 @@ public class ProxyScraper {
 			proxy = regexMatcher(txt);
 
 			proxy.stream()
-					.map(e -> checkProxy(e, 3000))
+					.map(e -> ProxyChceker.checkProxy(e, 3000))
 					.forEach(System.out::println);
 
 		} catch (IOException e) {
@@ -98,7 +98,7 @@ public class ProxyScraper {
 			new ForkJoinPool(10).submit(() ->
 					proxy.stream()
 							.parallel()
-							.map(e -> checkProxy(e, 10000))
+							.map(e -> ProxyChceker.checkProxy(e, 10000))
 							.forEach(System.out::println)).get();
 		} catch (InterruptedException | ExecutionException e) {
 			e.printStackTrace();
@@ -225,82 +225,5 @@ public class ProxyScraper {
 		adaptiveThreshold(image, image, 255, ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY, 255, 1);
 	}
 
-	public String checkProxy(String proxy, Integer timeout) {
-		String httpUrl = "http://www.google.cat/";//"http://www.wykop.pl/";
-		String httpsUrl = "https://www.google.cat/";
 
-		String ping = "http://absolutelydisgusting.ml/ping.php";
-
-		String ip = proxy.split(":")[0];
-		Integer port = Integer.parseInt(proxy.split(":")[1]);
-
-		Proxy http = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(ip, port));
-		Proxy socks = new Proxy(Proxy.Type.SOCKS, new InetSocketAddress(ip, port));
-
-		try {
-			//Socket uc = new Socket(socks);
-			//uc.connect(new InetSocketAddress(ping, 8080));
-
-			URL pingUrl = new URL(ping);
-			URLConnection uc = pingUrl.openConnection(socks);
-
-			//HttpURLConnection uc = (HttpURLConnection) pingUrl.openConnection(socks);
-			BufferedReader in = new BufferedReader(new InputStreamReader(
-					uc.getInputStream()));
-			String inputLine;
-			while ((inputLine = in.readLine()) != null)
-				System.out.println(inputLine);
-			in.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		Long counter;
-
-		try {
-			counter = System.currentTimeMillis();
-			String[] typeAndTime = Jsoup
-					.connect(ping)
-					.userAgent(BrowserVersion.random().ua())
-					.proxy(socks)
-					.ignoreContentType(true)
-					.timeout(timeout)
-					.execute()
-					.parse()
-					.text()
-					.split("\\|");
-
-			String type = typeAndTime[0];
-			Integer time = Math.toIntExact(Integer.parseInt(typeAndTime[1]) - counter);
-
-			return proxy + type + "|" + time;
-		} catch (Exception e) {
-			counter = System.currentTimeMillis();
-			try {
-				Jsoup
-						.connect(ping)
-						.userAgent(BrowserVersion.random().ua())
-						.proxy(socks)
-						//.ignoreContentType(true)
-						.timeout(timeout)
-						.followRedirects(true)
-						.execute();
-				return proxy + "|http" + "|" + (System.currentTimeMillis() - counter);
-			} catch (Exception e1) {
-				counter = System.currentTimeMillis();
-				try {
-					Jsoup
-							.connect(httpUrl)
-							.userAgent(BrowserVersion.random().ua())
-							.proxy(socks)
-							.ignoreContentType(true)
-							.timeout(timeout)
-							.execute();
-					return proxy + "|socks" + "|" + (System.currentTimeMillis() - counter);
-				} catch (Exception e2) {
-					return proxy;
-				}
-			}
-		}
-	}
 }

@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: org.jclarion:image4j:0.7">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jclarion/image4j/0.7/9721d65eba16bc5b1c32df0a57c17ce2d797fc82/image4j-0.7.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jclarion/image4j/0.7/d63996c285b49b5eed86e8a8c8dec017d3805f73/image4j-0.7-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

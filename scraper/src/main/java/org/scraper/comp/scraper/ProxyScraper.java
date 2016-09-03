@@ -1,10 +1,7 @@
 package org.scraper.comp.scraper;
 
-import com.sun.org.apache.xml.internal.serializer.utils.Utils;
 //import com.sun.org.apache.xpath.internal.operations.String;
-import org.bytedeco.javacpp.Pointer;
-import org.bytedeco.javacpp.lept;
-import org.jsoup.Connection;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -16,23 +13,15 @@ import org.opencv.imgcodecs.Imgcodecs;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.scraper.comp.web.Browser;
 import org.scraper.comp.web.BrowserVersion;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.*;
-import java.net.*;
-import java.nio.*;
-import java.nio.Buffer;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
 import java.util.concurrent.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 
 import org.opencv.core.Mat;
@@ -42,14 +31,17 @@ import static org.opencv.imgproc.Imgproc.*;
 
 public class ProxyScraper {
 
+	private static ProxyChecker checker = new ProxyChecker();
+
 
 	public static void main(String... args) {
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 		ProxyScraper ps = new ProxyScraper();
-		//ProxyChceker pc = new ProxyChceker();
+		//ProxyChecker pc = new ProxyChecker();
 		//ps.ocrScraper("https://www.torvpn.com/en/proxy-list");
 		//ps.normalScrape("http://proxylist.hidemyass.com/");
-		ProxyChceker.checkProxy("66.182.125.8:16318", 10000);
+		//checker.checkProxy("84.238.81.21:10200", 10000);
+		ps.ocrScraper("https://www.torvpn.com/en/proxy-list");
 		WebDriver driver = Browser.getBrowser(null, BrowserVersion.random(), "p");
 		ps.cssScrape("http://proxylist.hidemyass.com/", driver);
 	}
@@ -65,7 +57,7 @@ public class ProxyScraper {
 			proxy = regexMatcher(txt);
 
 			proxy.stream()
-					.map(e -> ProxyChceker.checkProxy(e, 3000))
+					.map(e -> checker.checkProxy(e, 3000))
 					.forEach(System.out::println);
 
 		} catch (IOException e) {
@@ -98,7 +90,7 @@ public class ProxyScraper {
 			new ForkJoinPool(10).submit(() ->
 					proxy.stream()
 							.parallel()
-							.map(e -> ProxyChceker.checkProxy(e, 10000))
+							.map(e -> checker.checkProxy(e, 10000))
 							.forEach(System.out::println)).get();
 		} catch (InterruptedException | ExecutionException e) {
 			e.printStackTrace();
@@ -108,7 +100,7 @@ public class ProxyScraper {
 	}
 
 	public List<String> ocrScraper(String url) {
-		List<String> proxy = null;
+		List<String> proxy = new ArrayList<>();
 		try {
 			Document doc = Jsoup.connect(url).timeout(10000).userAgent(BrowserVersion.random().ua()).get();
 
@@ -121,15 +113,9 @@ public class ProxyScraper {
 			long l = System.currentTimeMillis();
 
 			for (Element e : imgs) {
-				if (e.attr("src").charAt(0) == '/') {
-					imgsUrls.add(mainUrl + e.attr("src"));
-				} else {
+				if (!imgsUrls.contains(e.attr("src")))
 					imgsUrls.add(e.attr("src"));
-				}
 			}
-
-			System.out.println(System.currentTimeMillis() - l);
-			l = System.currentTimeMillis();
 
 			/*imgsUrls.parallelStream()
 					.map(e -> {
@@ -150,42 +136,36 @@ public class ProxyScraper {
 			System.out.println("PS"+(System.currentTimeMillis() - l));*/
 
 
-			ExecutorService executor = Executors.newFixedThreadPool(30);
+			ExecutorService executor = Executors.newFixedThreadPool(10);
 
-			l = System.currentTimeMillis();
+			System.out.println("Start ocr");
 			for (String iurl : imgsUrls) {
-				long finalL = l;
 				executor.execute(() -> {
 					try {
-						byte[] imgBytes = Jsoup.connect(iurl).ignoreContentType(true).execute().bodyAsBytes();
+						byte[] imgBytes = Jsoup.connect(iurl.charAt(0) == '/' ? mainUrl + iurl : iurl).ignoreContentType(true).execute().bodyAsBytes();
 
 						Mat mat = Imgcodecs.imdecode(new MatOfByte(imgBytes), Imgcodecs.CV_LOAD_IMAGE_GRAYSCALE);
-						ocrFilter(mat);
-						Imgcodecs.imwrite("D:/mat.tiff", mat);
-						String ret = Tess.read(mat);
-						System.out.println(":   " + ret + (System.currentTimeMillis() - finalL));
+						if (mat.width() / mat.height() >= 8) {
+							ocrFilter(mat);
+							String read = Tess.read(mat);
+							for (Element element : imgs) {
+								System.out.println(read);
+								if (element.attr("src").equals(iurl))
+									element.append(read);
+							}
+						}
 					} catch (IOException e1) {
 						e1.printStackTrace();
 					}
 				});
 			}
 
-			executor.awaitTermination(1, TimeUnit.DAYS);
+
+
 			executor.shutdown();
-			System.out.println("ES" + (System.currentTimeMillis() - l));
-			l = System.currentTimeMillis();
+			executor.awaitTermination(1, TimeUnit.MINUTES);
+			proxy = regexMatcher(doc.text());
 
-			String imgUrl = imgsUrls.get(4);
-			byte[] imgBytes = Jsoup.connect(imgUrl).ignoreContentType(true).execute().bodyAsBytes();
-			l = System.currentTimeMillis();
-
-			Mat mat = Imgcodecs.imdecode(new MatOfByte(imgBytes), Imgcodecs.CV_LOAD_IMAGE_GRAYSCALE);
-			ocrFilter(mat);
-			Imgcodecs.imwrite("D:/mat.tiff", mat);
-			String ret = Tess.read(mat);
-			System.out.println((System.currentTimeMillis() - l) + ":   " + ret);
-
-			imgs.get(0);
 		} catch (IOException e) {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
@@ -195,7 +175,7 @@ public class ProxyScraper {
 
 	private List<String> regexMatcher(String text) {
 		Pattern ipRegex = Pattern.compile("[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}");
-		Pattern portRegex = Pattern.compile("[0-9]{1,4}");
+		Pattern portRegex = Pattern.compile("[0-9]{1,5}");
 		Pattern ipPort = Pattern.compile(ipRegex + ":" + portRegex);
 
 		List<String> proxy = new ArrayList<>();
@@ -210,7 +190,6 @@ public class ProxyScraper {
 			if (portMatcher.find(ipMatcher.end())) {
 				tempProxy += portMatcher.group();
 				if (tempProxy.matches(ipPort.toString())) {
-
 					proxy.add(tempProxy);
 				}
 			}

@@ -32,7 +32,7 @@ public class Main {
 		Document doc = Jsoup.connect("http://www.samair.ru/proxy/").timeout(10000).userAgent(BrowserVersion.FIREFOX_MAC.ua()).get();
 		String txt = doc.tagName("body").text();
 
-		WebDriver drv = Browser.getBrowser(null, BrowserVersion.FIREFOX_UB, "c");
+		WebDriver drv = null;//Browser.getBrowser(null, BrowserVersion.FIREFOX_UB, "c");
 		drv.get("http://www.samair.ru/proxy/");
 		String txt2 = drv.findElement(tagName("body")).getText();
 
@@ -96,7 +96,7 @@ public class Main {
 
 			int finalI = i;
 			executor.execute(() -> {
-				WebDriver driver = Browser.getBrowser(null, BrowserVersion.FIREFOX_UB, "p");
+				WebDriver driver = null;//Browser.getBrowser(null, BrowserVersion.FIREFOX_UB, "p");
 				driver.get("http://www.google.com");//"http://proxylist.hidemyass.com/#listable");
 				System.out.println("GOT" + finalI);
 				latch.countDown();

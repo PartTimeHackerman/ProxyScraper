@@ -1,4 +1,4 @@
-package org.scraper.comp.scraper;
+package org.scraper.comp.web;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -46,7 +46,7 @@ public class Address {
 		@SerializedName("0")
 		NORMAL,
 		@SerializedName("1")
-		BEFORE_AFTER,
+		CSS,
 		@SerializedName("2")
 		OCR,
 		@SerializedName("3")

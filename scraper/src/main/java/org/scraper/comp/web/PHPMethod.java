@@ -1,6 +1,6 @@
-package org.scraper.comp.scraper;
+package org.scraper.comp.web;
 
-public enum PostGetPHP {
+public enum PHPMethod {
 
 	POST_ADDRS("post_addrs"),
 	GET_ADDRS("get_addrs"),
@@ -12,7 +12,7 @@ public enum PostGetPHP {
 
 	private String cmd;
 
-	PostGetPHP(String cmd){
+	PHPMethod(String cmd){
 		this.cmd=cmd;
 	}
 

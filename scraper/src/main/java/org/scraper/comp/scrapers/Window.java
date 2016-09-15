@@ -1,4 +1,4 @@
-package org.scraper.comp.scraper;
+package org.scraper.comp.scrapers;
 
 import javafx.application.Application;
 import javafx.fxml.FXML;
@@ -145,7 +145,7 @@ public class Window extends Application {
 
 	private void update() {
 		img2.setImage(new Image("file:///" + secondImage));
-		ip.setText(Tess.read(tiffImage));
+		ip.setText(new OCR().read(tiffImage));
 	}
 
 	private void write(Mat image) {

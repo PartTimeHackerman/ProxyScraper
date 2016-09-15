@@ -1,21 +1,17 @@
-package org.scraper.comp.other;
+package org.scraper.comp.web;
 
 import com.google.gson.Gson;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TakesScreenshot;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.phantomjs.PhantomJSDriver;
-import org.scraper.comp.scraper.Address;
-import org.scraper.comp.scraper.PostGetPHP;
-import org.scraper.comp.web.Browser;
-import org.scraper.comp.web.BrowserVersion;
+import org.scraper.comp.Main;
 
 import java.io.IOException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
+
 
 public class PHP {
 
@@ -24,6 +20,7 @@ public class PHP {
 	public static final Gson gson = new Gson();
 
 	public static void main(String... args) {
+		//sqlTest();
 
 		String post = "";
 		String get = "";
@@ -35,7 +32,7 @@ public class PHP {
 
 		List<Address> addrs = new ArrayList<>();
 
-		addrs.add(new Address("asd", Address.Type.BEFORE_AFTER, "ss"));
+		addrs.add(new Address("asd", Address.Type.CSS, "ss"));
 		addrs.add(new Address("yjytj", Address.Type.OCR, "adasd"));
 
 		String json = gson.toJson(addrs);
@@ -46,20 +43,21 @@ public class PHP {
 		System.out.println("Parsed: " + (System.currentTimeMillis() - l));
 		l = System.currentTimeMillis();
 
-		phpPost(PostGetPHP.POST_ADDRS, json);
-		phpPost(PostGetPHP.POST_CLICKS, json2);
+		phpPost(PHPMethod.POST_ADDRS, json);
+
+		phpPost(PHPMethod.POST_CLICKS, json2);
 		System.out.println("Posted: " + (System.currentTimeMillis() - l));
 		l = System.currentTimeMillis();
 
-		get = phpGet(PostGetPHP.GET_ADDRS);
+		get = phpGet(PHPMethod.GET_ADDRS);
 		List<Address> addrss = new ArrayList<>(Arrays.asList(new Gson().fromJson(get, Address[].class)));
 		System.out.println("ADDRESSES: " + get + "\n");
 
-		get = phpGet(PostGetPHP.GET_LINKS);
+		get = phpGet(PHPMethod.GET_LINKS);
 		System.out.println("LINKS: " + get + "\n");
 		List<String> links = new ArrayList<>(Arrays.asList(new Gson().fromJson(get, String[].class)));
 
-		get = phpGet(PostGetPHP.GET_CLICKS);
+		get = phpGet(PHPMethod.GET_CLICKS);
 		System.out.println("CLICKS: " + get + "\n");
 		List<String> clicks = new ArrayList<>(Arrays.asList(new Gson().fromJson(get, String[].class)));
 
@@ -67,7 +65,17 @@ public class PHP {
 		System.out.println("Getted: " + (System.currentTimeMillis() - l));
 	}
 
-	public static void phpPost(PostGetPHP posting, String json) {
+	public static <T> void post(T addresses, PHPMethod method){
+		String json = gson.toJson(addresses);
+		phpPost(method, json);
+	}
+
+	public static void postClicks(List<String> clicks){
+		String json = gson.toJson(clicks);
+		phpPost(PHPMethod.POST_ADDRS, json);
+	}
+
+	public static void phpPost(PHPMethod posting, String json) {
 		try {
 			Connection.Response response = Jsoup.connect(URL)
 					.timeout(20000)
@@ -80,7 +88,7 @@ public class PHP {
 		}
 	}
 
-	public static String phpGet(PostGetPHP getting) {
+	public static String phpGet(PHPMethod getting) {
 		String getted = "";
 		try {
 			Connection.Response response = Jsoup.connect(URL)
@@ -97,38 +105,43 @@ public class PHP {
 	}
 
 
-	public static Object get(PostGetPHP method) {
+	public static <T> void get(java.util.Collection<T> list, PHPMethod method) {
+		list.clear();
 		switch (method) {
 			case GET_ADDRS:
-				return new ArrayList<>(Arrays.asList(new Gson().fromJson(phpGet(method), Address[].class)));
+				list.addAll(new ArrayList<>(Arrays.asList((T[]) new Gson().fromJson(phpGet(method), Address[].class))));
+				break;
 			default:
-				return new ArrayList<>(Arrays.asList(new Gson().fromJson(phpGet(method), String[].class)));
+				list.addAll(new ArrayList<>(Arrays.asList((T[]) new Gson().fromJson(phpGet(method), String[].class))));
 
 		}
 	}
 
+	public static void sqlTest(){
+		java.sql.Connection connection = null;
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
 
-	private static void click() {
-		WebDriver driver = Browser.getBrowser(null, BrowserVersion.FIREFOX_WIN, "p");
-		driver.get("http://tell-my-ip.com/");
-		((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
-		System.out.println(driver.toString());
+			Properties connProp = new Properties();
+			connProp.setProperty("user", "u501421373_addrs");
+			connProp.setProperty("password", "tjbmh!");
+			connProp.setProperty("connectTimeout", "10000");
+			connProp.setProperty("socketTimeout", "10000");
 
-		String proxyip = "40.85.180.58", proxyport = "3128";
-		String proxy = "40.85.180.58:3128";
-		org.openqa.selenium.Proxy browserProxy = new org.openqa.selenium.Proxy();
-		browserProxy
-				.setHttpProxy(proxy)
-				.setSslProxy(proxy)
-				.setFtpProxy(proxy)
-				.setSocksProxy(proxy);
+			connection = DriverManager.getConnection("jdbc:mysql://1freehosting.com:3306/u501421373_addrs",connProp);
 
-		String js = "var page=this;" +
-				"phantom.setProxy(\"" + proxyip + "\"," + proxyport + ");";//, http, "", ""
+			Statement statement = connection.createStatement();
 
-		((PhantomJSDriver) driver).executePhantomJS(js);
+			String query = "SELECT proxy FROM Clicks WHERE clicks<5";
 
-		driver.get("http://tell-my-ip.com/");
-		((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+			ResultSet result = statement.executeQuery(query);
+
+			while (result.next()){
+				Main.log.info(result.getString("proxy"));
+			}
+
+		} catch (SQLException | ClassNotFoundException e) {
+			e.printStackTrace();
+		}
 	}
 }

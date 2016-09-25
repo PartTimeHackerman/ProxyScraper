@@ -8,10 +8,10 @@ import org.opencv.core.Mat;
 import org.opencv.core.MatOfByte;
 import org.opencv.core.Size;
 import org.opencv.imgcodecs.Imgcodecs;
-import org.scraper.comp.Globals;
 import org.scraper.comp.Main;
 import org.scraper.comp.Pool;
-import org.scraper.comp.checker.ProxyChecker;
+import org.scraper.comp.Proxy;
+import org.scraper.comp.web.Site;
 import org.scraper.comp.web.BrowserVersion;
 
 import java.io.IOException;
@@ -21,15 +21,21 @@ import java.util.concurrent.*;
 
 import static org.opencv.imgproc.Imgproc.*;
 
-public class OcrScraper implements Scraper {
+public class OcrScraper extends Scraper {
 	
-	@Override
-	public List<String> scrape(String url) throws IOException, InterruptedException {
-		return scrape(url, null);
+	private Pool pool;
+	
+	private BlockingQueue<OCR> ocrs;
+	
+	public OcrScraper(Pool pool, BlockingQueue<OCR> ocrs){
+		type = ScrapeType.OCR;
+		this.pool=pool;
+		this.ocrs = ocrs;
 	}
 	
 	@Override
-	public List<String> scrape(String url, ProxyChecker checker) throws InterruptedException, IOException {
+	public List<Proxy> scrape(Site site) throws InterruptedException, IOException {
+		String url = site.getAddress();
 		Main.log.info("OCR scraping {}", url);
 		Document doc = Jsoup.connect(url).timeout(10000).userAgent(BrowserVersion.random().ua()).get();
 		
@@ -52,6 +58,7 @@ public class OcrScraper implements Scraper {
 				byte[] imgBytes = Jsoup
 						.connect(iurl.charAt(0) == '/' ? mainUrl + iurl : iurl)
 						.timeout(10000)
+						.userAgent(BrowserVersion.random().ua())
 						.ignoreContentType(true)
 						.execute()
 						.bodyAsBytes();
@@ -60,9 +67,9 @@ public class OcrScraper implements Scraper {
 				if (mat.width() / mat.height() >= 8) {
 					ocrFilter(mat);
 					
-					OCR ocr = Globals.getOcrQueue().take();
+					OCR ocr = ocrs.take();
 					String read = ocr.read(mat);
-					Globals.getOcrQueue().put(ocr);
+					ocrs.put(ocr);
 					Main.log.info(read);
 					for (Element element : imgs) {
 						if (element.attr("src").equals(iurl))
@@ -72,14 +79,14 @@ public class OcrScraper implements Scraper {
 				return null;
 			});
 		}
-		Pool.sendTasks(calls);
+		pool.sendTasks(calls);
 		
 		Main.log.info("OCR Done");
 		
 		String txt = doc.text();
 		
-		return checker != null ? RegexMatcher.match(txt, checker) : RegexMatcher.match(txt);
-		
+		proxy = RegexMatcher.match(txt);
+		return proxy;
 	}
 	
 	private void ocrFilter(Mat image) {

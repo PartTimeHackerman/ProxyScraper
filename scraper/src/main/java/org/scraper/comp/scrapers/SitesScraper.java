@@ -6,11 +6,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.scraper.comp.Globals;
 import org.scraper.comp.Main;
-import org.scraper.comp.checker.ProxyChecker;
-import org.scraper.comp.web.Address;
-import org.scraper.comp.web.PHP;
-import org.scraper.comp.web.BrowserVersion;
-import org.scraper.comp.web.PHPMethod;
+import org.scraper.comp.web.*;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -21,30 +17,20 @@ import java.util.Map;
 
 public class SitesScraper {
 	
-	private List<Address> addrs;
+	private List<Site> sites;
 	
-	private List<Address> newAddrs = new ArrayList<>();
+	private List<Site> newAddrs = new ArrayList<>();
 	
-	private static ProxyScraper scraper = new ProxyScraper(false);
-	
-	private static ProxyChecker checker = new ProxyChecker(3000);
-	
-	public SitesScraper() {
-		addrs = Globals.getSites();
+	public SitesScraper(List<Site> sites) {
+		this.sites = sites;
 	}
 	
 	public static void main(String... args) throws Exception {
-		Globals.init(100, 1000, true);
-		SitesScraper ss = new SitesScraper();
-		try {
-			ss.getType(new Address("http://proxylist.hidemyass.com/", Address.Type.UNCHECKED, ""));
-		} catch (InterruptedException e) {
-			Main.log.warn("Thread interrupted {}", e);
-		}
+		SitesScraper ss = new SitesScraper(DataBase.getAllSites());
 		
 		System.out.println(ss.getSearchURL(GGLang.PL));
 		ss.scrapeSites();
-		PHP.phpPost(PHPMethod.POST_ADDRS, PHP.gson.toJson(ss.newAddrs));
+		PHP.phpPost(PHPMethod.POST_SITES, PHP.gson.toJson(ss.newAddrs));
 		List<Integer> ints = new ArrayList<>();
 		for (int i = 0; i < 10000; i++) {
 			try {
@@ -90,58 +76,29 @@ public class SitesScraper {
 						String address = siteLink.child(0).child(0).child(0).attr("href");
 						System.out.println(address);
 						
-						if (! addrs.stream().filter(e -> e.getAddress().equals(address)).findFirst().isPresent())
-							newAddrs.add(new Address(address, Address.Type.UNCHECKED, InetAddress.getLocalHost().getHostAddress() + " " + System.getProperty("user.name")));
+						if (! sites.contains(address))
+							newAddrs.add(new Site(address, ScrapeType.UNCHECKED, InetAddress.getLocalHost().getHostAddress() + " " + System.getProperty("user.name")));
 					}
 				} catch (IOException e) {
-					System.out.println(e.toString());
+					Main.log.error("Connection failed, url: {} error: {}", url, (e.getMessage()!=null?e.getMessage():"null"));
 				}
 			}
 		}
 	}
 	
-	public Address.Type getType(Address address) throws InterruptedException, IOException {
-		String site = address.getAddress();
-		int minAll = 10, minWorking = 0;
-		double minWoringPrecent = 0.2;
-		
-		Address.Type type;
-		
-		Main.log.info("Getting {} scrapng method", site);
-		
-		if (workingPrecent(ScrapeType.NORMAL, site, minAll, minWorking) < minWoringPrecent) {
-			if (workingPrecent(ScrapeType.CSS, site, minAll, minWorking) < minWoringPrecent) {
-				type = (workingPrecent(ScrapeType.OCR, site, minAll, minWorking) < minWoringPrecent) ? Address.Type.BLACK : Address.Type.OCR;
-			} else {
-				type = Address.Type.CSS;
-			}
-		} else {
-			type = Address.Type.NORMAL;
-		}
-		return type;
+	public List<Site> getSites() {
+		return sites;
 	}
 	
-	private double workingPrecent(ScrapeType type, String url, int minAll, int minWorking) throws IOException, InterruptedException {
-		List<String> prxs = scraper.scrape(type, url);
-		int all = prxs.size();
-		int working = checker.checkProxies(prxs).size();
-		
-		return all > minAll && working > minWorking ? (double) working / (double) all : 0D;
+	public void setSites(List<Site> sites) {
+		this.sites = sites;
 	}
 	
-	public List<Address> getAddrs() {
-		return addrs;
-	}
-	
-	public void setAddrs(List<Address> addrs) {
-		this.addrs = addrs;
-	}
-	
-	public List<Address> getNewAddrs() {
+	public List<Site> getNewAddrs() {
 		return newAddrs;
 	}
 	
-	public void setNewAddrs(List<Address> newAddrs) {
+	public void setNewAddrs(List<Site> newAddrs) {
 		this.newAddrs = newAddrs;
 	}
 	

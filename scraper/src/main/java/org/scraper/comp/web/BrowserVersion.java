@@ -23,9 +23,9 @@ public enum BrowserVersion {
 	SAFARI_WIN("Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US) AppleWebKit/533.20.25 (KHTML, like Gecko) Version/5.0.4 Safari/533.20.27", Platform.XP, "Safari"),
 	SAFARI_MAC("Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_6; en-US) AppleWebKit/533.20.25 (KHTML, like Gecko) Version/5.0.4 Safari/533.20.27", Platform.MOUNTAIN_LION, "Safari"),
 
-	IE11("Mozilla/5.0 (Windows NT 6.3; Trident/7.0; rv 11.0) like Gecko", Platform.WIN10, "Internet Explorer"),
-	IE10("Mozilla/5.0 (compatible; WOW64; MSIE 10.0; Windows NT 6.2)", Platform.WIN8, "Internet Explorer"),
-	IE9("Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0)", Platform.WINDOWS, "Internet Explorer");
+	IE11("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2486.0 Safari/537.36 Edge/13.10586", Platform.WIN10, "Internet Explorer"),
+	IE10("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2486.0 Safari/537.36 Edge/13.10586", Platform.WIN8, "Internet Explorer"),
+	IE9("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2486.0 Safari/537.36 Edge/13.10586", Platform.WINDOWS, "Internet Explorer");
 
 	private String userAgent;
 	private Platform platform;

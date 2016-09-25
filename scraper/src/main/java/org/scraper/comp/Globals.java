@@ -1,239 +1,230 @@
 package org.scraper.comp;
 
 
-import org.scraper.comp.web.Address;
+import org.opencv.core.Core;
+import org.scraper.comp.checker.ConnectionChecker;
 import org.scraper.comp.scrapers.OCR;
-import org.scraper.comp.web.PHPMethod;
 import org.scraper.comp.web.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.*;
 
 public class Globals {
-
-	private static int threads;
-
-	private static int timeout;
-
-	private static boolean checkOnFly;
-
-
-	private static ThreadPoolExecutor pool;
-
-
-	private static int browsersNumber;
-
-	private static List<Browser> browsers = Collections.synchronizedList(new ArrayList<>());
-
-	private static BlockingQueue<Browser> browsersQueue;
-
-
-	private static int ocrNumber;
-
-	private static List<OCR> ocrs = Collections.synchronizedList(new ArrayList<>());
-
-	private static BlockingQueue<OCR> ocrQueue;
-
-
-	private static List<Address> sites = new ArrayList<>();
-
-	private static List<String> links = new ArrayList<>();
-
-	private static List<String> clicks = new ArrayList<>();
-
-
-	private static ConcurrentHashMap<String, String[]> proxies = new ConcurrentHashMap<>();
-
-
-	public static void init(int threads, int timeout, boolean checkOnFly) throws Exception {
-		Pool.init(threads);
-		pool = Pool.getPool();
-
+	
+	private int threads;
+	
+	private int timeout;
+	
+	private int limit;
+	
+	private boolean checkOnFly;
+	
+	private String ip;
+	
+	
+	private Pool globalPool;
+	
+	private Pool sitesPool;
+	
+	
+	private int browsersNumber;
+	
+	private List<Browser> browsers = Collections.synchronizedList(new ArrayList<>());
+	
+	private BlockingQueue<Browser> browsersQueue;
+	
+	
+	private int ocrNumber;
+	
+	private List<OCR> ocrs = Collections.synchronizedList(new ArrayList<>());
+	
+	private BlockingQueue<OCR> ocrQueue;
+	
+	private DataBase dataBase;
+	
+	private List<Proxy> allPrx = Collections.synchronizedList(new ArrayList<>());
+	
+	private List<Proxy> checkedPrx = Collections.synchronizedList(new ArrayList<>());
+	
+	
+	private GlobalObserver observer;
+	
+	private LinksManager linksManager;
+	
+	public Globals(int threads, int timeout, int limit, boolean checkOnFly, boolean click) {
+		//OpenCV lib
+		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+		
+		globalPool = new Pool(threads);
+		sitesPool = new Pool(10);
+		
 		setThreads(threads);
 		setTimeout(timeout);
+		setLimit( limit>0 ? Integer.MAX_VALUE : limit);
 		setCheckOnFly(checkOnFly);
-
-		setBrowsersNumber(threads/10);
-		setOcrNumber(threads/10);
-
-
-
-		/*IntStream.range(0, threads).forEach(e -> {
-			try {
-				Pool.sendTask(
-						() -> {
-							Main.log.debug("test: " + Thread.currentThread().getName());
-							return null;
-						}, 1, true);
-			} catch (Exception e1) {
-				e1.printStackTrace();
-			}
-		});*/
-
-		Pool.sendTask(() -> PHP.get(sites, PHPMethod.GET_ADDRS),false);
-
-		Pool.sendTask(() -> PHP.get(links, PHPMethod.GET_LINKS),false);
-
-		Pool.sendTask(() -> PHP.get(clicks, PHPMethod.GET_CLICKS),false);
-
-		//clicks.addAll((List<String>)PHP.get(PHPMethod.GET_CLICKS));
-
-		browsersQueue = new ArrayBlockingQueue<>(browsersNumber);
-
+		setBrowsersNumber(threads / 10);
+		setOcrNumber(threads / 10);
+		
+		dataBase = new DataBase(globalPool);
+		
+		linksManager = new LinksManager(globalPool, browsersQueue, dataBase);
+		linksManager.setOn(click);
+		
+		observer = new GlobalObserver(this);
+		
+		ip = ConnectionChecker.getIp();
+		
+		browsersQueue = new ArrayBlockingQueue<>(1024);
+		
 		ocrQueue = new ArrayBlockingQueue<>(ocrNumber);
-
+		
 		Callable<?> makeBrowsers = () -> {
 			Browser browser = new Browser();
 			browsersQueue.put(browser);
 			browsers.add(browser);
-			Main.log.debug("Browser created");
 			return null;
 		};
-
+		
 		Callable<?> makeOCR = () -> {
 			OCR ocr = new OCR();
 			ocrQueue.put(ocr);
 			ocrs.add(ocr);
-			Main.log.debug("OCR created");
 			return null;
 		};
-
+		
 		try {
-			//Pool.sendTask(()->{
-				Pool.sendTask(makeBrowsers,false,browsersNumber);
-				Pool.sendTask(makeOCR,false,ocrNumber);
-			//	return null;
-			//},1,true);
-
+			globalPool.sendTask(makeBrowsers, false, browsersNumber);
+			
 		} catch (Exception e) {
-			e.printStackTrace();
+			Main.log.error("Failed to load browsers");
 		}
-
-		synchronized(pool) {
-			while (!(pool.getActiveCount() == 0))
-				pool.notify(); //wait for the queue to become empty
+		
+		try {
+			globalPool.sendTask(makeOCR, false, ocrNumber);
+		} catch (Exception e) {
+			Main.log.error("Failed to load OCR");
 		}
-
-
-	}
-
-	public static void handleChecked(String[] checked){
-		proxies.putIfAbsent(checked[0], Arrays.copyOfRange(checked,1,4));
+		
+		synchronized (globalPool) {
+			while (! (globalPool.getPool().getActiveCount() == 0))
+				globalPool.notify();
+		}
+		
+		Main.log.info("Browser created");
+		Main.log.info("OCR created");
 	}
 	
-	public static int getThreads() {
+	public Globals(){
+		this(100,3000,0,false,false);
+	}
+	
+	public void addProxy(Proxy proxy) {
+		if (! proxy.isChecked() && ! allPrx.contains(proxy)) {
+			allPrx.add(proxy);
+		} else {
+			allPrx.add(proxy);
+			if (! checkedPrx.contains(proxy)) checkedPrx.add(proxy);
+		}
+	}
+	
+	public void addProxies(List<Proxy> all) {
+		all.forEach(this::addProxy);
+	}
+	
+	public int getThreads() {
 		return threads;
 	}
-
-	public static void setThreads(int threads) {
-		Globals.threads = threads;
-		pool.setMaximumPoolSize(threads);
+	
+	public void setThreads(int threads) {
+		this.threads = threads;
+		globalPool.getPool().setMaximumPoolSize(threads);
 	}
-
-	public static int getTimeout() {
+	
+	public int getTimeout() {
 		return timeout;
 	}
-
-	public static void setTimeout(int timeout) {
-		Globals.timeout = timeout;
+	
+	public void setTimeout(int timeout) {
+		this.timeout = timeout;
 	}
-
-	public static boolean isCheckOnFly() {
+	
+	public boolean isCheckOnFly() {
 		return checkOnFly;
 	}
-
-	public static void setCheckOnFly(boolean checkOnFly) {
-		Globals.checkOnFly = checkOnFly;
+	
+	public void setCheckOnFly(boolean checkOnFly) {
+		this.checkOnFly = checkOnFly;
 	}
-
-	public static ThreadPoolExecutor getPool() {
-		return pool;
-	}
-
-	public static void setPool(ThreadPoolExecutor pool) {
-		Globals.pool = pool;
-	}
-
-	public static List<Browser> getBrowsers() {
+	
+	public List<Browser> getBrowsers() {
 		return browsers;
 	}
-
-	public static void setBrowsers(List<Browser> browsers) {
-		Globals.browsers = browsers;
+	
+	public List<Proxy> getCheckedPrx() {
+		return checkedPrx;
 	}
-
-	public static List<String> getLinks() {
-		return links;
-	}
-
-	public static void setLinks(List<String> links) {
-		Globals.links = links;
-	}
-
-	public static ConcurrentHashMap<String, String[]> getProxies() {
-		return proxies;
-	}
-
-	public static void setProxies(ConcurrentHashMap<String, String[]> proxies) {
-		Globals.proxies = proxies;
-	}
-
-	public static int getBrowsersNumber() {
+	
+	public int getBrowsersNumber() {
 		return browsersNumber;
 	}
-
-	public static void setBrowsersNumber(int browsersNumber) {
-		Globals.browsersNumber = browsersNumber;
+	
+	public void setBrowsersNumber(int browsersNumber) {
+		this.browsersNumber = browsersNumber <= 0 ? 1 : browsersNumber;
 	}
-
-	public static List<Address> getSites() {
-		return sites;
-	}
-
-	public static void setSites(List<Address> sites) {
-		Globals.sites = sites;
-	}
-
-	public static List<String> getClicks() {
-		return clicks;
-	}
-
-	public static void setClicks(List<String> clicks) {
-		Globals.clicks = clicks;
-	}
-
-	public static BlockingQueue<Browser> getBrowsersQueue() {
+	
+	public BlockingQueue<Browser> getBrowsersQueue() {
 		return browsersQueue;
 	}
-
-	public static void setBrowsersQueue(BlockingQueue browsersQueue) {
-		Globals.browsersQueue = browsersQueue;
-	}
-
-	public static int getOcrNumber() {
+	
+	public int getOcrNumber() {
 		return ocrNumber;
 	}
-
-	public static void setOcrNumber(int ocrNumber) {
-		Globals.ocrNumber = ocrNumber;
+	
+	public void setOcrNumber(int ocrNumber) {
+		this.ocrNumber = ocrNumber <= 0 ? 1 : ocrNumber;
 	}
-
-	public static List<OCR> getOcrs() {
+	
+	public List<OCR> getOcrs() {
 		return ocrs;
 	}
-
-	public static void setOcrs(List<OCR> ocrs) {
-		Globals.ocrs = ocrs;
-	}
-
-	public static BlockingQueue<OCR> getOcrQueue() {
+	
+	public BlockingQueue<OCR> getOcrQueue() {
 		return ocrQueue;
 	}
-
-	public static void setOcrQueue(BlockingQueue<OCR> ocrQueue) {
-		Globals.ocrQueue = ocrQueue;
+	
+	public int getLimit() {
+		return limit;
+	}
+	
+	public void setLimit(int limit) {
+		this.limit = limit;
+	}
+	
+	public GlobalObserver getObserver() {
+		return observer;
+	}
+	
+	public List<Proxy> getAllPrx() {
+		return allPrx;
+	}
+	
+	public LinksManager getLinksManager() {
+		return linksManager;
+	}
+	
+	public String getIp() {
+		return ip;
+	}
+	
+	public Pool getGlobalPool() {
+		return globalPool;
+	}
+	
+	public Pool getSitesPool() {
+		return sitesPool;
+	}
+	
+	public DataBase getDataBase() {
+		return dataBase;
 	}
 }

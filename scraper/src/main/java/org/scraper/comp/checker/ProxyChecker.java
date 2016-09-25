@@ -1,137 +1,108 @@
 package org.scraper.comp.checker;
 
-import org.jsoup.Connection;
-import org.jsoup.Jsoup;
-import org.scraper.comp.Globals;
-import org.scraper.comp.Main;
-import org.scraper.comp.Pool;
-import org.scraper.comp.web.BrowserVersion;
+import org.scraper.comp.*;
+import org.scraper.comp.Proxy;
 
-import java.net.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Observable;
+import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-public class ProxyChecker {
+public class ProxyChecker extends Observable {
+	
+	private Pool pool;
 	
 	private int timeout;
 	
 	public static void main(String... args) {
-		ProxyChecker pc = new ProxyChecker(3000);
+		ProxyChecker pc = new ProxyChecker(new Pool(100), new GlobalObserver(new Globals()), 3000);
 		String socks = "68.67.80.202:41271";
 		String elite = "45.79.87.67:8080";
 		
-		Consumer<String> check = prx -> {
-			String[] result = pc.checkProxy(prx);
-			if (result != null) {
-				for (String s : result) System.out.print(s + " ");
-			} else {
-				Main.log.warn(prx + " broken");
-			}
+		Consumer<Proxy> check = prx -> {
+			Proxy result = pc.checkProxy(prx);
+			if (result != null) System.out.print(result);
 		};
 		
-		check.accept(socks);
-		check.accept(elite);
+		check.accept(new Proxy(socks));
+		check.accept(new Proxy(elite));
 	}
 	
-	public ProxyChecker(int timeout) {
+	public ProxyChecker(Pool pool, Observer observer, int timeout) {
+		this.pool = pool;
 		this.timeout = timeout;
+		addObserver(observer);
 	}
 	
-	public List<String[]> checkProxies(List<String> proxies) throws InterruptedException {
+	public List<Proxy> checkProxies(List<Proxy> proxies) {
 		Main.log.info("Checking list of size {}", proxies.size());
-		List<Callable<String[]>> calls = new ArrayList<>();
-		List<String[]> checked;
+		List<Callable<Proxy>> calls = new ArrayList<>();
+		List<Proxy> checked = new ArrayList<>();
 		
-		 proxies.stream()
+		proxies.stream()
 				.map(proxy ->
-					calls.add(()-> checkProxy(proxy))
-					)
+							 calls.add(() -> checkProxy(proxy)))
 				.collect(Collectors.toList());
 		
-		checked = Pool.sendTasks(calls);
+		try {
+			checked = pool.sendTasks(calls);
+		} catch (InterruptedException e) {
+			Main.log.fatal("Checking interrupted!" + e);
+		}
 		
 		checked.removeIf(Objects::isNull);
 		
 		return checked;
 	}
 	
-	public String[] checkProxy(String proxy) {
-		// 0 - ip:port, 1 - type(socks, http, https), 2 - anonimity (transparent, elite, etc.), 3 - time
-		String[] info = new String[4];
-		info[0] = proxy;
-		info[1]= "";
+	public Proxy checkProxy(Proxy proxy) {
 		
-		String httpUrl = "http://www.google.cat/";//"http://www.wykop.pl/";
-		String httpsUrl = "https://www.google.cat/";
-		
-		String ping = "http://absolutelydisgusting.ml/ping.php";
-		
-		String ip = proxy.split(":")[0];
-		Integer port = Integer.parseInt(proxy.split(":")[1]);
-		if (port >= 89595) {
-			Main.log.warn("Proxy {}:{} port >= 89595", ip, port);
+		String ip = proxy.getIp();
+		Integer port = proxy.getPort();
+		if (port >= 78184) {
+			Main.log.warn("Proxy {}:{} port out of range > 78184", ip, port);
 			return null;
 		}
 		
-		Proxy http = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(ip, port));
-		Proxy socks = new Proxy(Proxy.Type.SOCKS, new InetSocketAddress(ip, port));
 		
-		String pingResopnse = pingProxy(http, ping);
-		
-		if (pingResopnse.equals("socks")) {
-			pingResopnse = pingProxy(socks, ping);
-			if (pingResopnse.contains("|")) {
-				String[] responseInfo = pingResopnse.split("\\|");
-				info[1] = "socks";
-				info[2] = responseInfo[0];
-				info[3] = responseInfo[1];
-			}
-		}else if (pingResopnse.contains("|")) {
-			String[] responseInfo = pingResopnse.split("\\|");
-			info[1] = "http";
-			info[2] = responseInfo[0];
-			info[3] = responseInfo[1];
+		setProxy(proxy);
+		if (proxy.isChecked()) {
+			Main.log.info("Proxy {}", proxy);
 			
-			pingResopnse = pingProxy(http, httpsUrl);
-			if (pingResopnse.contains("|")) {
-				info[1] = "https";
-			}
-		}
-		
-		if(!info[1].equals("")){
-			Main.log.info("Proxy {}:{} {} {} {}", ip, port, info[1], info[2], info[3]);
-			Globals.handleChecked(info);
-			return info;
-		}else {
-			Main.log.warn("Proxy {}:{} not working", ip, port);
+			setChanged();
+			notifyObservers(proxy);
+			
+			return proxy;
+		} else {
+			Main.log.warn("Proxy {} not working!", proxy.getIpPort());
 			return null;
 		}
 	}
 	
-	private String pingProxy(Proxy proxy, String url) {
-		Long counter = System.currentTimeMillis();
-		try {
-			Connection.Response response = Jsoup
-					.connect(url)
-					.userAgent(BrowserVersion.random().ua())
-					.proxy(proxy)
-					.ignoreContentType(true)
-					.timeout(timeout)
-					.execute();
-			
-			if (url.contains("https")) return "|";
-			
-			String[] typeAndTime = response.parse().text().split("\\|");
-			return typeAndTime[0] + "|" + (System.currentTimeMillis() - counter);//(Long.parseLong(typeAndTime[1].replace(".",""))-counter);
-			
-		} catch (Exception e) {
-			if (e.getMessage()!=null && e.getMessage().equals("Connection reset")) return "socks";
+	private void setProxy(Proxy proxy) {
+		String httpsUrl = "https://www.google.cat/";
+		String ping = "http://absolutelydisgusting.ml/ping.php";
+		//ping = "http://www.google.com/";
+		
+		Connection https = new Connection(Proxy.Type.HTTPS, proxy);
+		boolean connected = https.connect(httpsUrl, timeout);
+		if (connected) {
+			proxy.setProxy(https);
+		} else if (https.getType() == Proxy.Type.SOCKS) {
+			Connection socks = new Connection(Proxy.Type.SOCKS, proxy);
+			if (socks.connect(ping, timeout))
+				proxy.setProxy(socks);
+			connected = true;
 		}
-		return "";
+		if (!connected) {
+			Connection http = new Connection(Proxy.Type.HTTP, proxy);
+			if (http.connect(ping, timeout)) {
+				proxy.setProxy(http);
+			}
+		}
+	}
+	
+	public Proxy checkProxy(String proxy) {
+		return checkProxy(new Proxy(proxy));
 	}
 }

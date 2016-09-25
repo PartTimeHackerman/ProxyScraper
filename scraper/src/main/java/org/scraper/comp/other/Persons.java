@@ -9,9 +9,14 @@ public class Persons {
 
 	public static final String path = FileSystemView.getFileSystemView().getDefaultDirectory().getPath();
 
-	public static int personsNum = 100;
+	public static int personsNum = 1000;
 
 	private Map<Integer, Person> personMap = new ConcurrentHashMap<>();
+	
+	public static void main(String... args){
+		Persons p = new Persons();
+		p.loadPersons();
+	}
 
 	public void loadPersons() {
 

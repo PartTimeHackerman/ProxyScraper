@@ -42,13 +42,13 @@ public class Person implements Serializable {
 
 	private void dlPerson(){
 		try {
-			String url = "http://www.fakenamegenerator.com/gen-random-gr-gr.php";
+			String url = "http://www.fakenamegenerator.com";
 			Document doc = Jsoup.connect(url).userAgent("Mozilla").get();
 
 
-			name = doc.select("#details > div.content > div.info > div > div.address > h3").text();
+			String fullName = doc.select("#details > div.content > div.info > div > div.address > h3").text();
 
-			/*String[] nameArr = fullName.split(" ");
+			String[] nameArr = fullName.split(" ");
 
 			name+=nameArr[0] +" ";
 			name+=nameArr[2];
@@ -69,17 +69,16 @@ public class Person implements Serializable {
 			state+=stzip[1];
 
 			zip+=stzip[2];
-*/
-			email = doc.select("#details > div.content > div.info > div > div.extra > dl:nth-child(11) > dd").text().split(" ")[0];
-			//email = email.split("@")[0]+"@cuvox.de";
-/*
+
+			email = doc.select("#details > div.content > div.info > div > div.extra > dl:nth-child(12) > dd").text().split(" ")[0];
+
 			card = doc.select("#details > div.content > div.info > div > div.extra > dl:nth-child(18) > dd").text();
 
 			cardDate = doc.select("#details > div.content > div.info > div > div.extra > dl:nth-child(19) > dd").text();
 
 			phone = "1"+doc.select("#details > div.content > div.info > div > div.extra > dl:nth-child(5) > dd").text().replace("-","");
 
-			password = name.replace(" ","").toLowerCase() + "123";*/
+			password = name.replace(" ","").toLowerCase() + "123";
 
 		} catch (IOException e) {
 			e.printStackTrace();

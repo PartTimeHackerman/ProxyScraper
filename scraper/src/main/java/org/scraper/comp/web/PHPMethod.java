@@ -2,11 +2,15 @@ package org.scraper.comp.web;
 
 public enum PHPMethod {
 
-	POST_ADDRS("post_addrs"),
-	GET_ADDRS("get_addrs"),
-
+	POST_SITES("post_sites"),
+	GET_SITES("get_sites"),
+	
+	POST_DOMAINS("post_domains"),
+	GET_DOMAINS("get_domains"),
+	
 	POST_CLICKS("post_clicks"),
 	GET_CLICKS("get_clicks"),
+	
 
 	GET_LINKS("get_links");
 

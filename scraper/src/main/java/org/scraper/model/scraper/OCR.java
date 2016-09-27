@@ -1,4 +1,4 @@
-package org.scraper.model.scrapers;
+package org.scraper.model.scraper;
 
 import org.bytedeco.javacpp.tesseract;
 import org.bytedeco.javacpp.tesseract.TessBaseAPI;

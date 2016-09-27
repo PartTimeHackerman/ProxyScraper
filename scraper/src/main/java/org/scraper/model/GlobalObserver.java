@@ -5,29 +5,18 @@ import java.util.Observer;
 
 public class GlobalObserver implements Observer {
 	
-	private Globals globals;
+	private ProxyManager proxyManager;
 	
-	private static GlobalObserver observer = null;
-	
-	public GlobalObserver(Globals globals){
-		this.globals=globals;
+	public GlobalObserver(ProxyManager proxyManager){
+		this.proxyManager = proxyManager;
 	}
 	
 	@Override
 	public void update(Observable o, Object arg) {
 		if (arg instanceof Proxy) {
 			Proxy proxy = (Proxy) arg;
-			globals.addProxy(proxy);
-			globals.getLinksManager().clickAll(proxy);
+			proxyManager.addProxy(proxy);
+			//globals.getLinksManager().clickAll(proxyManager);
 		}
-	}
-	
-	private GlobalObserver() {
-	}
-	
-	public static GlobalObserver getObserver() {
-		if (observer == null)
-			observer = new GlobalObserver();
-		return observer;
 	}
 }

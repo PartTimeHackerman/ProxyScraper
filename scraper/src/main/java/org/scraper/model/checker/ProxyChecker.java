@@ -36,18 +36,14 @@ public class ProxyChecker extends Observable {
 	public List<Proxy> checkProxies(List<Proxy> proxies) {
 		Main.log.info("Checking list of size {}", proxies.size());
 		List<Callable<Proxy>> calls = new ArrayList<>();
-		List<Proxy> checked = new ArrayList<>();
+		List<Proxy> checked;
 		
 		proxies.stream()
 				.map(proxy ->
 							 calls.add(() -> checkProxy(proxy)))
 				.collect(Collectors.toList());
 		
-		try {
 			checked = pool.sendTasks(calls);
-		} catch (InterruptedException e) {
-			Main.log.fatal("Checking interrupted!" + e);
-		}
 		
 		checked.removeIf(Objects::isNull);
 		

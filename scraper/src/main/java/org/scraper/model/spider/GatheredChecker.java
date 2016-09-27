@@ -1,9 +1,9 @@
 package org.scraper.model.spider;
 
 import org.scraper.model.Main;
-import org.scraper.model.scrapers.ProxyScraper;
-import org.scraper.model.scrapers.ScrapeType;
-import org.scraper.model.scrapers.ScrapersFactory;
+import org.scraper.model.scraper.ProxyScraper;
+import org.scraper.model.scraper.ScrapeType;
+import org.scraper.model.scraper.ScrapersFactory;
 import org.scraper.model.web.Site;
 
 import java.util.List;

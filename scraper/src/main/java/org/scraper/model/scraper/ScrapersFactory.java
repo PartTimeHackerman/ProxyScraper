@@ -1,4 +1,4 @@
-package org.scraper.model.scrapers;
+package org.scraper.model.scraper;
 
 import org.scraper.model.Pool;
 import org.scraper.model.web.Browser;

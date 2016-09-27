@@ -1,7 +1,7 @@
 package org.scraper.model.spider;
 
 import org.scraper.model.Main;
-import org.scraper.model.scrapers.ScrapeType;
+import org.scraper.model.scraper.ScrapeType;
 import org.scraper.model.web.Site;
 
 import java.util.List;

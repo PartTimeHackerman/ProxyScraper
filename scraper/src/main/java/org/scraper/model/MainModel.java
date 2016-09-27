@@ -7,9 +7,19 @@ import org.scraper.model.checker.ConnectionChecker;
 import org.scraper.model.checker.ProxyChecker;
 import org.scraper.model.scraper.ProxyScraper;
 import org.scraper.model.scraper.ScrapersFactory;
-import org.scraper.model.web.*;
+import org.scraper.model.web.DataBase;
+import org.scraper.model.web.LinksManager;
 
-public class Globals {
+import java.util.List;
+
+public class MainModel implements InterfaceModel{
+	
+	private Model scrapeModel;
+	
+	private Model proxyModel;
+	
+	
+	private Model presentModel = scrapeModel;
 	
 	private Pool globalPool;
 	
@@ -21,6 +31,10 @@ public class Globals {
 	private DataBase dataBase;
 	
 	private ProxyManager proxyManager;
+	
+	private SitesManager sitesManager;
+	
+	private TextManager textManager;
 	
 	
 	private GlobalObserver observer;
@@ -40,8 +54,11 @@ public class Globals {
 	
 	private String ip;
 	
+	public static void main(String[] args) {
+		MainModel m = new MainModel(100, 5000, 0, false, false);
+	}
 	
-	public Globals(int threads, int timeout, int limit, boolean checkOnFly, boolean click) {
+	public MainModel(int threads, int timeout, int limit, boolean checkOnFly, boolean click) {
 		//OpenCV lib
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 		
@@ -60,7 +77,7 @@ public class Globals {
 		linksManager = new LinksManager(globalPool, queues.getBrowsersQueue(), dataBase);
 		linksManager.setOn(click);
 		
-		observer = null;
+		observer = new GlobalObserver(proxyManager);
 		
 		ip = ConnectionChecker.getIp();
 		
@@ -70,9 +87,17 @@ public class Globals {
 		
 		scraper = new ProxyScraper(scrapersFactory);
 		
-		assigner = new AssignManager(scrapersFactory, checker, checkOnFly);
+		assigner = new AssignManager(scrapersFactory, checker, globalPool, checkOnFly);
 		
 		proxyManager = new ProxyManager(limit);
+		
+		sitesManager = new SitesManager(dataBase);
+		
+		textManager = new TextManager(proxyManager, sitesManager);
+		
+		scrapeModel = new ScraperModel(this, scraper, dataBase.getAllSites());
+		
+		proxyModel = new ProxyModel(this);
 		
 		synchronized (globalPool) {
 			while (!(globalPool.getPool().getActiveCount() == 0))
@@ -80,18 +105,58 @@ public class Globals {
 		}
 	}
 	
-	public Globals() {
-		this(100, 3000, 0, false, false);
+	@Override
+	public void scrape() {
+		presentModel.scrape();
+	}
+	
+	@Override
+	public void check() {
+		presentModel.check();
+	}
+	
+	@Override
+	public void crawl() {
+		presentModel.crawl();
+	}
+	
+	@Override
+	public void setCheckOnFly(boolean checkOnFly) {
+		this.checkOnFly = checkOnFly;
+	}
+	
+	@Override
+	public void switchModel() {
+		//TODO switch to proxy model if textarea doesn't contains any site
+		presentModel = (presentModel == scrapeModel) ? proxyModel : scrapeModel;
+	}
+	
+	@Override
+	public void save() {
+		
+	}
+	
+	@Override
+	public void load() {
+		
+	}
+	
+	@Override
+	public void addToText(List<String> text) {
+		textManager.addToText(text);
+	}
+	
+	public Model getPresentModel() {
+		return presentModel;
+	}
+	
+	public void setPresentModel(Model presentModel) {
+		this.presentModel = presentModel;
 	}
 	
 	public boolean isCheckOnFly() {
 		return checkOnFly;
 	}
-	
-	public void setCheckOnFly(boolean checkOnFly) {
-		this.checkOnFly = checkOnFly;
-	}
-	
 	
 	public GlobalObserver getObserver() {
 		return observer;
@@ -105,7 +170,7 @@ public class Globals {
 		return ip;
 	}
 	
-	public Pool getGlobalPool() {
+	public Pool pool() {
 		return globalPool;
 	}
 	
@@ -133,7 +198,7 @@ public class Globals {
 		return scraper;
 	}
 	
-	public Boolean getCheckOnFly() {
+	public boolean getCheckOnFly() {
 		return checkOnFly;
 	}
 	
@@ -145,7 +210,19 @@ public class Globals {
 		return assigner;
 	}
 	
-	public void setCheckOnFly(Boolean checkOnFly) {
-		this.checkOnFly = checkOnFly;
+	public SitesManager getSitesManager() {
+		return sitesManager;
+	}
+	
+	public void setSitesManager(SitesManager sitesManager) {
+		this.sitesManager = sitesManager;
+	}
+	
+	public TextManager getTextManager() {
+		return textManager;
+	}
+	
+	public void setTextManager(TextManager textManager) {
+		this.textManager = textManager;
 	}
 }

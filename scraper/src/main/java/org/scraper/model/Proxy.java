@@ -2,9 +2,7 @@ package org.scraper.model;
 
 import org.scraper.model.checker.Connection;
 
-public class Proxy {
-	
-	// 0 - ip:port, 1 - type(socks, http, https), 2 - anonymity (transparent, elite, etc.), 3 - time
+public class Proxy implements Text{
 	
 	private String ip;
 	
@@ -20,7 +18,7 @@ public class Proxy {
 	
 	private boolean checked;
 	
-	
+	private boolean working;
 	
 	public Proxy(String ip, int port) {
 		setIp(ip);
@@ -39,6 +37,7 @@ public class Proxy {
 		setAnonymity(connection.getAnonymity());
 		setSpeed(connection.getTime());
 		setChecked(true);
+		working = true;
 		return this;
 	}
 	
@@ -107,6 +106,15 @@ public class Proxy {
 	
 	public void setChecked(boolean checked) {
 		this.checked = checked;
+	}
+	
+	public boolean isWorking() {
+		return working;
+	}
+	
+	@Override
+	public String getText() {
+		return ipPort;
 	}
 	
 	

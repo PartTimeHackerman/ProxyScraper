@@ -1,8 +1,8 @@
 package org.scraper.model.assigner;
 
 import org.scraper.model.Proxy;
-import org.scraper.model.scrapers.ScrapeType;
-import org.scraper.model.scrapers.ScrapersFactory;
+import org.scraper.model.scraper.ScrapeType;
+import org.scraper.model.scraper.ScrapersFactory;
 import org.scraper.model.web.Site;
 
 import java.util.ArrayList;

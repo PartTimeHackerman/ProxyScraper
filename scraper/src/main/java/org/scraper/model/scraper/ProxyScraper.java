@@ -1,19 +1,24 @@
-package org.scraper.model.scrapers;
+package org.scraper.model.scraper;
 
 //import com.sun.org.apache.xpath.internal.operations.String;
 
 import org.scraper.model.Main;
+import org.scraper.model.Pool;
 import org.scraper.model.Proxy;
 import org.scraper.model.web.Site;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.stream.Collectors;
 
 
 public class ProxyScraper {
 	
-	ScrapersFactory scrapersFactory;
+	private ScrapersFactory scrapersFactory;
+	
+	private Pool pool;
 	
 	public static void main(String... args) throws Exception {
 		/*PropertyConfigurator.configure("log4j.properties");
@@ -30,8 +35,9 @@ public class ProxyScraper {
 	
 	
 	public
-	ProxyScraper(ScrapersFactory scrapersFactory){
+	ProxyScraper(ScrapersFactory scrapersFactory, Pool pool){
 		this.scrapersFactory = scrapersFactory;
+		this.pool = pool;
 	}
 	
 	public ProxyScraper(int size){
@@ -57,6 +63,25 @@ public class ProxyScraper {
 			Main.log.error("Scraping failed, url: {} error: {}", url, (e.getMessage() != null ? e.getMessage() : "null"));
 			return new ArrayList<>();
 		}
+	}
+	
+	public List<Proxy> scrapeList(List<Site> sites){
+		
+		List<Callable<List<Proxy>>> calls = new ArrayList<>();
+		List<List<Proxy>> proxyList;
+		
+		sites.stream()
+				.map(site ->
+							 calls.add(() -> scrape(site)))
+				.collect(Collectors.toList());
+		
+		proxyList = pool.sendTasks(calls);
+		
+		List<Proxy> proxy = new ArrayList<>();
+		
+		proxyList.forEach(proxy::addAll);
+		
+		return proxy;
 	}
 	
 }

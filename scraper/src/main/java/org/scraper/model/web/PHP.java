@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.scraper.model.Main;
-import org.scraper.model.scrapers.ScrapeType;
+import org.scraper.model.scraper.ScrapeType;
 
 import java.io.IOException;
 import java.sql.*;

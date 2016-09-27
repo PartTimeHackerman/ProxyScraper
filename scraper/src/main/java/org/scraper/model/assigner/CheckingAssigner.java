@@ -5,9 +5,9 @@ import org.scraper.model.Globals;
 import org.scraper.model.Pool;
 import org.scraper.model.Proxy;
 import org.scraper.model.checker.ProxyChecker;
-import org.scraper.model.scrapers.ScrapeType;
-import org.scraper.model.scrapers.Scraper;
-import org.scraper.model.scrapers.ScrapersFactory;
+import org.scraper.model.scraper.ScrapeType;
+import org.scraper.model.scraper.Scraper;
+import org.scraper.model.scraper.ScrapersFactory;
 import org.scraper.model.web.Site;
 
 import java.util.List;
@@ -76,24 +76,12 @@ public class CheckingAssigner extends NonCheckAssigner implements Observer {
 		proxy.add((Proxy) arg);
 	}
 	
-	public int getMinAll() {
-		return minAll;
-	}
-	
 	public void setMinAll(int minAll) {
 		this.minAll = minAll;
 	}
 	
-	public int getMinWorking() {
-		return minWorking;
-	}
-	
 	public void setMinWorking(int minWorking) {
 		this.minWorking = minWorking;
-	}
-	
-	public double getMinWorkingPrecent() {
-		return minWorkingPrecent;
 	}
 	
 	public void setMinWorkingPrecent(double minWorkingPrecent) {

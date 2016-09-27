@@ -4,7 +4,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.scraper.model.Main;
-import org.scraper.model.scrapers.ScrapeType;
+import org.scraper.model.scraper.ScrapeType;
 import org.scraper.model.web.BrowserVersion;
 import org.scraper.model.web.Site;
 

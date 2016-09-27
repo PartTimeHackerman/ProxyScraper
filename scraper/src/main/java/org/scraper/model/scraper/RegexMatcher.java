@@ -1,4 +1,4 @@
-package org.scraper.model.scrapers;
+package org.scraper.model.scraper;
 
 
 import org.scraper.model.Proxy;
@@ -17,7 +17,7 @@ public class RegexMatcher {
 	private static Pattern ipPortPattern = Pattern.compile(ipPattern + ":" + portPattern);
 	
 	
-	public static List<Proxy> match(String text) throws InterruptedException {
+	public static List<Proxy> match(String text){
 		return match(text, null);
 	}
 	

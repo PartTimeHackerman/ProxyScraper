@@ -1,8 +1,9 @@
 package org.scraper.model.web;
 
-import org.scraper.model.scrapers.ScrapeType;
+import org.scraper.model.Text;
+import org.scraper.model.scraper.ScrapeType;
 
-public class Site {
+public class Site implements Text {
 
 	private String address;
 
@@ -23,7 +24,7 @@ public class Site {
 	public String getAddress() {
 		return address;
 	}
-
+	
 	public ScrapeType getType() {
 		return type;
 	}
@@ -50,6 +51,12 @@ public class Site {
 		return address.contains("https") ? "https://" + domain : "http://" + domain;
 	}
 	
+	
+	@Override
+	public String getText() {
+		return address;
+	}
+	
 	@Override
 	public String toString(){
 		return address + " " + type;
@@ -57,7 +64,7 @@ public class Site {
 	
 	@Override
 	public boolean equals(Object o){
-		return (o instanceof Site && ((Site) o).address.equals(address) && ((Site) o).type == type);
+		return (o instanceof Site && ((Site) o).address.equals(address));// && ((Site) o).type == type);
 	}
 	
 	@Override

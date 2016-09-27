@@ -1,4 +1,4 @@
-package org.scraper.model.scrapers;
+package org.scraper.model.scraper;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;

@@ -1,13 +1,18 @@
 package org.scraper.model.assigner;
 
+import org.jsoup.select.Collector;
 import org.scraper.model.Pool;
 import org.scraper.model.Proxy;
 import org.scraper.model.checker.ProxyChecker;
-import org.scraper.model.scrapers.ScrapersFactory;
+import org.scraper.model.scraper.ScrapersFactory;
 import org.scraper.model.web.Site;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.Callable;
+import java.util.stream.Collectors;
 
 public class AssignManager {
 	
@@ -15,14 +20,15 @@ public class AssignManager {
 	
 	private ProxyChecker checker;
 	
-	private List<Proxy> proxy;
+	private Pool pool;
 	
 	private boolean check = false;
 	
-	public AssignManager(ScrapersFactory scrapersFactory, ProxyChecker checker) {
+	public AssignManager(ScrapersFactory scrapersFactory, ProxyChecker checker, Pool pool, boolean check) {
 		this.scrapersFactory = scrapersFactory;
 		this.checker = checker;
-		check = true;
+		this.pool = pool;
+		this.check = check;
 	}
 	
 	public AssignManager(ScrapersFactory scrapersFactory) {
@@ -36,7 +42,7 @@ public class AssignManager {
 			check = true;
 	}
 	
-	public List<Proxy> assign(Site site) throws InterruptedException, IOException {
+	public List<Proxy> assign(Site site){
 		
 		Assigner assigner;
 		if (check) {
@@ -47,7 +53,24 @@ public class AssignManager {
 		
 		site.setType(assigner.getType(site));
 		
-		proxy = assigner.getProxy();
+		return assigner.getProxy();
+	}
+	
+	public List<Proxy> assignList(List<Site> sites){
+		
+		List<Callable<List<Proxy>>> calls = new ArrayList<>();
+		List<List<Proxy>> proxyList;
+		
+		sites.stream()
+				.map(site ->
+							 calls.add(() -> assign(site)))
+				.collect(Collectors.toList());
+		
+		proxyList = pool.sendTasks(calls);
+		
+		List<Proxy> proxy = new ArrayList<>();
+		
+		proxyList.forEach(proxy::addAll);
 		
 		return proxy;
 	}

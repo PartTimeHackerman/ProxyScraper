@@ -1,4 +1,4 @@
-package org.scraper.model.scrapers;
+package org.scraper.model.scraper;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;

@@ -1,8 +1,10 @@
 package org.scraper.model;
 
+import org.apache.commons.lang.StringUtils;
 import org.scraper.model.checker.Connection;
+import org.scraper.model.managers.Checkable;
 
-public class Proxy implements Text{
+public class Proxy implements Checkable {
 	
 	private String ip;
 	
@@ -14,7 +16,7 @@ public class Proxy implements Text{
 	
 	private Anonymity anonymity;
 	
-	private long speed;
+	private Long speed = 0l;
 	
 	private boolean checked;
 	
@@ -32,23 +34,22 @@ public class Proxy implements Text{
 		this(ipPort.split(":")[0], Integer.parseInt(ipPort.split(":")[1]));
 	}
 	
-	public Proxy setProxy(Connection connection){
+	public Proxy setProxy(Connection connection) {
 		setType(connection.getType());
 		setAnonymity(connection.getAnonymity());
 		setSpeed(connection.getTime());
-		setChecked(true);
-		working = true;
+		setWorking(true);
 		return this;
 	}
 	
 	
 	@Override
-	public String toString(){
+	public String toString() {
 		return getIpPort() + " " + getType() + " " + getAnonymity() + " " + getSpeed();
 	}
 	
 	@Override
-	public boolean equals(Object o){
+	public boolean equals(Object o) {
 		return ((Proxy) o).getIpPort().equals(getIpPort());
 	}
 	
@@ -117,14 +118,35 @@ public class Proxy implements Text{
 		return ipPort;
 	}
 	
+	@Override
+	public String getParamOne() {
+		return type != null ? type.name() : "";
+	}
+	
+	@Override
+	public String getParamTwo() {
+		return anonymity != null ? anonymity.name() : (isChecked() ? "BROKEN" : "UNCHECKED");
+	}
+	
+	@Override
+	public String getParamThree() {
+		return speed != null ? String.format("%.2f",(double)speed/1000)+" s." : "";
+	}
+	
+	public void setWorking(boolean working) {
+		this.working = working;
+	}
+	
 	
 	public enum Type {
+		ALL, //TODO this is for view only, encapsulate it or somerhing
 		HTTP,
 		HTTPS,
 		SOCKS
 	}
 	
 	public enum Anonymity {
+		ALL, //TODO as above
 		TRANSPARENT,
 		ANONYMOUS,
 		ELITE

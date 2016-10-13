@@ -1,10 +1,9 @@
 package org.scraper.model.assigner;
 
-import org.scraper.model.Globals;
 import org.scraper.model.Main;
-import org.scraper.model.scraper.ScrapeType;
-import org.scraper.model.scraper.Scraper;
-import org.scraper.model.scraper.ScrapersFactory;
+import org.scraper.model.scrapers.ScrapeType;
+import org.scraper.model.scrapers.Scraper;
+import org.scraper.model.scrapers.ScrapersFactory;
 import org.scraper.model.web.Site;
 
 import java.io.IOException;
@@ -15,16 +14,13 @@ public class NonCheckAssigner extends Assigner {
 	protected List<Scraper> scrapers;
 	
 	public static void main(String[] args) throws InterruptedException {
-		Globals g = new Globals();
-		NonCheckAssigner na = new NonCheckAssigner(g.getScrapersFactory());
-		ScrapeType t = na.getType(new Site("https://www.torvpn.com/en/proxy-list",ScrapeType.UNCHECKED));
 	}
 	
-	public NonCheckAssigner(ScrapersFactory scrapersFactory){
+	public NonCheckAssigner(ScrapersFactory scrapersFactory) {
 		this.scrapersFactory = scrapersFactory;
 	}
 	
-	public NonCheckAssigner(int size){
+	public NonCheckAssigner(int size) {
 		this.scrapersFactory = new ScrapersFactory(size);
 	}
 	
@@ -40,10 +36,10 @@ public class NonCheckAssigner extends Assigner {
 		Scraper winnerScraper = scrapers.get(0);
 		proxy = winnerScraper.getScraped();
 		
-		return winnerScraper.getType();
+		return proxy.size() > 0 ? winnerScraper.getType() : ScrapeType.UNCHECKED;
 	}
 	
-	protected void scrapeAll(Site address){
+	protected void scrapeAll(Site address) {
 		scrapers = scrapersFactory.getAll();
 		
 		scrapers.forEach(scraper -> {

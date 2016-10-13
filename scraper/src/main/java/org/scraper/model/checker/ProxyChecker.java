@@ -43,7 +43,7 @@ public class ProxyChecker extends Observable {
 							 calls.add(() -> checkProxy(proxy)))
 				.collect(Collectors.toList());
 		
-			checked = pool.sendTasks(calls);
+		checked = pool.sendTasks(calls);
 		
 		checked.removeIf(Objects::isNull);
 		
@@ -51,26 +51,26 @@ public class ProxyChecker extends Observable {
 	}
 	
 	public Proxy checkProxy(Proxy proxy) {
-		
-		String ip = proxy.getIp();
-		Integer port = proxy.getPort();
-		if (port >= 69129) {
-			Main.log.warn("Proxy {}:{} port out of range > 69129", ip, port);
-			return null;
-		}
-		
-		
-		setProxy(proxy);
-		if (proxy.isChecked()) {
-			Main.log.info("Proxy {}", proxy);
-			
-		} else {
-			Main.log.warn("Proxy {} not working!", proxy.getIpPort());
-		}
-		
-		setChanged();
-		notifyObservers(proxy);
-		
+		pool.sendTask(() -> {
+			String ip = proxy.getIp();
+			Integer port = proxy.getPort();
+			if (port >= 69129) {
+				Main.log.warn("Proxy {}:{} port out of range > 69129", ip, port);
+				return;
+			}
+			setProxy(proxy);
+			if (proxy.isWorking()) {
+				Main.log.info("Proxy {}", proxy);
+			  
+			} else {
+				Main.log.warn("Proxy {} not working!", proxy.getIpPort());
+			}
+		  
+			proxy.setChecked(true);
+			//setChanged();
+			//notifyObservers(proxy);
+		  
+		}, false);
 		return proxy;
 	}
 	

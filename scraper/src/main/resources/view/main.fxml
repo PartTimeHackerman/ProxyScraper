@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.layout.BorderPane?>
+
+<TabPane prefHeight="617.0" prefWidth="916.0" tabClosingPolicy="ALL_TABS" tabMaxWidth="400.0" tabMinWidth="400.0" xmlns="http://javafx.com/javafx/8.0.76-ea" xmlns:fx="http://javafx.com/fxml/1">
+   <tabs>
+      <Tab closable="false" text="Proxy">
+         <content>
+            <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="591.0" prefWidth="916.0">
+               <padding>
+                  <Insets top="10.0" />
+               </padding>
+            </BorderPane>
+         </content>
+      </Tab>
+      <Tab closable="false" text="Site">
+         <content>
+            <BorderPane prefHeight="200.0" prefWidth="200.0" />
+         </content>
+      </Tab>
+   </tabs>
+   <opaqueInsets>
+      <Insets />
+   </opaqueInsets>
+</TabPane>

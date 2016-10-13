@@ -2,22 +2,12 @@ package org.scraper.model;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TakesScreenshot;
-import org.openqa.selenium.WebDriver;
-import org.scraper.model.checker.ConnectionChecker;
-import org.scraper.model.scraper.ProxyScraper;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Callable;
 
 public class Main {
 	
 	
 	public static final Logger log = LogManager.getLogger(Main.class.getSimpleName());
 	
-	public static Globals globals;
 	
 	public static void main(String... args) {
 /*

@@ -1,0 +1,36 @@
+#editable{
+    -fx-background-color: white;
+    //-fx-background-color: linear-gradient(#61a2b1, #2A5058);
+    -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.5) , 10, .5 , 2 , 0 );
+
+    -fx-border-radius: 0 10 10 0;
+    -fx-background-radius: 0 10 10 0;
+    -fx-padding: 5;
+
+    -fx-focus-color: -fx-control-inner-background ;
+    -fx-faint-focus-color: -fx-control-inner-background ;
+}
+
+
+#editableText:focused{
+    -fx-border-width: 0;
+}
+
+#editableText:hover{
+    -fx-border-width: 0;
+}
+
+#notEditableText .scroll-bar:vertical{
+    -fx-opacity: 0;
+}
+
+#table .table-column{
+    -fx-pref-width: 150;
+    -fx-alignment: center;
+}
+
+#addArea:hover{
+    -fx-pref-width: 100;
+    -fx-pref-height: 100;
+}
+

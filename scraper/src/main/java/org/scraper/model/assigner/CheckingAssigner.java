@@ -1,32 +1,24 @@
 package org.scraper.model.assigner;
 
 import org.apache.commons.collections.ListUtils;
-import org.scraper.model.Globals;
 import org.scraper.model.Pool;
 import org.scraper.model.Proxy;
 import org.scraper.model.checker.ProxyChecker;
-import org.scraper.model.scraper.ScrapeType;
-import org.scraper.model.scraper.Scraper;
-import org.scraper.model.scraper.ScrapersFactory;
+import org.scraper.model.scrapers.ScrapeType;
+import org.scraper.model.scrapers.Scraper;
+import org.scraper.model.scrapers.ScrapersFactory;
 import org.scraper.model.web.Site;
 
 import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
 
-public class CheckingAssigner extends NonCheckAssigner implements Observer {
+public class CheckingAssigner extends NonCheckAssigner {
 	
 	private ProxyChecker checker;
 	
 	private ScrapeType type;
-	private int minAll = 10, minWorking = 0;
 	private double minWorkingPrecent = 0.2, last = 0D;
 	
 	public static void main(String[] args) {
-		Globals g = new Globals();
-		Assigner ca = new CheckingAssigner(g.getScrapersFactory(), new ProxyChecker(g.getGlobalPool(),5000));
-		
-		ScrapeType t = ca.getType(new Site("http://proxylist.hidemyass.com/",ScrapeType.UNCHECKED));
 	}
 	
 	public CheckingAssigner(ScrapersFactory scrapersFactory, ProxyChecker checker) {
@@ -69,19 +61,6 @@ public class CheckingAssigner extends NonCheckAssigner implements Observer {
 		double precent = (double) workingSize / (double) all;
 		
 		return precent;
-	}
-	
-	@Override
-	public void update(Observable o, Object arg) {
-		proxy.add((Proxy) arg);
-	}
-	
-	public void setMinAll(int minAll) {
-		this.minAll = minAll;
-	}
-	
-	public void setMinWorking(int minWorking) {
-		this.minWorking = minWorking;
 	}
 	
 	public void setMinWorkingPrecent(double minWorkingPrecent) {

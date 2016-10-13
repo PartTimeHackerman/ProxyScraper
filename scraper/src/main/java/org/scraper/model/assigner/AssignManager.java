@@ -1,20 +1,18 @@
 package org.scraper.model.assigner;
 
-import org.jsoup.select.Collector;
 import org.scraper.model.Pool;
 import org.scraper.model.Proxy;
 import org.scraper.model.checker.ProxyChecker;
-import org.scraper.model.scraper.ScrapersFactory;
+import org.scraper.model.scrapers.ScrapersFactory;
 import org.scraper.model.web.Site;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+import java.util.Observable;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
-public class AssignManager {
+public class AssignManager extends Observable{
 	
 	private ScrapersFactory scrapersFactory;
 	
@@ -52,6 +50,11 @@ public class AssignManager {
 		}
 		
 		site.setType(assigner.getType(site));
+		
+		setChanged();
+		notifyObservers(assigner.getProxy());
+		setChanged();
+		notifyObservers(site);
 		
 		return assigner.getProxy();
 	}

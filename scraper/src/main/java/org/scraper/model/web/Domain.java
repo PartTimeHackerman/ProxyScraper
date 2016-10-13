@@ -1,6 +1,6 @@
 package org.scraper.model.web;
 
-import org.scraper.model.scraper.ScrapeType;
+import org.scraper.model.scrapers.ScrapeType;
 
 public class Domain {
 	

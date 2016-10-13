@@ -5,8 +5,10 @@ import org.opencv.core.Core;
 import org.scraper.model.assigner.AssignManager;
 import org.scraper.model.checker.ConnectionChecker;
 import org.scraper.model.checker.ProxyChecker;
-import org.scraper.model.scraper.ProxyScraper;
-import org.scraper.model.scraper.ScrapersFactory;
+import org.scraper.model.managers.ProxyManager;
+import org.scraper.model.managers.QueuesManager;
+import org.scraper.model.scrapers.ProxyScraper;
+import org.scraper.model.scrapers.ScrapersFactory;
 import org.scraper.model.web.*;
 
 public class Globals {

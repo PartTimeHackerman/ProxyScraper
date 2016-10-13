@@ -105,7 +105,7 @@ public class Main {
 		latch.await();
 
 
-		//String allVisible = driver.findElement(By.tagName("body")).getText();
+		//String allVisible = driver.findElement(By.tagName("body")).setTextArea();
 
 
 		System.exit(0);

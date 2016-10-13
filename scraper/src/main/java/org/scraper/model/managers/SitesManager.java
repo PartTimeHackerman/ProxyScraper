@@ -31,7 +31,6 @@ public class SitesManager {
 			all.add(site);
 			if (site.getType() != ScrapeType.UNCHECKED) working.add(site);
 		}
-		
 		Platform.runLater(() -> visible.add(site));
 	}
 	
@@ -40,6 +39,10 @@ public class SitesManager {
 		Site site = new Site(siteString, ScrapeType.UNCHECKED);
 		if(!all.contains(site))
 			addSite(site);
+	}
+	
+	public ObservableList<Site> getVisible(){
+		return visible;
 	}
 	
 	public void addSites(List<Site> all) {

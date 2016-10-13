@@ -17,7 +17,7 @@ allprojects {
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
     compile group: 'org.bytedeco.javacpp-presets', name: 'tesseract', version: '3.04.01' + '-1.2'
-    compile group: 'org.bytedeco.javacpp-presets', name: 'tesseract', version: '3.04.01' + '-1.2', classifier: 'windows-x86_64'
+    compile group: 'org.bytedeco.javacpp-presets', name: 'tesseract', version: '3.04.01' + '-1.2'//, classifier: 'windows-x86_64'
 
     compile group: 'org.bytedeco.javacpp-presets', name: 'leptonica', version: '1.73' + '-1.2'
     compile group: 'org.bytedeco.javacpp-presets', name: 'leptonica', version: '1.73' + '-1.2', classifier: 'windows-x86_64'

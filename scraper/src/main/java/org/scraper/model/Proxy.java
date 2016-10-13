@@ -1,6 +1,5 @@
 package org.scraper.model;
 
-import org.apache.commons.lang.StringUtils;
 import org.scraper.model.checker.Connection;
 import org.scraper.model.managers.Checkable;
 

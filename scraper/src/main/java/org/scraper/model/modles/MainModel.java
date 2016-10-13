@@ -65,7 +65,7 @@ public class MainModel implements InterfaceModel{
 	
 	public MainModel(int threads, int timeout, int limit, boolean check, boolean click) {
 		//OpenCV lib
-		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+		System.loadLibrary(Core.NATIVE_LIBRARY_NAME + System.getProperty("os.arch"));
 		
 		globalPool = new Pool(threads);
 		sitesPool = new Pool(10);

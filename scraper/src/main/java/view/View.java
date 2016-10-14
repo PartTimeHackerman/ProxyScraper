@@ -42,6 +42,9 @@ public class View extends Application {
 		
 		model = new MainModel();
 		
+		//TEST
+		model.getSitesManager().addSites(model.getDataBase().getAllSites());
+		
 		if(args.length == 0)
 		launch();
 	}
@@ -89,6 +92,7 @@ public class View extends Application {
 		
 		
 		executeController.initialize(model);
+		siteTableController.initialize(model.getSitesManager());
 		//textController.initialize();
 		//filterSortController.initialize();
 		

@@ -11,7 +11,7 @@ public class Site implements Checkable {
 	
 	private String poster;
 	
-	private Integer sites;
+	private Integer sites = 0;
 	
 	public Site(String address, ScrapeType type) {
 		this(address, type, "");
@@ -66,7 +66,7 @@ public class Site implements Checkable {
 	
 	@Override
 	public String getParamTwo() {
-		return sites.toString();
+		return sites != null ? sites.toString() : "";
 	}
 	
 	@Override

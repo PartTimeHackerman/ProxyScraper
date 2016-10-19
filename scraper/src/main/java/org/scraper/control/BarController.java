@@ -1,13 +1,10 @@
 package org.scraper.control;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import org.scraper.model.modles.MainModel;
 
-public class ExecuteController {
+public class BarController {
 	@FXML
 	private Button scrapeButton;
 	@FXML
@@ -17,7 +14,7 @@ public class ExecuteController {
 	@FXML
 	private TextField depthField;
 	@FXML
-	private CheckBox checkOnFly;
+	private ToggleButton checkOnFly;
 	@FXML
 	private Label uiLog;
 	

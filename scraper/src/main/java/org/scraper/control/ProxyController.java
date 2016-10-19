@@ -1,17 +1,14 @@
 package org.scraper.control;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import org.scraper.model.Proxy;
 import org.scraper.model.managers.Checkable;
 import org.scraper.model.managers.ProxyTableManager;
 
 import java.util.Arrays;
 
-public class FilterController {
+public class ProxyController {
 	
 	@FXML
 	private ComboBox<Proxy.Type> typeFilter;
@@ -20,7 +17,7 @@ public class FilterController {
 	@FXML
 	private TextField filterTimeoutField;
 	@FXML
-	private CheckBox showBroken;
+	private ToggleButton showBroken;
 	
 	@FXML
 	public void initialize() {

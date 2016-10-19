@@ -1,28 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
 
-<TabPane prefHeight="617.0" prefWidth="916.0" tabClosingPolicy="ALL_TABS" tabMaxWidth="400.0" tabMinWidth="400.0" xmlns="http://javafx.com/javafx/8.0.76-ea" xmlns:fx="http://javafx.com/fxml/1">
-   <tabs>
-      <Tab closable="false" text="Proxy">
-         <content>
-            <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="591.0" prefWidth="916.0">
-               <padding>
-                  <Insets top="10.0" />
-               </padding>
-            </BorderPane>
-         </content>
-      </Tab>
-      <Tab closable="false" text="Site">
-         <content>
-            <BorderPane prefHeight="200.0" prefWidth="200.0" />
-         </content>
-      </Tab>
-   </tabs>
-   <opaqueInsets>
-      <Insets />
-   </opaqueInsets>
-</TabPane>
+<BorderPane prefHeight="650.0" prefWidth="850.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1">
+   <center>
+      <TabPane tabClosingPolicy="ALL_TABS" tabMaxHeight="30.0" tabMaxWidth="300.0" tabMinWidth="300.0" BorderPane.alignment="TOP_LEFT">
+         <tabs>
+            <Tab closable="false" text="Proxy">
+               <content>
+                  <BorderPane />
+               </content>
+            </Tab>
+            <Tab closable="false" text="Site">
+               <content>
+                  <BorderPane />
+               </content>
+            </Tab>
+         </tabs>
+         <opaqueInsets>
+            <Insets />
+         </opaqueInsets>
+         <BorderPane.margin>
+            <Insets bottom="5.0" />
+         </BorderPane.margin>
+      </TabPane>
+   </center>
+   <bottom>
+      <VBox alignment="CENTER" BorderPane.alignment="CENTER">
+         <children>
+            <Separator>
+               <VBox.margin>
+                  <Insets left="10.0" right="10.0" />
+               </VBox.margin>
+            </Separator>
+            <Label fx:id="logBar" text="LOG BAR" />
+         </children>
+      </VBox>
+   </bottom>
+</BorderPane>

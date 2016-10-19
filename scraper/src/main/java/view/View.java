@@ -1,8 +1,10 @@
 package view;
 
+import javafx.fxml.FXML;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DataFormat;
+import javafx.scene.layout.VBox;
 import org.scraper.control.*;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -19,22 +21,27 @@ import java.util.List;
 
 public class View extends Application {
 	
+	@FXML
+	private Label logBar;
+	
 	private static Clipboard clipboard = Clipboard.getSystemClipboard();
+	
 	
 	private static ClipboardContent content = new ClipboardContent();
 	
-	
 	private static MainModel model;
 	
-	private ProxyTableController textController;
+	private ProxyTableController proxyTableController;
 	
-	private ExecuteController executeController;
+	private SitesController sitesController;
 	
-	private FilterController filterSortController;
+	private ProxyController proxyController;
 	
 	private IOController inOutController;
 	
 	private SiteTableController siteTableController;
+	
+	private BarController barController;
 	
 	
 	
@@ -54,9 +61,16 @@ public class View extends Application {
 		
 		primaryStage.setTitle("Ultimate Proxy Scraper");
 		
+		
 		FXMLLoader main = new FXMLLoader(getClass().getResource("/view/main.fxml"));
-		TabPane tabPane = main.load();
+		BorderPane rootPane = main.load();
 		main.setController(this);
+		
+		FXMLLoader bar = new FXMLLoader(getClass().getResource("/view/bar.fxml"));
+		rootPane.setTop(bar.load());
+		barController = bar.getController();
+		
+		TabPane tabPane = (TabPane) rootPane.getCenter();
 		
 		BorderPane proxyRoot = (BorderPane) tabPane.getTabs().get(0).getContent();
 		BorderPane siteRoot = (BorderPane) tabPane.getTabs().get(1).getContent();
@@ -64,37 +78,40 @@ public class View extends Application {
 		FXMLLoader proxyTable = new FXMLLoader();
 		proxyTable.setLocation(getClass().getResource("/view/proxyTable.fxml"));
 		proxyRoot.setCenter(proxyTable.load());
-		textController = proxyTable.getController();
+		proxyTableController = proxyTable.getController();
 		
-		FXMLLoader execute = new FXMLLoader(getClass().getResource("/view/execute.fxml"));
-		proxyRoot.setBottom(execute.load());
-		executeController = execute.getController();
-		
-		FXMLLoader filterSort = new FXMLLoader(getClass().getResource("/view/filters.fxml"));
-		proxyRoot.setRight(filterSort.load());
-		filterSortController = filterSort.getController();
+		FXMLLoader proxyControl = new FXMLLoader(getClass().getResource("/view/proxyControl.fxml"));
+		VBox proxyControllBox = proxyControl.load();
+		proxyRoot.setRight(proxyControllBox);
+		proxyController = proxyControl.getController();
 		
 		FXMLLoader inOut = new FXMLLoader(getClass().getResource("/view/IO.fxml"));
-		proxyRoot.setLeft(inOut.load());
+		proxyControllBox.getChildren().add(inOut.load());
 		inOutController = inOut.getController();
 		
-		FXMLLoader siteTable = new FXMLLoader(getClass().getResource("/view/siteTable.fxml"));
-		siteRoot.setLeft(siteTable.load());
+		FXMLLoader sitesControl = new FXMLLoader(getClass().getResource("/view/sitesControl.fxml"));
+		siteRoot.setRight(sitesControl.load());
+		sitesController = sitesControl.getController();
+		
+		FXMLLoader siteTable = new FXMLLoader(getClass().getResource("/view/sitesTable.fxml"));
+		siteRoot.setCenter(siteTable.load());
 		siteTableController = siteTable.getController();
 		
 		
 		
-		Scene scene = new Scene(tabPane);
+		Scene scene = new Scene(rootPane);
 		
 		scene.getStylesheets().add(String.valueOf(getClass().getResource("/view/userAgent.css")));
 		//scene.setUserAgentStylesheet(String.valueOf(getClass().getResource("/userAgent.css")));
 		
 		
 		
-		executeController.initialize(model);
+		sitesController.initialize(model);
 		siteTableController.initialize(model.getSitesManager());
-		//textController.initialize();
-		//filterSortController.initialize();
+		barController.initialize(model);
+		
+		//proxyTableController.initialize();
+		//proxyController.initialize();
 		
 		/*controller.setTextArea(editable);
 		
@@ -109,6 +126,8 @@ public class View extends Application {
 		
 		notEditable.scrollTopProperty().bindBidirectional(editable.scrollTopProperty());*/
 		
+		
+		primaryStage.setOnCloseRequest(e -> System.exit(0));
 		
 		primaryStage.setScene(scene);
 		primaryStage.show();

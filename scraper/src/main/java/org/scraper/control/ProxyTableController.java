@@ -8,7 +8,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.util.Callback;
 import org.scraper.model.Proxy;
-import org.scraper.model.managers.Checkable;
 import org.scraper.model.managers.ProxyTableManager;
 
 public class ProxyTableController {
@@ -17,7 +16,7 @@ public class ProxyTableController {
 	private TableView<Proxy> table;
 	
 	@FXML
-	private TableColumn<Proxy, String> proxySiteColumn;
+	private TableColumn<Proxy, String> proxyColumn;
 	
 	@FXML
 	private TableColumn<Proxy, String> typeColumn;
@@ -72,7 +71,7 @@ public class ProxyTableController {
 	@SuppressWarnings("unchecked")
 	private void setColumns() {
 		
-		proxySiteColumn.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getText()));
+		proxyColumn.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getText()));
 		
 		typeColumn.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getParamOne()));
 		

@@ -61,8 +61,8 @@ public class Site implements Checkable {
 	
 	@Override
 	public String getParamOne() {
-		return "Approx.";
-	}
+		return "todo";
+	} //TODO
 	
 	@Override
 	public String getParamTwo() {

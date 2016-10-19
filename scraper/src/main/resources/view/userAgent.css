@@ -24,9 +24,17 @@
     -fx-opacity: 0;
 }
 
-#table .table-column{
-    -fx-pref-width: 150;
+.table-view .table-column{
+    //-fx-pref-width: 150;
     -fx-alignment: center;
+}
+
+#proxyColumn{
+    -fx-alignment: top-left;
+}
+
+#siteColumn{
+    -fx-alignment: top-left;
 }
 
 #addArea:hover{

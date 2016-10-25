@@ -1,10 +1,9 @@
 package org.scraper.model.scrapers;
 
-//import com.sun.org.apache.xpath.internal.operations.String;
-
 import org.scraper.model.Main;
 import org.scraper.model.Pool;
 import org.scraper.model.Proxy;
+import org.scraper.model.assigner.AssignManager;
 import org.scraper.model.web.Site;
 
 import java.io.*;
@@ -20,6 +19,8 @@ public class ProxyScraper extends Observable {
 	private ScrapersFactory scrapersFactory;
 	
 	private Pool pool;
+	
+	private AssignManager assigner;
 	
 	public static void main(String... args) throws Exception {
 		/*PropertyConfigurator.configure("log4j.properties");
@@ -46,26 +47,30 @@ public class ProxyScraper extends Observable {
 	
 	public List<Proxy> scrape(Site site) {
 		String url = site.getAddress();
-		try {
-			Scraper scraper = scrapersFactory.get(site.getType());
-			List<Proxy> proxy;
+		List<Proxy> proxy = new ArrayList<>();
+		
+		pool.sendTask(() -> {
+			try {
+				if (assigner != null && site.getType() == ScrapeType.UNCHECKED)
+					assigner.assignConcurrent(site);
+				Scraper scraper = scrapersFactory.get(site.getType());
+				
+				
+				proxy.addAll(scraper.scrape(site));
+				if (proxy.size() == 0)
+					site.setType(ScrapeType.BLACK);
+				
+				setChanged();
+				notifyObservers(proxy);
+				
+			} catch (IOException | InterruptedException e) {
+				Main.log.error("Scraping failed, url: {} error: {}", url, (e.getMessage() != null ? e.getMessage() : "null"));
+				//return new ArrayList<>();
+			}
 			
-			proxy = scraper.scrape(site);
-			if (proxy.size() == 0)
-				site.setType(ScrapeType.BLACK);
-			
-			setChanged();
-			notifyObservers(proxy);
-			
-			return proxy;
-			
-		} catch (IOException e) {
-			Main.log.error("Scraping failed, url: {} error: {}", url, (e.getMessage() != null ? e.getMessage() : "null"));
-			return new ArrayList<>();
-		} catch (InterruptedException e) {
-			Main.log.error("Scraping failed, url: {} error: {}", url, (e.getMessage() != null ? e.getMessage() : "null"));
-			return new ArrayList<>();
-		}
+		}, false);
+		return proxy;
+		
 	}
 	
 	public List<Proxy> scrapeList(List<Site> sites) {
@@ -85,6 +90,10 @@ public class ProxyScraper extends Observable {
 		proxyList.forEach(proxy::addAll);
 		
 		return proxy;
+	}
+	
+	public void setAssigner(AssignManager assigner) {
+		this.assigner = assigner;
 	}
 	
 }

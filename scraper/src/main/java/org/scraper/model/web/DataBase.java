@@ -87,7 +87,7 @@ public class DataBase {
 		}
 	}
 	
-	private void postSites(List<Site> sites) {
+	public void postSites(List<Site> sites) {
 		try {
 			pool.sendTask(() -> PHP.post(sites, PHPMethod.POST_SITES), false);
 		} catch (Exception e) {

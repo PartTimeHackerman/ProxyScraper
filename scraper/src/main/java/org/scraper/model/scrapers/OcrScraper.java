@@ -27,9 +27,9 @@ public class OcrScraper extends Scraper {
 	
 	private BlockingQueue<OCR> ocrs;
 	
-	public OcrScraper(Pool pool, BlockingQueue<OCR> ocrs){
+	public OcrScraper(Pool pool, BlockingQueue<OCR> ocrs) {
 		type = ScrapeType.OCR;
-		this.pool=pool;
+		this.pool = pool;
 		this.ocrs = ocrs;
 	}
 	
@@ -46,11 +46,11 @@ public class OcrScraper extends Scraper {
 		Elements imgs = doc.getElementsByTag("img");
 		
 		for (Element e : imgs) {
-			if (! imgsUrls.contains(e.attr("src")))
+			if (!imgsUrls.contains(e.attr("src")))
 				imgsUrls.add(e.attr("src"));
 		}
 		
-		Main.log.info("Starting OCR");
+		Main.log.info("Starting OCR {}", ocrs.size());
 		List<Callable<String>> calls = new ArrayList<>();
 		
 		for (String iurl : imgsUrls) {
@@ -64,7 +64,7 @@ public class OcrScraper extends Scraper {
 						.bodyAsBytes();
 				
 				Mat mat = Imgcodecs.imdecode(new MatOfByte(imgBytes), Imgcodecs.CV_LOAD_IMAGE_GRAYSCALE);
-				if (mat.width() / mat.height() >= 8) {
+				if (mat.height() > 0 && mat.width() / mat.height() >= 8) {
 					ocrFilter(mat);
 					
 					OCR ocr = ocrs.take();
@@ -92,7 +92,7 @@ public class OcrScraper extends Scraper {
 	private void ocrFilter(Mat image) {
 		double sizeMult = 300 / (double) image.height();
 		resize(image, image, new Size((int) (image.size().width * sizeMult), (int) (image.size().height * sizeMult)));
-		image.convertTo(image, 0, 2, - 255);
+		image.convertTo(image, 0, 2, -255);
 		adaptiveThreshold(image, image, 255, ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY, 255, 1);
 	}
 }

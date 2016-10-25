@@ -4,7 +4,6 @@ import org.scraper.model.assigner.AssignManager;
 import org.scraper.model.checker.ProxyChecker;
 import org.scraper.model.managers.ProxyManager;
 import org.scraper.model.managers.SitesManager;
-import org.scraper.model.managers.ProxyTableManager;
 import org.scraper.model.scrapers.ScrapeType;
 import org.scraper.model.web.Site;
 
@@ -54,10 +53,8 @@ public class GlobalObserver implements Observer {
 		
 		Site site = (Site) arg;
 		if (checkOnFly && site.getType() == ScrapeType.UNCHECKED)
-			assignManager.assign(site);
+			assignManager.assignConcurrent(site);
 		sitesManager.addSite(site);
-		
-		//ProxyTableManager.addProxy(site);
 	}
 	
 	private void handleProxy(Object arg) {
@@ -67,7 +64,5 @@ public class GlobalObserver implements Observer {
 		if (checkOnFly && !proxy.isChecked())
 			proxyChceker.checkProxy(proxy);
 		proxyManager.addProxy(proxy);
-		
-		ProxyTableManager.addProxy(proxy);
 	}
 }

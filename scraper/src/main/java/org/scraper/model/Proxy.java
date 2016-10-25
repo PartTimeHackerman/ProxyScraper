@@ -80,12 +80,20 @@ public class Proxy implements Checkable {
 		return type;
 	}
 	
+	public String getTypeString() {
+		return type != null ? type.name() : "";
+	}
+	
 	public void setType(Type type) {
 		this.type = type;
 	}
 	
 	public Anonymity getAnonymity() {
 		return anonymity;
+	}
+	
+	public String getAnonymityString() {
+		return anonymity != null ? anonymity.name() : "";
 	}
 	
 	public void setAnonymity(Anonymity anonymity) {
@@ -129,7 +137,7 @@ public class Proxy implements Checkable {
 	
 	@Override
 	public String getParamThree() {
-		return speed != null ? String.format("%.2f",(double)speed/1000)+" s." : "";
+		return speed != null ? String.format("%.2f",(double)speed/1000)+" s." : null;
 	}
 	
 	public void setWorking(boolean working) {

@@ -11,7 +11,9 @@ public class Site implements Checkable {
 	
 	private String poster;
 	
-	private Integer sites = 0;
+	private Integer avgSites = 0;
+	
+	private Integer avgWorking = 0;
 	
 	public Site(String address, ScrapeType type) {
 		this(address, type, "");
@@ -66,7 +68,7 @@ public class Site implements Checkable {
 	
 	@Override
 	public String getParamTwo() {
-		return sites != null ? sites.toString() : "";
+		return avgSites != null ? avgSites.toString() : "";
 	}
 	
 	@Override
@@ -90,4 +92,19 @@ public class Site implements Checkable {
 	}
 	
 	
+	public Integer getAvgWorking() {
+		return avgWorking != null ? avgWorking : 0;
+	}
+	
+	public void setAvgWorking(Integer avgWorking) {
+		this.avgWorking = avgWorking;
+	}
+	
+	public Integer getAvgSites() {
+		return avgSites != null ? avgSites : 0;
+	}
+	
+	public void setAvgSites(Integer avgSites) {
+		this.avgSites = avgSites;
+	}
 }

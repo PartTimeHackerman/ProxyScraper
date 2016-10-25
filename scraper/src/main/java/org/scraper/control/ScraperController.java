@@ -11,7 +11,7 @@ public class ScraperController implements Controller {
 	private InterfaceModel model;
 	
 	public ScraperController(String[] args){
-		model = new MainModel(); //TODO set args
+		//model = new MainModel(); //TODO set args
 	}
 	
 	

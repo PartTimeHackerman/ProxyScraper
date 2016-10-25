@@ -15,7 +15,7 @@ public class CheckingAssigner extends NonCheckAssigner {
 	
 	private ProxyChecker checker;
 	
-	private ScrapeType type;
+	private ScrapeType type = ScrapeType.BLACK;
 	private double minWorkingPrecent = 0.2, last = 0D;
 	
 	public static void main(String[] args) {

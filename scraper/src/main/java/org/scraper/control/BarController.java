@@ -6,17 +6,13 @@ import org.scraper.model.modles.MainModel;
 
 public class BarController {
 	@FXML
-	private Button scrapeButton;
+	private TextField threadsField;
+	
 	@FXML
-	private Button checkButton;
-	@FXML
-	private Button gatherButton;
-	@FXML
-	private TextField depthField;
+	private TextField threadsField1;
+	
 	@FXML
 	private ToggleButton checkOnFly;
-	@FXML
-	private Label uiLog;
 	
 	private MainModel model;
 	
@@ -24,14 +20,6 @@ public class BarController {
 	public void initialize(MainModel model) {
 		
 		this.model = model;
-		
-		scrapeButton.setOnAction(event -> model.scrape());
-		
-		checkButton.setOnAction(event -> model.check());
-		
-		gatherButton.setOnAction(event -> model.crawl());
-		
-		checkButton.setOnAction(event -> model.setCheckOnFly(checkButton.isArmed()));
 	}
 	
 }

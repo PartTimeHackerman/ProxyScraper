@@ -36,7 +36,7 @@ public class NonCheckAssigner extends Assigner {
 		Scraper winnerScraper = scrapers.get(0);
 		proxy = winnerScraper.getScraped();
 		
-		return proxy.size() > 0 ? winnerScraper.getType() : ScrapeType.UNCHECKED;
+		return proxy.size() > 0 ? winnerScraper.getType() : ScrapeType.BLACK;
 	}
 	
 	protected void scrapeAll(Site address) {

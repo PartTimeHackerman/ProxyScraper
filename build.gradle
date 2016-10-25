@@ -40,10 +40,10 @@ dependencies {
     compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.6.2'
 
     // https://mvnrepository.com/artifact/org.jooq/jooq
-    compile group: 'org.jooq', name: 'jooq', version: '3.8.4'
+    //compile group: 'org.jooq', name: 'jooq', version: '3.8.4'
 
     // https://mvnrepository.com/artifact/mysql/mysql-connector-java
-    compile group: 'mysql', name: 'mysql-connector-java', version: '6.0.3'
+    //compile group: 'mysql', name: 'mysql-connector-java', version: '6.0.3'
 
     // https://mvnrepository.com/artifact/commons-collections/commons-collections
     compile group: 'commons-collections', name: 'commons-collections', version: '3.2.2'

@@ -1,18 +1,16 @@
 package org.scraper.control;
 
-import javafx.beans.property.ListProperty;
-import javafx.beans.property.ReadOnlyStringWrapper;
-import javafx.beans.property.SimpleListProperty;
+import javafx.beans.property.*;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.HBox;
-import org.scraper.model.Proxy;
-import org.scraper.model.managers.ProxyTableManager;
 import org.scraper.model.managers.SitesManager;
+import org.scraper.model.modles.SitesModel;
 import org.scraper.model.web.Site;
 
 public class SiteTableController {
@@ -27,29 +25,31 @@ public class SiteTableController {
 	private TableColumn<Site, String> siteColumn;
 	
 	@FXML
-	private TableColumn<Site, String> proxiesColumn;
+	private TableColumn<Site, Number> proxiesColumn;
 	
 	@FXML
-	private TableColumn<Site, String> workingColumn;
+	private TableColumn<Site, Number> workingColumn;
+	
+	@FXML
+	private TableColumn<Site, String> typeColumn;
 	
 	@FXML
 	private Label sites;
 	
-	private SitesManager manager;
+	private SitesModel model;
 	
 	@FXML
-	public void initialize(SitesManager manager) {
-		this.manager = manager;
+	public void initialize(SitesModel model) {
+		this.model = model;
 		
 		setColumns();
 		
+		table.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 		
-		ListProperty<Proxy> prop = new SimpleListProperty<>(ProxyTableManager.getVisible());
-		//prop.addListener(this::changed);
+		ListProperty<Site> prop = new SimpleListProperty<>(table.getItems());
 		
 		sites.textProperty().bind(prop.sizeProperty().asString());
 		
-		//actualSize.bind(prop.sizeProperty());
 		
 	}
 	
@@ -63,11 +63,16 @@ public class SiteTableController {
 		
 		siteColumn.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getText()));
 		
-		proxiesColumn.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getParamOne()));
+		proxiesColumn.setCellValueFactory(cellData -> new ReadOnlyIntegerWrapper(cellData.getValue().getAvgSites()));
 		
-		workingColumn.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getParamTwo()));
+		workingColumn.setCellValueFactory(cellData -> new ReadOnlyIntegerWrapper(cellData.getValue().getAvgWorking()));
 		
-		table.setItems(manager.getVisible());
+		typeColumn.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getType().name()));
+		
+		table.setItems(model.getVisible());
 	}
 	
+	public TableView<Site> getTable() {
+		return table;
+	}
 }

@@ -8,7 +8,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.util.Callback;
 import org.scraper.model.Proxy;
-import org.scraper.model.managers.ProxyTableManager;
+import org.scraper.model.managers.ProxyTableModel;
+import org.scraper.model.modles.ProxyModel;
 
 public class ProxyTableController {
 	
@@ -25,7 +26,7 @@ public class ProxyTableController {
 	private TableColumn<Proxy, String> anonymityColumn;
 	
 	@FXML
-	private TableColumn<Proxy, String> timeoutColumn;
+	private TableColumn<Proxy, Number> timeoutColumn;
 	
 	@FXML
 	private Label proxies;
@@ -43,13 +44,15 @@ public class ProxyTableController {
 	
 	
 	@FXML
-	public void initialize() {
-		
+	public void initialize(ProxyModel model) {
 		setColumns();
 		
+		table.setItems(model.getVisible());
+		
+		table.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 		table.getColumns().addListener(this::onChange);
 		
-		ListProperty<Proxy> prop = new SimpleListProperty<>(ProxyTableManager.getVisible());
+		ListProperty<Proxy> prop = new SimpleListProperty<>(model.getVisible());
 		//prop.addListener(this::changed);
 		
 		proxies.textProperty().bind(prop.sizeProperty().asString());
@@ -71,17 +74,15 @@ public class ProxyTableController {
 	@SuppressWarnings("unchecked")
 	private void setColumns() {
 		
-		proxyColumn.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getText()));
+		proxyColumn.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getIpPort()));
 		
-		typeColumn.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getParamOne()));
+		typeColumn.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getTypeString()));
 		
-		anonymityColumn.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getParamTwo()));
+		anonymityColumn.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getAnonymityString()));
 		
-		timeoutColumn.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getParamThree()));
+		timeoutColumn.setCellValueFactory(cellData -> new ReadOnlyDoubleWrapper(((double) cellData.getValue().getSpeed() / 1000)));
 		
 		setBrokenUncheckedStyle(typeColumn);
-		
-		table.setItems(ProxyTableManager.getVisible());
 	}
 	
 	private void setBrokenUncheckedStyle(TableColumn<Proxy, String> column) {
@@ -107,8 +108,12 @@ public class ProxyTableController {
 		});
 	}
 	
-	private void sort(TableColumn column, TableColumn.SortType sortType){
+	private void sort(TableColumn column, TableColumn.SortType sortType) {
 		column.setSortType(sortType);
 		table.getSortOrder().add(column);
+	}
+	
+	public TableView<Proxy> getTable() {
+		return table;
 	}
 }

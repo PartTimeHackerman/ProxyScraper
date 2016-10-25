@@ -9,18 +9,17 @@ import org.scraper.model.checker.ProxyChecker;
 import org.scraper.model.managers.ProxyManager;
 import org.scraper.model.managers.QueuesManager;
 import org.scraper.model.managers.SitesManager;
-import org.scraper.model.managers.ProxyTableManager;
 import org.scraper.model.scrapers.ProxyScraper;
 import org.scraper.model.scrapers.ScrapersFactory;
 import org.scraper.model.gather.LinksGather;
 import org.scraper.model.web.DataBase;
 import org.scraper.model.web.LinksManager;
 
-public class MainModel implements InterfaceModel{
+public class MainModel {
 	
-	private Model scrapeModel;
+	//private SitesModel scrapeModel;
 	
-	private Model proxyModel;
+	//private ProxyModel proxyModel;
 	
 	
 	private Model presentModel;
@@ -90,27 +89,21 @@ public class MainModel implements InterfaceModel{
 		
 		checker = new ProxyChecker(globalPool, timeout);
 		
-		scraper = new ProxyScraper(scrapersFactory, globalPool);
-		
 		assigner = new AssignManager(scrapersFactory, checker, globalPool, checkOnFly);
 		
+		scraper = new ProxyScraper(scrapersFactory, globalPool);
+		scraper.setAssigner(assigner);
+		
+		
 		gather = new LinksGather(2, globalPool);
-		
-		
-		
 		
 		proxyManager = new ProxyManager(limit);
 		
 		sitesManager = new SitesManager(dataBase);
 		
-		ProxyTableManager.setProxyManager(proxyManager);
-		ProxyTableManager.setSitesManager(sitesManager);
+		//scrapeModel = new SitesModel(assigner, scraper, gather);
 		
-		scrapeModel = new ScraperModel(this, scraper, dataBase.getAllSites());
-		
-		proxyModel = new ProxyModel(this);
-		
-		presentModel = scrapeModel;
+		//proxyModel = new ProxyModel(checker);
 		
 		observer = new GlobalObserver(proxyManager, sitesManager, assigner, checker, checkOnFly);
 		checker.addObserver(observer);
@@ -130,43 +123,37 @@ public class MainModel implements InterfaceModel{
 	this(100, 3000, 0, true, false);
 	}
 	
-	@Override
+	//@Override
 	public void scrape() {
 		pool().sendTask(() -> presentModel.scrape(), false);
 	}
 	
-	@Override
+	//@Override
 	public void check() {
 		presentModel.check();
 	}
 	
-	@Override
+	//@Override
 	public void crawl() {
 		presentModel.crawl();
 	}
 	
-	@Override
+	//@Override
 	public void setCheckOnFly(boolean checkOnFly) {
 		this.checkOnFly = checkOnFly;
 	}
 	
-	@Override
-	public void switchModel() {
-		//TODO switch to proxy model if textarea doesn't contains any site
-		presentModel = (presentModel == scrapeModel) ? proxyModel : scrapeModel;
-	}
-	
-	@Override
+	//@Override
 	public void save() {
 		
 	}
 	
-	@Override
+	//@Override
 	public void load() {
 		
 	}
 	
-	@Override
+	//@Override
 	public void setGatherDepth(Integer depth){
 		gather.setDepth(depth);
 	}

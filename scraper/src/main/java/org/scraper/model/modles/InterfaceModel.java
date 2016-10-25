@@ -6,7 +6,6 @@ public interface InterfaceModel extends Model {
 	
 	void setCheckOnFly(boolean checkOnFly);
 	void setGatherDepth(Integer depth);
-	void switchModel();
 	void save();
 	void load();
 }

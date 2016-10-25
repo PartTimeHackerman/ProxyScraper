@@ -3,7 +3,6 @@ package view;
 import javafx.fxml.FXML;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.DataFormat;
 import javafx.scene.layout.VBox;
 import org.scraper.control.*;
 import javafx.application.Application;
@@ -12,12 +11,9 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-import org.scraper.model.managers.ProxyTableManager;
 import org.scraper.model.modles.MainModel;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import org.scraper.model.modles.ProxyModel;
+import org.scraper.model.modles.SitesModel;
 
 public class View extends Application {
 	
@@ -26,10 +22,14 @@ public class View extends Application {
 	
 	private static Clipboard clipboard = Clipboard.getSystemClipboard();
 	
-	
 	private static ClipboardContent content = new ClipboardContent();
 	
 	private static MainModel model;
+	
+	private static ProxyModel proxyModel;
+	
+	private static SitesModel sitesModel;
+	
 	
 	private ProxyTableController proxyTableController;
 	
@@ -44,23 +44,27 @@ public class View extends Application {
 	private BarController barController;
 	
 	
-	
 	public static void main(String[] args) {
 		
 		model = new MainModel();
 		
-		//TEST
 		model.getSitesManager().addSites(model.getDataBase().getAllSites());
 		
-		if(args.length == 0)
-		launch();
+		if (args.length == 0) {
+			proxyModel = new ProxyModel(model.getChecker());
+			sitesModel = new SitesModel(model.getAssigner(), model.getScraper(), model.getGather(), model.getDataBase());
+			
+			model.getProxyManager().setModel(proxyModel);
+			
+			model.getSitesManager().setModel(sitesModel);
+			launch();
+		}
 	}
 	
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		
-		primaryStage.setTitle("Ultimate Proxy Scraper");
-		
+		primaryStage.setTitle("Proxy Scraper");
 		
 		FXMLLoader main = new FXMLLoader(getClass().getResource("/view/main.fxml"));
 		BorderPane rootPane = main.load();
@@ -98,17 +102,20 @@ public class View extends Application {
 		siteTableController = siteTable.getController();
 		
 		
-		
 		Scene scene = new Scene(rootPane);
 		
 		scene.getStylesheets().add(String.valueOf(getClass().getResource("/view/userAgent.css")));
 		//scene.setUserAgentStylesheet(String.valueOf(getClass().getResource("/userAgent.css")));
 		
-		
-		
-		sitesController.initialize(model);
-		siteTableController.initialize(model.getSitesManager());
 		barController.initialize(model);
+		
+		sitesController.initialize(sitesModel, model.getSitesManager(), siteTableController.getTable());
+		proxyController.initialize(proxyModel, proxyTableController.getTable());
+		
+		siteTableController.initialize(sitesModel);
+		proxyTableController.initialize(proxyModel);
+		
+		
 		
 		//proxyTableController.initialize();
 		//proxyController.initialize();
@@ -135,9 +142,9 @@ public class View extends Application {
 	}
 	
 	
-	public static void handleCopy(){
+	/*public static void handleCopy(){
 		content.clear();
-		ProxyTableManager.getVisible().forEach(checkable -> {
+		ProxyTableModel.getVisible().forEach(checkable -> {
 			content.put(DataFormat.PLAIN_TEXT, checkable.getText()+"\n");
 		});
 	}
@@ -149,7 +156,7 @@ public class View extends Application {
 		if(clipboardText!=null){
 			String[] clipboardTextArray = clipboardText.split("\\n");
 			
-			Arrays.stream(clipboardTextArray).forEach(ProxyTableManager::addProxy);
+			Arrays.stream(clipboardTextArray).forEach(ProxyTableModel::addProxy);
 		}
-	}
+	}*/
 }

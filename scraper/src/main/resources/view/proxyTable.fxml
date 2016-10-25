@@ -6,7 +6,6 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 
 <HBox id="textBox" fx:id="textBox" alignment="TOP_CENTER" maxWidth="620.0" stylesheets="@userAgent.css" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.scraper.control.ProxyTableController">
@@ -18,49 +17,40 @@
                   <TableColumn fx:id="proxyColumn" prefWidth="180.0" text="Proxy" />
                   <TableColumn fx:id="typeColumn" prefWidth="150.0" text="Type" />
                   <TableColumn fx:id="anonymityColumn" prefWidth="150.0" text="Anonymity" />
-                  <TableColumn fx:id="timeoutColumn" prefWidth="119.0" text="Timeout" />
+                  <TableColumn fx:id="timeoutColumn" prefWidth="103.0" text="Timeout" />
                </columns></TableView>
             <HBox alignment="CENTER" spacing="40.0">
                <children>
-                  <Pane prefHeight="17.0" prefWidth="100.0">
+                  <HBox spacing="5.0">
                      <children>
                         <Label text="Proxies:" />
-                        <Label fx:id="proxies" layoutX="45.0" text="0">
+                        <Label fx:id="proxies" text="0">
                            <opaqueInsets>
                               <Insets />
                            </opaqueInsets>
-                           <padding>
-                              <Insets left="5.0" />
-                           </padding>
                         </Label>
                      </children>
-                  </Pane>
-                  <Pane prefHeight="17.0" prefWidth="100.0">
+                  </HBox>
+                  <HBox spacing="5.0">
                      <children>
                         <Label text="Chceked:" />
-                        <Label fx:id="checked" layoutX="45.0" text="0">
+                        <Label fx:id="checked" text="0">
                            <opaqueInsets>
                               <Insets />
                            </opaqueInsets>
-                           <padding>
-                              <Insets left="5.0" />
-                           </padding>
                         </Label>
                      </children>
-                  </Pane>
-                  <Pane prefHeight="17.0" prefWidth="100.0">
+                  </HBox>
+                  <HBox spacing="5.0">
                      <children>
                         <Label text="Working:" />
-                        <Label fx:id="working" layoutX="45.0" text="0">
+                        <Label fx:id="working" text="0">
                            <opaqueInsets>
                               <Insets />
                            </opaqueInsets>
-                           <padding>
-                              <Insets left="5.0" />
-                           </padding>
                         </Label>
                      </children>
-                  </Pane>
+                  </HBox>
                </children>
             </HBox>
          </children>

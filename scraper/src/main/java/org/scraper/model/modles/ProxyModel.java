@@ -5,7 +5,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.scraper.model.Proxy;
 import org.scraper.model.checker.ProxyChecker;
-import org.scraper.model.scrapers.RegexMatcher;
 
 import java.util.List;
 
@@ -38,7 +37,7 @@ public class ProxyModel {
 	
 	
 	public void check(List<Proxy> proxies) {
-		checker.checkProxies(proxies);
+		checker.checkProxies(proxies, false);
 	}
 	
 	public void filterType(Proxy.Type type) {

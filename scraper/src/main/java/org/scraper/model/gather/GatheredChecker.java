@@ -23,7 +23,7 @@ public class GatheredChecker {
 	
 	public List<Site> check(List<Site> sites) {
 		List<Site> checked = sites.stream()
-				.map(site -> scraper.scrape(site).size() > 0 ? site : null)
+				.map(site -> scraper.scrapeConcurrent(site, false).size() > 0 ? site : null)
 				.filter(site -> site != null)
 				.collect(Collectors.toList());
 

@@ -3,7 +3,7 @@ package org.scraper.model.modles;
 
 import org.opencv.core.Core;
 import org.scraper.model.*;
-import org.scraper.model.assigner.AssignManager;
+import org.scraper.model.managers.AssignManager;
 import org.scraper.model.checker.ConnectionChecker;
 import org.scraper.model.checker.ProxyChecker;
 import org.scraper.model.managers.ProxyManager;
@@ -28,7 +28,7 @@ public class MainModel {
 	
 	private Pool sitesPool;
 	
-	private QueuesManager queues;
+	private QueuesManager queuesManager;
 	
 	
 	private DataBase dataBase;
@@ -68,50 +68,58 @@ public class MainModel {
 		sysArch = sysArch.substring(sysArch.length()-2);
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME + "x" + sysArch );
 		
-		globalPool = new Pool(threads);
-		sitesPool = new Pool(10);
+		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+			Main.log.info("SHUTDOWN HOOK!!!");
+			dataBase.postAll();
+			queuesManager.shutdownBrowsers();
+		}));
 		
-		queues = new QueuesManager(globalPool, threads / 10, threads / 10);
 		
 		setCheckOnFly(check);
+		
+		globalPool = new Pool(threads);
+		sitesPool = new Pool(10);
 		
 		dataBase = new DataBase(globalPool);
 		dataBase.getAll();
 		
-		linksManager = new LinksManager(globalPool, queues.getBrowsersQueue(), dataBase);
+		
+		queuesManager = new QueuesManager(globalPool, threads / 10, threads / 10);
+		
+		linksManager = new LinksManager(globalPool, queuesManager.getBrowsersQueue(), dataBase);
 		linksManager.setOn(click);
-		
-		
-		ip = ConnectionChecker.getIp();
-		
-		scrapersFactory = new ScrapersFactory(globalPool, queues.getBrowsersQueue(), queues.getOcrQueue());
-		
-		
-		checker = new ProxyChecker(globalPool, timeout);
-		
-		assigner = new AssignManager(scrapersFactory, checker, globalPool, checkOnFly);
-		
-		scraper = new ProxyScraper(scrapersFactory, globalPool);
-		scraper.setAssigner(assigner);
-		
-		
-		gather = new LinksGather(2, globalPool);
 		
 		proxyManager = new ProxyManager(limit);
 		
 		sitesManager = new SitesManager(dataBase);
 		
+		ip = ConnectionChecker.getIp();
+		
+		scrapersFactory = new ScrapersFactory(globalPool, queuesManager.getBrowsersQueue(), queuesManager.getOcrQueue());
+		
+		
+		checker = new ProxyChecker(globalPool, timeout, getProxyManager().getAll());
+		
+		assigner = new AssignManager(scrapersFactory, checker, globalPool, this);
+		
+		scraper = new ProxyScraper(scrapersFactory, globalPool, dataBase.getAllDomains());
+		scraper.setAssigner(assigner);
+		
+		
+		gather = new LinksGather(2, globalPool);
+		
+		
 		//scrapeModel = new SitesModel(assigner, scraper, gather);
 		
 		//proxyModel = new ProxyModel(checker);
 		
-		observer = new GlobalObserver(proxyManager, sitesManager, assigner, checker, checkOnFly);
+		observer = new GlobalObserver(proxyManager, sitesManager, assigner, checker, this);
 		checker.addObserver(observer);
 		scraper.addObserver(observer);
 		assigner.addObserver(observer);
 		gather.addObserver(observer);
 		
-		
+		Main.log.info("Initialized");
 		
 		synchronized (globalPool) {
 			while (!(globalPool.getPool().getActiveCount() == 0))
@@ -120,7 +128,7 @@ public class MainModel {
 	}
 	
 	public MainModel(){
-	this(100, 3000, 0, true, false);
+	this(100, 3000, 0, false, false);
 	}
 	
 	//@Override
@@ -198,8 +206,8 @@ public class MainModel {
 		return scrapersFactory;
 	}
 	
-	public QueuesManager getQueues() {
-		return queues;
+	public QueuesManager getQueuesManager() {
+		return queuesManager;
 	}
 	
 	public ProxyChecker getChecker() {
@@ -232,6 +240,17 @@ public class MainModel {
 	
 	public LinksGather getGather() {
 		return gather;
+	}
+	
+	public void setVarsInterval(){
+		Interval.addFunc("threads", () -> globalPool.getThreads() - globalPool.getPool().getActiveCount());
+		Interval.addFunc("threadsMax", () -> globalPool.getThreads());
+		
+		Interval.addFunc("browsers", () -> queuesManager.getBrowsersQueue().size());
+		Interval.addFunc("browsersMax", () -> queuesManager.getBrowsersNumber());
+		
+		Interval.addFunc("ocrs", () -> queuesManager.getOcrQueue().size());
+		Interval.addFunc("ocrsMax", () -> queuesManager.getOcrNumber());
 	}
 	
 }

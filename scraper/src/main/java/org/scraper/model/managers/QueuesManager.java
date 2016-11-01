@@ -34,9 +34,6 @@ public class QueuesManager {
 		
 		makeBrowsers();
 		makeOCRs();
-		
-		Main.log.info("Browser created");
-		Main.log.info("OCR created");
 	}
 	
 	public void makeBrowsers(){
@@ -82,5 +79,31 @@ public class QueuesManager {
 	
 	public void setOcrNumber(int ocrNumber) {
 		this.ocrNumber = ocrNumber <= 0 ? 1 : ocrNumber;
+	}
+	
+	public int getBrowsersNumber() {
+		return browsersNumber;
+	}
+	
+	public int getOcrNumber() {
+		return ocrNumber;
+	}
+	
+	public void shutdownBrowsers() {
+		for (int i = 0; i < browsersQueue.size()-1 ; i++) {
+				pool.sendTask(() -> {
+					try {
+						browsersQueue.take().shutdown();
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}, false);
+		}
+		try {
+			browsersQueue.take().shutdown();
+			Thread.sleep(500);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 }

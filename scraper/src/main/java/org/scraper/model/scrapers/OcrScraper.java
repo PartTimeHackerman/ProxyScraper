@@ -40,7 +40,7 @@ public class OcrScraper extends Scraper {
 		Document doc = Jsoup.connect(url).timeout(10000).userAgent(BrowserVersion.random().ua()).get();
 		
 		
-		String mainUrl = doc.baseUri().substring(0, doc.baseUri().indexOf("/", 8));
+		String mainUrl = doc.baseUri().substring(0,site.getAddress().indexOf("/", 8));// doc.baseUri().indexOf("/", 8));
 		List<String> imgsUrls = new ArrayList<>();
 		
 		Elements imgs = doc.getElementsByTag("img");
@@ -50,7 +50,7 @@ public class OcrScraper extends Scraper {
 				imgsUrls.add(e.attr("src"));
 		}
 		
-		Main.log.info("Starting OCR {}", ocrs.size());
+		Main.log.info("Starting OCR {} {}", ocrs.size(), ocrs.remainingCapacity());
 		List<Callable<String>> calls = new ArrayList<>();
 		
 		for (String iurl : imgsUrls) {

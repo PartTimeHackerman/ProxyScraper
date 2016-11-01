@@ -26,16 +26,23 @@ public class DataBase {
 	
 	private List<String> clicked = Collections.synchronizedList(new ArrayList<>());
 	
-	public void main(String[] args) {
-		
-	}
+	private Boolean gotSites = false;
 	
-	public DataBase(Pool pool){
+	
+	public DataBase(Pool pool) {
 		this.pool = pool;
 	}
 	
 	public void getAll() {
 		getAll(sites, domains, clicks, links);
+		//TODO wait for database to dl what's needed
+		while (!gotSites){
+			try {
+				Thread.sleep(500);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	private void getAll(List<Site> sites, List<Domain> domains, List<String> clicks, List<String> links) {
@@ -45,8 +52,12 @@ public class DataBase {
 		getLinks(links);
 	}
 	
-	public void postAll() {
+	public void postNew() {
 		postAll(newSites, newDomains, clicked);
+	}
+	
+	public void postAll() {
+		postAll(sites, domains, clicked);
 	}
 	
 	private void postAll(List<Site> sites, List<Domain> domains, List<String> clicks) {
@@ -57,7 +68,10 @@ public class DataBase {
 	
 	private void getSites(List<Site> sites) {
 		try {
-			pool.sendTask(() -> PHP.get(sites, PHPMethod.GET_SITES), false);
+			pool.sendTask(() -> {
+				PHP.get(sites, PHPMethod.GET_SITES);
+				gotSites = true;
+			}, false);
 		} catch (Exception e) {
 			org.scraper.model.Main.log.error("Failed to get sites");
 		}
@@ -111,7 +125,9 @@ public class DataBase {
 		}
 	}
 	
-	public List<Site> getAllSites() { return ListUtils.sum(sites, newSites); }
+	public List<Site> getAllSites() {
+		return ListUtils.sum(sites, newSites);
+	}
 	
 	public List<String> getLinks() {
 		return links;

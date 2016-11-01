@@ -63,9 +63,9 @@ public class SiteTableController {
 		
 		siteColumn.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getText()));
 		
-		proxiesColumn.setCellValueFactory(cellData -> new ReadOnlyIntegerWrapper(cellData.getValue().getAvgSites()));
+		proxiesColumn.setCellValueFactory(cellData -> cellData.getValue().getAvgSites() != -1 ? new ReadOnlyIntegerWrapper(cellData.getValue().getAvgSites()) : null);
 		
-		workingColumn.setCellValueFactory(cellData -> new ReadOnlyIntegerWrapper(cellData.getValue().getAvgWorking()));
+		workingColumn.setCellValueFactory(cellData -> cellData.getValue().getAvgWorking() != -1 ? new ReadOnlyIntegerWrapper(cellData.getValue().getAvgWorking()) : null);
 		
 		typeColumn.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getType().name()));
 		

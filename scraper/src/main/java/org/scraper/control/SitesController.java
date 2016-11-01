@@ -9,7 +9,9 @@ import org.scraper.model.managers.SitesManager;
 import org.scraper.model.modles.SitesModel;
 import org.scraper.model.web.Site;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class SitesController {
 	@FXML
@@ -75,13 +77,14 @@ public class SitesController {
 	
 	private void check(){
 		ObservableList<Site> selected = table.getSelectionModel().getSelectedItems();
-		
+		List<Site> sites;
 		if (selected.size() > 0) {
-			model.check(selected.subList(0, selected.size()));
+			sites = new ArrayList<>(selected.subList(0, selected.size()));
 		} else {
 			ObservableList<Site> all = table.getItems();
-			model.check(all.subList(0, all.size()));
+			sites = new ArrayList<>(all.subList(0, all.size()));
 		}
+		model.check(sites);
 	}
 	
 	private void crawl(){

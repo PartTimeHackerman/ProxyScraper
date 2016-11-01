@@ -1,9 +1,10 @@
 package org.scraper.model;
 
-import org.scraper.model.assigner.AssignManager;
+import org.scraper.model.managers.AssignManager;
 import org.scraper.model.checker.ProxyChecker;
 import org.scraper.model.managers.ProxyManager;
 import org.scraper.model.managers.SitesManager;
+import org.scraper.model.modles.MainModel;
 import org.scraper.model.scrapers.ScrapeType;
 import org.scraper.model.web.Site;
 
@@ -19,18 +20,19 @@ public class GlobalObserver implements Observer {
 	
 	private AssignManager assignManager;
 	private ProxyChecker proxyChceker;
-	private Boolean checkOnFly;
+	
+	private MainModel model;
 	
 	public GlobalObserver(ProxyManager proxyManager,
 						  SitesManager sitesManager,
 						  AssignManager assignManager,
 						  ProxyChecker proxyChecker,
-						  Boolean checkOnFly) {
+						  MainModel model) {
 		this.proxyManager = proxyManager;
 		this.sitesManager = sitesManager;
 		this.assignManager = assignManager;
 		this.proxyChceker = proxyChecker;
-		this.checkOnFly = checkOnFly;
+		this.model = model;
 	}
 	
 	@Override
@@ -52,7 +54,7 @@ public class GlobalObserver implements Observer {
 		if (!(arg instanceof Site)) return;
 		
 		Site site = (Site) arg;
-		if (checkOnFly && site.getType() == ScrapeType.UNCHECKED)
+		if (model.isCheckOnFly() && site.getType() == ScrapeType.UNCHECKED)
 			assignManager.assignConcurrent(site);
 		sitesManager.addSite(site);
 	}
@@ -61,8 +63,8 @@ public class GlobalObserver implements Observer {
 		if (!(arg instanceof Proxy)) return;
 		
 		Proxy proxy = (Proxy) arg;
-		if (checkOnFly && !proxy.isChecked())
-			proxyChceker.checkProxy(proxy);
+		if (model.isCheckOnFly() && !proxy.isChecked())
+			proxyChceker.checkProxyConcurrent(proxy, false);
 		proxyManager.addProxy(proxy);
 	}
 }

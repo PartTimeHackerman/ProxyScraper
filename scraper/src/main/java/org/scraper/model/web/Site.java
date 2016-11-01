@@ -11,9 +11,9 @@ public class Site implements Checkable {
 	
 	private String poster;
 	
-	private Integer avgSites = 0;
+	private Integer avgSites = -1;
 	
-	private Integer avgWorking = 0;
+	private Integer avgWorking = -1;
 	
 	public Site(String address, ScrapeType type) {
 		this(address, type, "");

@@ -22,6 +22,11 @@ public class PHP {
 
 	public static void main(String... args) {
 		//sqlTest();
+		
+		List<Site> domains = new ArrayList<>();
+		domains.add(new Site("test.xyz",ScrapeType.UNCHECKED));
+		
+		post(domains, PHPMethod.POST_SITES);
 
 		String post = "";
 		String get = "";
@@ -66,8 +71,8 @@ public class PHP {
 		System.out.println("Getted: " + (System.currentTimeMillis() - l));
 	}
 
-	public static <T> void post(T addresses, PHPMethod method){
-		String json = gson.toJson(addresses);
+	public static <T> void post(T data, PHPMethod method){
+		String json = gson.toJson(data);
 		phpPost(method, json);
 	}
 
@@ -79,7 +84,7 @@ public class PHP {
 					.method(Connection.Method.POST)
 					.data(posting.cmd(), json)
 					.execute();
-			System.out.println(response.parse().text());
+			//System.out.println(response.parse().text());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

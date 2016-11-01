@@ -17,7 +17,7 @@ public class Pool {
 		this.threads = threads;
 		pool = new ThreadPoolExecutor(threads, threads,
 									  60L, TimeUnit.SECONDS,
-									  new LinkedBlockingQueue<Runnable>());
+									  new LinkedBlockingQueue<>());
 	}
 	
 	//Send one lambda
@@ -36,7 +36,11 @@ public class Pool {
 	
 	//Send one call
 	public <R> R sendTask(Callable<R> callable, boolean wait) {
-		return sendTask(pool, callable, wait, 1);
+		try {
+			return pool.getActiveCount() < pool.getMaximumPoolSize() ? sendTask(pool, callable, wait, 1) : callable.call();
+		} catch (Exception e) {
+			return null;
+		}
 	}
 	
 	//Send more than one call by default pool
@@ -55,7 +59,7 @@ public class Pool {
 			try {
 				return wait ? future.get() : null;
 			} catch (InterruptedException | ExecutionException e) {
-				Main.log.fatal("Some thread was interrupted!");
+				Main.log.fatal(Thread.currentThread().getName() + " thread was interrupted!");
 			}
 		}
 		
@@ -122,6 +126,11 @@ public class Pool {
 		this.threads = threads;
 		pool.setCorePoolSize(threads);
 		pool.setMaximumPoolSize(threads);
+		
+	}
+	
+	public <T> ExecutorCompletionService<T> getCompletionService(){
+		return new ExecutorCompletionService<>(pool);
 	}
 	
 	public int getThreads() {

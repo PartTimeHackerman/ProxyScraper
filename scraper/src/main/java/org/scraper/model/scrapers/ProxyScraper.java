@@ -3,7 +3,8 @@ package org.scraper.model.scrapers;
 import org.scraper.model.Main;
 import org.scraper.model.Pool;
 import org.scraper.model.Proxy;
-import org.scraper.model.assigner.AssignManager;
+import org.scraper.model.managers.AssignManager;
+import org.scraper.model.web.Domain;
 import org.scraper.model.web.Site;
 
 import java.io.*;
@@ -22,6 +23,8 @@ public class ProxyScraper extends Observable {
 	
 	private AssignManager assigner;
 	
+	private List<Domain> domains;
+	
 	public static void main(String... args) throws Exception {
 		/*PropertyConfigurator.configure("log4j.properties");
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
@@ -29,36 +32,40 @@ public class ProxyScraper extends Observable {
 		//ProxyChecker pc = new ProxyChecker();
 		//ps.ocrScraper("https://www.torvpn.com/en/proxy-list");
 		//ps.normalScrape("http://proxylist.hidemyass.com/");
-		//checker.checkProxy("84.238.81.21:10200", 10000);
-		List<Proxy> prxs = ps.scrape(new Site("https://www.torvpn.com/en/proxy-list", ScrapeType.OCR));
+		//checker.checkProxyConcurrent("84.238.81.21:10200", 10000);
+		List<Proxy> prxs = ps.scrapeConcurrent(new Site("https://www.torvpn.com/en/proxy-list", ScrapeType.OCR));
 		//WebDriver driver = Browser.getBrowser(null, BrowserVersion.random(), "p");
 		//ps.cssScrape("http://proxylist.hidemyass.com/", driver);*/
 	}
 	
 	
-	public ProxyScraper(ScrapersFactory scrapersFactory, Pool pool) {
+	public ProxyScraper(ScrapersFactory scrapersFactory, Pool pool, List<Domain> domains) {
 		this.scrapersFactory = scrapersFactory;
 		this.pool = pool;
+		this.domains = domains;
 	}
 	
 	public ProxyScraper(int size) {
 		this.scrapersFactory = new ScrapersFactory(size);
 	}
 	
+	public List<Proxy> scrapeConcurrent(Site site, Boolean wait) {
+		return pool.sendTask(() -> scrape(site), wait);
+	}
+	
 	public List<Proxy> scrape(Site site) {
 		String url = site.getAddress();
 		List<Proxy> proxy = new ArrayList<>();
-		
-		pool.sendTask(() -> {
 			try {
+				
 				if (assigner != null && site.getType() == ScrapeType.UNCHECKED)
-					assigner.assignConcurrent(site);
+					assigner.assign(site);
+				
 				Scraper scraper = scrapersFactory.get(site.getType());
 				
-				
 				proxy.addAll(scraper.scrape(site));
-				if (proxy.size() == 0)
-					site.setType(ScrapeType.BLACK);
+				/*if (proxy.size() == 0)
+					site.setType(ScrapeType.BLACK);*/
 				
 				setChanged();
 				notifyObservers(proxy);
@@ -67,10 +74,7 @@ public class ProxyScraper extends Observable {
 				Main.log.error("Scraping failed, url: {} error: {}", url, (e.getMessage() != null ? e.getMessage() : "null"));
 				//return new ArrayList<>();
 			}
-			
-		}, false);
 		return proxy;
-		
 	}
 	
 	public List<Proxy> scrapeList(List<Site> sites) {

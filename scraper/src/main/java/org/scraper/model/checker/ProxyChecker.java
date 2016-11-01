@@ -14,26 +14,18 @@ public class ProxyChecker extends Observable {
 	
 	private int timeout;
 	
+	private List<Proxy> all;
+	
 	public static void main(String... args) {
-		ProxyChecker pc = new ProxyChecker(new Pool(100), 3000);
-		String socks = "68.67.80.202:41271";
-		String elite = "45.79.87.67:8080";
-		
-		Consumer<Proxy> check = prx -> {
-			Proxy result = pc.checkProxy(prx);
-			if (result != null) System.out.print(result);
-		};
-		
-		check.accept(new Proxy(socks));
-		check.accept(new Proxy(elite));
 	}
 	
-	public ProxyChecker(Pool pool, int timeout) {
+	public ProxyChecker(Pool pool, int timeout, List<Proxy> all) {
 		this.pool = pool;
 		this.timeout = timeout;
+		this.all = all;
 	}
 	
-	public List<Proxy> checkProxies(List<Proxy> proxies) {
+	public List<Proxy> checkProxies(List<Proxy> proxies, boolean wait) {
 		Main.log.info("Checking list of size {}", proxies.size());
 		List<Callable<Proxy>> calls = new ArrayList<>();
 		List<Proxy> checked;
@@ -50,27 +42,36 @@ public class ProxyChecker extends Observable {
 		return checked;
 	}
 	
+	public Proxy checkProxyConcurrent(Proxy proxy, boolean wait) {
+		pool.sendTask(() -> checkProxy(proxy), wait);
+		return proxy;
+	}
+	
 	public Proxy checkProxy(Proxy proxy) {
-		pool.sendTask(() -> {
-			String ip = proxy.getIp();
-			Integer port = proxy.getPort();
-			if (port >= 69129) {
-				Main.log.warn("Proxy {}:{} port out of range > 69129", ip, port);
-				return;
+		
+		if (all.contains(proxy)) {
+			Proxy doubled = all.get(all.indexOf(proxy));
+			if (doubled.isChecked()) {
+				Main.log.info("Proxy double {}", doubled);
+				return doubled;
 			}
-			setProxy(proxy);
-			if (proxy.isWorking()) {
-				Main.log.info("Proxy {}", proxy);
-			  
-			} else {
-				Main.log.warn("Proxy {} not working!", proxy.getIpPort());
-			}
-		  
-			proxy.setChecked(true);
-			//setChanged();
-			//notifyObservers(proxy);
-		  
-		}, false);
+		}
+		
+		String ip = proxy.getIp();
+		Integer port = proxy.getPort();
+		if (port >= 69129) {
+			Main.log.warn("Proxy {}:{} port out of range > 69129", ip, port);
+			return proxy;
+		}
+		setProxy(proxy);
+		if (proxy.isWorking()) {
+			Main.log.info("Proxy {}", proxy);
+			
+		} else {
+			Main.log.warn("Proxy {} not working!", proxy.getIpPort());
+		}
+		
+		proxy.setChecked(true);
 		return proxy;
 	}
 	
@@ -97,7 +98,7 @@ public class ProxyChecker extends Observable {
 		}
 	}
 	
-	public Proxy checkProxy(String proxy) {
-		return checkProxy(new Proxy(proxy));
+	public Proxy checkProxyConcurrent(String proxy) {
+		return checkProxyConcurrent(new Proxy(proxy), false);
 	}
 }

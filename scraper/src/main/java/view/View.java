@@ -11,6 +11,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import org.scraper.model.Interval;
 import org.scraper.model.modles.MainModel;
 import org.scraper.model.modles.ProxyModel;
 import org.scraper.model.modles.SitesModel;
@@ -48,11 +49,11 @@ public class View extends Application {
 		
 		model = new MainModel();
 		
-		model.getSitesManager().addSites(model.getDataBase().getAllSites());
-		
 		if (args.length == 0) {
+			model.setVarsInterval();
+			Interval.setInterval(100);
 			proxyModel = new ProxyModel(model.getChecker());
-			sitesModel = new SitesModel(model.getAssigner(), model.getScraper(), model.getGather(), model.getDataBase());
+			sitesModel = new SitesModel(model.getAssigner(), model.getScraper(), model.getGather(), model.getDataBase(), model.pool());
 			
 			model.getProxyManager().setModel(proxyModel);
 			
@@ -126,7 +127,7 @@ public class View extends Application {
 		setTextAreas();
 		
 		
-		scrapeButton.setOnAction(event -> controller.scrape());
+		scrapeButton.setOnAction(event -> controller.scrapeConcurrent());
 		
 		editable.textProperty().addListener((observable, oldValue, newValue) ->
 													   controller.updateCheck(newValue, notEditable));

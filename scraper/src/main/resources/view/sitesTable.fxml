@@ -15,8 +15,8 @@
             <TableView fx:id="table" maxHeight="1.7976931348623157E308" minHeight="0.0" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" VBox.vgrow="ALWAYS">
                <columns>
                   <TableColumn fx:id="siteColumn" prefWidth="266.0" text="Site" />
-                  <TableColumn fx:id="proxiesColumn" minWidth="0.0" prefWidth="122.0" text="Approx. proxies" />
-                  <TableColumn fx:id="workingColumn" prefWidth="121.0" text="Approx. working" />
+                  <TableColumn fx:id="proxiesColumn" minWidth="0.0" prefWidth="122.0" text="Avg. proxies" />
+                  <TableColumn fx:id="workingColumn" prefWidth="121.0" text="Avg. working" />
                   <TableColumn fx:id="typeColumn" prefWidth="78.0" text="Type" />
                </columns></TableView>
             <HBox alignment="CENTER" spacing="5.0">

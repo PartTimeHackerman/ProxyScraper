@@ -25,21 +25,21 @@ public class NonCheckAssigner extends Assigner {
 	}
 	
 	@Override
-	public ScrapeType getType(Site address) {
-		String site = address.getAddress();
+	public ScrapeType getType(Site site) {
+		String address = site.getAddress();
 		
 		
-		Main.log.info("Getting non check {} scrapng type", site);
+		Main.log.info("Getting non check {} scrapng type", address);
 		
-		scrapeAll(address);
+		Scraper winner = scrapeAll(site);
 		
-		Scraper winnerScraper = scrapers.get(0);
-		proxy = winnerScraper.getScraped();
+		proxy = winner.getScraped();
+		Assigner.setAvgProxies(site,proxy.size());
 		
-		return proxy.size() > 0 ? winnerScraper.getType() : ScrapeType.BLACK;
+		return proxy.size() > 0 ? winner.getType() : ScrapeType.BLACK;
 	}
 	
-	protected void scrapeAll(Site address) {
+	protected Scraper scrapeAll(Site address) {
 		scrapers = scrapersFactory.getAll();
 		
 		scrapers.forEach(scraper -> {
@@ -50,5 +50,6 @@ public class NonCheckAssigner extends Assigner {
 			}
 		});
 		Collections.sort(scrapers, Collections.reverseOrder());
+		return scrapers.get(0);
 	}
 }

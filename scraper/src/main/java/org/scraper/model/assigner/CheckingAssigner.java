@@ -9,14 +9,15 @@ import org.scraper.model.scrapers.Scraper;
 import org.scraper.model.scrapers.ScrapersFactory;
 import org.scraper.model.web.Site;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class CheckingAssigner extends NonCheckAssigner {
 	
 	private ProxyChecker checker;
 	
 	private ScrapeType type = ScrapeType.BLACK;
-	private double minWorkingPrecent = 0.2, last = 0D;
 	
 	public static void main(String[] args) {
 	}
@@ -30,40 +31,40 @@ public class CheckingAssigner extends NonCheckAssigner {
 	public CheckingAssigner(int size, int timeout) {
 		super(new ScrapersFactory(size));
 		
-		this.checker = new ProxyChecker(new Pool(size), timeout);
+		this.checker = new ProxyChecker(new Pool(size), timeout, new ArrayList<>());
 	}
 	
-	public ScrapeType getType(Site address) {
+	public ScrapeType getType(Site site) {
 		
-		super.scrapeAll(address);
+		type = super.getType(site);
 		
-		scrapers.forEach(scraper -> {
-			double present = workingPrecent(scraper);
+		double workingPrecent = workingPrecent(proxy, checker);
+		
+		/*scrapers.forEach(scraper -> {
+			present = workingPrecent(scraper);
 			if (present > last) {
 				type = scraper.getType();
 				last = present;
 			}
 		});
+		*/
+		Assigner.setAvgWorking(site, workingPrecent);
 		
 		return type;
 	}
 	
-	private double workingPrecent(Scraper scraper) {
-		List<Proxy> prxs = checker.checkProxies(ListUtils.subtract(scraper.getScraped(), proxy));
-		int all = prxs.size();
-		int workingSize;
+	public static double workingPrecent(List<Proxy> proxies, ProxyChecker checker) {
+		int all = proxies.size();
+		int workingSize = checker.checkProxies(proxies, true)
+				.stream()
+				.filter(Proxy::isWorking)
+				.collect(Collectors.toList())
+				.size();
 		
-		List<Proxy> working = checker.checkProxies(prxs);
-		proxy.addAll(working);
-		
-		workingSize = working.size();
-		
-		double precent = (double) workingSize / (double) all;
-		
-		return precent;
+		return workingSize / (double) all;
 	}
 	
-	public void setMinWorkingPrecent(double minWorkingPrecent) {
+	/*public void setMinWorkingPrecent(double minWorkingPrecent) {
 		this.minWorkingPrecent = minWorkingPrecent;
-	}
+	}*/
 }

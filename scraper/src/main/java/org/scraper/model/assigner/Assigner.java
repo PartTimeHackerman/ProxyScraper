@@ -19,4 +19,12 @@ public abstract class Assigner {
 	public List<Proxy> getProxy() {
 		return proxy;
 	}
+	
+	public static void setAvgProxies(Site site, Integer proxies) {
+		site.setAvgSites(site.getAvgSites() == null ? (site.getAvgSites() + proxies) / 2 : proxies);
+	}
+	
+	public static void setAvgWorking(Site site, Double workingPrecent) {
+		site.setAvgWorking(site.getAvgWorking() > 0 ? ((site.getAvgWorking() + (int) (site.getAvgSites() * workingPrecent)) / 2) : (int) (site.getAvgSites() * workingPrecent));
+	}
 }

@@ -11,6 +11,9 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import org.scraper.model.Main;
 import org.scraper.model.Proxy;
 
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+
 public class Browser {
 	
 	private WebDriver browser;
@@ -21,14 +24,14 @@ public class Browser {
 		//br.click("http://tell-my-ip.com/","68.67.80.202:41271","socks");
 		//"http://aruljohn.com/details.php"
 		br.getBrowser().get("http://aruljohn.com/details.php");//"https://www.whatismybrowser.com/detect/is-flash-installed");
-		Object result = ((PhantomJSDriver) br.getBrowser()).executeScript("console.warn('should log return');"+"return navigator.mimeTypes['application/x-shockwave-flash'];");
-		Object result2 = ((PhantomJSDriver) br.getBrowser()).executeScript("console.warn('should log return');"+"return navigator.javaEnabled();");
+		Object result = ((PhantomJSDriver) br.getBrowser()).executeScript("console.warn('should log return');" + "return navigator.mimeTypes['application/x-shockwave-flash'];");
+		Object result2 = ((PhantomJSDriver) br.getBrowser()).executeScript("console.warn('should log return');" + "return navigator.javaEnabled();");
 		Main.log.info(result);
 		br.getBrowser().quit();
 	}
 	
 	public Browser() {
-		browser = getBrowser(null, BrowserVersion.random(), "p");
+		browser = getBrowser(null, BrowserVersion.random(), "p", true);
 	}
 	
 	public void changeProxy(Proxy proxy) {
@@ -46,11 +49,13 @@ public class Browser {
 		((PhantomJSDriver) browser).executePhantomJS(js);
 	}
 	
-	public WebDriver getBrowser(String proxy, BrowserVersion version, String browser) {
+	public WebDriver getBrowser(String proxy, BrowserVersion version, String browser, Boolean debug) {
 		
-		//java.util.logging.Logger.getLogger(PhantomJSDriverService.class.getName()).setLevel(Level.OFF);
-		//java.util.logging.Logger.getLogger(PhantomJSDriver.class.getName()).setLevel(Level.OFF);
-		//java.util.logging.Logger.getLogger("global").setLevel(Level.WARNING);
+		if (!debug) {
+			java.util.logging.Logger.getLogger(PhantomJSDriverService.class.getName()).setLevel(Level.OFF);
+			java.util.logging.Logger.getLogger(PhantomJSDriver.class.getName()).setLevel(Level.OFF);
+			java.util.logging.Logger.getLogger("global").setLevel(Level.WARNING);
+		}
 		
 		DesiredCapabilities capabilities = new DesiredCapabilities();
 		if (proxy != null) {
@@ -63,18 +68,18 @@ public class Browser {
 			capabilities.setCapability(CapabilityType.PROXY, browserProxy);
 		}
 		
-		capabilities.setCapability(PhantomJSDriverService.PHANTOMJS_PAGE_CUSTOMHEADERS_PREFIX + "Referer", "https://www.facebook.com/" );
+		capabilities.setCapability(PhantomJSDriverService.PHANTOMJS_PAGE_CUSTOMHEADERS_PREFIX + "Referer", "https://www.facebook.com/");
 		capabilities.setCapability(PhantomJSDriverService.PHANTOMJS_PAGE_CUSTOMHEADERS_PREFIX + "Accept-Language", "fr-FR,fr;q=0.8,en-US;q=0.6,en;q=0.4");
-		capabilities.setCapability(PhantomJSDriverService.PHANTOMJS_PAGE_CUSTOMHEADERS_PREFIX + "Accept","text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
+		capabilities.setCapability(PhantomJSDriverService.PHANTOMJS_PAGE_CUSTOMHEADERS_PREFIX + "Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
 		
 		
-		capabilities.setCapability(PhantomJSDriverService.PHANTOMJS_CLI_ARGS, new String[] { "--webdriver-loglevel=INFO","--ignore-ssl-errors=true", "--ssl-protocol=any"});
+		capabilities.setCapability(PhantomJSDriverService.PHANTOMJS_CLI_ARGS, new String[]{"--webdriver-loglevel=" + (debug ? "INFO" : "OFF"), "--ignore-ssl-errors=true", "--ssl-protocol=any"});
 		capabilities.setCapability(PhantomJSDriverService.PHANTOMJS_PAGE_SETTINGS_PREFIX + "userAgent", version.ua());
 		capabilities.setCapability(PhantomJSDriverService.PHANTOMJS_PAGE_SETTINGS_PREFIX + "loadImages", false);
 		capabilities.setCapability(PhantomJSDriverService.PHANTOMJS_PAGE_SETTINGS_PREFIX + "javascriptEnabled", true);
 		capabilities.setCapability(PhantomJSDriverService.PHANTOMJS_PAGE_SETTINGS_PREFIX + "javascriptCanOpenWindows", false);
 		capabilities.setCapability(PhantomJSDriverService.PHANTOMJS_PAGE_SETTINGS_PREFIX + "javascriptCanCloseWindows", false);
-		capabilities.setCapability(PhantomJSDriverService.PHANTOMJS_PAGE_SETTINGS_PREFIX + "debug", true);
+		capabilities.setCapability(PhantomJSDriverService.PHANTOMJS_PAGE_SETTINGS_PREFIX + "debug", debug);
 		
 		capabilities.setCapability("marionette", false);
 		capabilities.setPlatform(version.pl());
@@ -96,114 +101,115 @@ public class Browser {
 				driver = new ChromeDriver(capabilities);
 		}
 		
-		//driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
-		driver.manage().window().setSize(new Dimension(800,600));
+		driver.manage().timeouts().implicitlyWait(2000, TimeUnit.MILLISECONDS);
+		driver.manage().timeouts().setScriptTimeout(3000,TimeUnit.MILLISECONDS);
+		driver.manage().window().setSize(new Dimension(800, 600));
 		setupDriver(driver, version.pl());
 		
 		return driver;
 	}
 	
-	private void setupDriver(WebDriver driver,Platform platform){
+	private void setupDriver(WebDriver driver, Platform platform) {
 		String onInitialized =
 				"var page = this;" +
-				"page.onInitialized = function () { " +
-					//"console.warn('onInitialized');" +
-					"page.evaluate(function () {" +
+						"page.onInitialized = function () { " +
+						//"console.warn('onInitialized');" +
+						"page.evaluate(function () {" +
 						//"page.reload();"+
-							"navigator = {\n" +
-								"plugins: [" +
-									"{" +
-									"description : 'Shockwave Flash 23.0 r0'," +
-									"filename : 'pepflashplayer.dll'," +
-									"name : 'Shockwave Flash'" +
-									"}" +
-								"]," +
-								"mimeTypes: [ " +
-									"{" +
-									"description: 'Shockwave Flash'," +
-									"suffixes: 'swf'," +
-									"type : 'application/x-shockwave-flash', " +
-									"enabledPlugin: " +
-										"{" +
-										"description : 'Shockwave Flash 23.0 r0'," +
-										"filename : 'pepflashplayer.dll'," +
-										"name : 'Shockwave Flash'" +
-										"}" +
-									"}," +
-									"{" +
-									"description: 'Shockwave Flash'," +
-									"suffixes: 'spl'," +
-									"type: 'application/futuresplash', " +
-									"enabledPlugin: " +
-										"{" +
-										"description : 'Shockwave Flash 23.0 r0'," +
-										"filename : 'pepflashplayer.dll'," +
-										"name : 'Shockwave Flash'" +
-										"}" +
-									"}" +
-								"]," +
-								"appCodeName: 'Mozilla'," +
-								"appName: 'Netscape'," +
-								"appVersion: '5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.22 (KHTML, like Gecko) Chrome/25.0.1364.172 Safari/537.22',\n" +
-								"cookieEnabled: true," +
-								"language: 'en'," +
-								"onLine: true," +
-								"javaEnabled : function(){ return true;}," +
-								"platform: '"+platform.name()+"'," +
-								"product: 'Gecko'," +
-								"productSub: '20030107'," +
-								"userAgent: 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.22 (KHTML, like Gecko) Chrome/25.0.1364.172 Safari/537.22',\n" +
-							"};" +
-							
-					"});" +
-				"};";
+						"navigator = {\n" +
+						"plugins: [" +
+						"{" +
+						"description : 'Shockwave Flash 23.0 r0'," +
+						"filename : 'pepflashplayer.dll'," +
+						"name : 'Shockwave Flash'" +
+						"}" +
+						"]," +
+						"mimeTypes: [ " +
+						"{" +
+						"description: 'Shockwave Flash'," +
+						"suffixes: 'swf'," +
+						"type : 'application/x-shockwave-flash', " +
+						"enabledPlugin: " +
+						"{" +
+						"description : 'Shockwave Flash 23.0 r0'," +
+						"filename : 'pepflashplayer.dll'," +
+						"name : 'Shockwave Flash'" +
+						"}" +
+						"}," +
+						"{" +
+						"description: 'Shockwave Flash'," +
+						"suffixes: 'spl'," +
+						"type: 'application/futuresplash', " +
+						"enabledPlugin: " +
+						"{" +
+						"description : 'Shockwave Flash 23.0 r0'," +
+						"filename : 'pepflashplayer.dll'," +
+						"name : 'Shockwave Flash'" +
+						"}" +
+						"}" +
+						"]," +
+						"appCodeName: 'Mozilla'," +
+						"appName: 'Netscape'," +
+						"appVersion: '5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.22 (KHTML, like Gecko) Chrome/25.0.1364.172 Safari/537.22',\n" +
+						"cookieEnabled: true," +
+						"language: 'en'," +
+						"onLine: true," +
+						"javaEnabled : function(){ return true;}," +
+						"platform: '" + platform.name() + "'," +
+						"product: 'Gecko'," +
+						"productSub: '20030107'," +
+						"userAgent: 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.22 (KHTML, like Gecko) Chrome/25.0.1364.172 Safari/537.22',\n" +
+						"};" +
+						
+						"});" +
+						"};";
 		
 		String onLoadFinished =
 				"var page = this;" +
-					"page.onLoadFinished = function () {" +
+						"page.onLoadFinished = function () {" +
 						"page.stop();" +
 						//"console.warn('loadfinish');" +
 						"page.evaluate(function(){" +
 						"window.stop();" +
-					"});" +
-				"};";
+						"});" +
+						"};";
 		
 		String onUrlChanged =
 				"var page = this;" +
-				"page.onUrlChanged = function() {" +
-					"page.stop();" +
-				"};";
+						"page.onUrlChanged = function() {" +
+						"page.stop();" +
+						"};";
 		
 		String onRequest =
 				"var page = this;" +
-				"page.onResourceRequested = function(requestData, networkRequest){" +
-				
-					" var skip = [" +
+						"page.onResourceRequested = function(requestData, networkRequest){" +
+						
+						" var skip = [" +
 						"'googleads.g.doubleclick.net'," +
 						"'cm.g.doubleclick.net'," +
 						"'www.googleadservices.com'," +
 						"'http://www.google-analytics.com/analytics.js'," +
 						"'https://apis.google.com/js/plusone.js'" +
-					"];" +
-					
-					"skip.forEach(function(needle) {" +
-					"    if (requestData.url.indexOf(needle) > 0) {" +
-					"      networkRequest.cancel();" +
-					"    }" +
-				"};";
+						"];" +
+						
+						"skip.forEach(function(needle) {" +
+						"    if (requestData.url.indexOf(needle) > 0) {" +
+						"      networkRequest.cancel();" +
+						"    }" +
+						"};";
 		
 		String onConfirm =
 				"var page = this;" +
-				"this.onConfirm = function(msg) {" +
+						"this.onConfirm = function(msg) {" +
 						//"page.evaluate(function(){" +
 						//"console.warn('CONFIRM: ' + msg);" +
 						"return true;" +
 						//"});" +
-				"};";
+						"};";
 		
 		String onAlert =
 				"var page = this;" +
-				"page.onAlert = function(msg) {" +
+						"page.onAlert = function(msg) {" +
 						//"page.evaluate(function(){" +
 						//"console.warn('ALERT: ' + msg);" +
 						"return true;" +
@@ -212,10 +218,24 @@ public class Browser {
 		
 		String onPrompt =
 				"var page = this;" +
-				"page.onPrompt = function(msg) {" +
+						"page.onPrompt = function(msg) {" +
 						//"page.evaluate(function(){" +
 						//"console.warn('PROMPT: ' + msg);" +
 						"return true;" +
+						//"});" +
+						"};";
+		
+		String onError =
+				"var page = this;" +
+						"page.onError = function(msg, trace) {" +
+						"var msgStack = ['PHANTOM ERROR: ' + msg];\n" +
+						"  if (trace && trace.length) {\n" +
+						"    msgStack.push('TRACE:');\n" +
+						"    trace.forEach(function(t) {\n" +
+						"      msgStack.push(' -> ' + (t.file || t.sourceURL) + ': ' + t.line + (t.function ? ' (in function ' + t.function +')' : ''));\n" +
+						"    });\n" +
+						"  }\n" +
+						"  console.error(msgStack.join('\\n'));" +
 						//"});" +
 						"};";
 		
@@ -227,11 +247,16 @@ public class Browser {
 		phantom.executePhantomJS(onConfirm);
 		phantom.executePhantomJS(onPrompt);
 		phantom.executePhantomJS(onRequest);
+		phantom.executePhantomJS(onError);
 		//phantom.executePhantomJS(onUrlChanged);
 	}
 	
 	public WebDriver getBrowser() {
 		return browser;
+	}
+	
+	public void shutdown() {
+		browser.quit();
 	}
 }
 

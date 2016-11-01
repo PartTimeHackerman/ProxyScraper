@@ -69,5 +69,6 @@
     <orderEntry type="library" name="Gradle: org.seleniumhq.selenium:selenium-api:3.0.0-beta2" level="project" />
     <orderEntry type="library" name="Gradle: org.apache.logging.log4j:log4j-core:2.6.2" level="project" />
     <orderEntry type="library" name="Gradle: org.apache.logging.log4j:log4j-api:2.6.2" level="project" />
+    <orderEntry type="library" name="Gradle: io.reactivex:rxjava:1.2.1" level="project" />
   </component>
 </module>

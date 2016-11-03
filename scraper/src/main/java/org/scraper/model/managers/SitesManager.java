@@ -1,7 +1,5 @@
 package org.scraper.model.managers;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import org.scraper.model.modles.SitesModel;
 import org.scraper.model.scrapers.ScrapeType;
 import org.scraper.model.web.DataBase;
@@ -10,8 +8,6 @@ import org.scraper.model.web.Site;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import javafx.application.Platform;
 
 public class SitesManager {
 	
@@ -34,7 +30,6 @@ public class SitesManager {
 			if (site.getType() != ScrapeType.UNCHECKED) working.add(site);
 			if (model != null) model.addSite(site);
 		}
-		
 	}
 	
 	public void addSite(String siteString) {
@@ -54,6 +49,6 @@ public class SitesManager {
 	
 	public void setModel(SitesModel model) {
 		this.model = model;
-		all.forEach(site -> model.addSite(site));
+		all.forEach(model::addSite);
 	}
 }

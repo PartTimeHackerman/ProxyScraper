@@ -1,6 +1,9 @@
 package org.scraper.model.modles;
 
 import javafx.application.Platform;
+import javafx.beans.property.ListProperty;
+import javafx.beans.property.ReadOnlyIntegerProperty;
+import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.scraper.model.Proxy;
@@ -14,7 +17,11 @@ public class ProxyModel {
 	
 	private ObservableList<Proxy> visible = FXCollections.observableArrayList();
 	
+	private ObservableList<Proxy> working = FXCollections.observableArrayList();
+	private ListProperty<Proxy> workingProperty = new SimpleListProperty<>(working);
+	
 	private ObservableList<Proxy> all = FXCollections.observableArrayList();
+	private ListProperty<Proxy> allProperty = new SimpleListProperty<>(all);
 	
 	private boolean showBroken = false;
 	
@@ -22,7 +29,7 @@ public class ProxyModel {
 	
 	private Proxy.Anonymity visibleAnonymity = Proxy.Anonymity.ALL;
 	
-	public ProxyModel(ProxyChecker checker){
+	public ProxyModel(ProxyChecker checker) {
 		this.checker = checker;
 	}
 	
@@ -30,14 +37,18 @@ public class ProxyModel {
 	public void addProxy(Proxy proxy) {
 		Platform.runLater(() -> {
 			all.add(proxy);
+			
 			if (proxy.isWorking() || showBroken)
 				visible.add(proxy);
+			
+			if (proxy.isWorking())
+				working.add(proxy);
 		});
 	}
 	
 	
 	public void check(List<Proxy> proxies) {
-		checker.checkProxies(proxies, false);
+		checker.checkProxies(proxies);
 	}
 	
 	public void filterType(Proxy.Type type) {
@@ -46,7 +57,7 @@ public class ProxyModel {
 		all.forEach(proxy -> {
 			if ((proxy.getType() == type || type == Proxy.Type.ALL)
 					&& (proxy.getAnonymity() == visibleAnonymity || visibleAnonymity == Proxy.Anonymity.ALL)
-					&& (showBroken|| proxy.isWorking()))
+					&& (showBroken || proxy.isWorking()))
 				visible.add(proxy);
 		});
 	}
@@ -81,8 +92,15 @@ public class ProxyModel {
 		});
 	}
 	
-	
 	public ObservableList<Proxy> getVisible() {
 		return visible;
+	}
+	
+	public ReadOnlyIntegerProperty getAllSize() {
+		return allProperty.sizeProperty();
+	}
+	
+	public ReadOnlyIntegerProperty getWorkingSize() {
+		return workingProperty.sizeProperty();
 	}
 }

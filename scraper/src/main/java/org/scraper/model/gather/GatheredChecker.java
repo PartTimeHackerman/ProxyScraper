@@ -10,9 +10,6 @@ public class GatheredChecker {
 	
 	private ProxyScraper scraper;
 	
-	public static void main(String[] args) {
-	}
-	
 	public GatheredChecker(ProxyScraper scraper) {
 		this.scraper = scraper;
 	}
@@ -23,7 +20,8 @@ public class GatheredChecker {
 	
 	public List<Site> check(List<Site> sites) {
 		List<Site> checked = sites.stream()
-				.map(site -> scraper.scrapeConcurrent(site, false).size() > 0 ? site : null)
+				.map(site ->
+							 scraper.scrapeConcurrent(site, false).size() > 0 ? site : null)
 				.filter(site -> site != null)
 				.collect(Collectors.toList());
 

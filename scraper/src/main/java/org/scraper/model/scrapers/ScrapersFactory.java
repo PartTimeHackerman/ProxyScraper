@@ -39,8 +39,6 @@ public class ScrapersFactory {
 					ocrs.put(new OCR());
 				} catch (InterruptedException e) {}
 			});
-		
-		
 	}
 	
 	public Scraper get(ScrapeType type) {

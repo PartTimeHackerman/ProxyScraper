@@ -48,14 +48,14 @@ public class SitesModel {
 	}
 	
 	public void check(List<Site> sites) {
-		
 		pool.sendTask(() ->{
 		assigner.assignList(sites);
 		dataBase.postSites(new ArrayList<>(sites));
 		},false);
 	}
 	
-	public void crawl(List<Site> sites){
+	public void gather(List<Site> sites, Integer depth){
+		gather.setDepth(depth);
 		gather.gatherList(sites);
 	}
 }

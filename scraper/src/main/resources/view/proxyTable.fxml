@@ -33,12 +33,12 @@
                   </HBox>
                   <HBox spacing="5.0">
                      <children>
-                        <Label text="Chceked:" />
+                        <!--<Label text="Chceked:" />
                         <Label fx:id="checked" text="0">
                            <opaqueInsets>
                               <Insets />
                            </opaqueInsets>
-                        </Label>
+                        </Label>-->
                      </children>
                   </HBox>
                   <HBox spacing="5.0">

@@ -1,5 +1,7 @@
 package org.scraper.model;
 
+import org.scraper.model.modles.MainModel;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
@@ -59,7 +61,7 @@ public class Pool {
 			try {
 				return wait ? future.get() : null;
 			} catch (InterruptedException | ExecutionException e) {
-				Main.log.fatal(Thread.currentThread().getName() + " thread was interrupted!");
+				MainModel.log.fatal(Thread.currentThread().getName() + " thread was interrupted!");
 			}
 		}
 		
@@ -79,7 +81,7 @@ public class Pool {
 		if (wait) try {
 			future.get();
 		} catch (InterruptedException | ExecutionException e) {
-			Main.log.fatal("Some thread was interrupted!");
+			MainModel.log.fatal("Some thread was interrupted!");
 		}
 		
 		return null;
@@ -108,12 +110,12 @@ public class Pool {
 						try {
 							return future.get();
 						} catch (Exception e) {
-							Main.log.catching(e.getCause());
+							MainModel.log.catching(e.getCause());
 						}
 						return null;
 					}).collect(Collectors.toList());
 		} catch (InterruptedException e) {
-			Main.log.fatal("Some thread was interrupted!");
+			MainModel.log.fatal("Some thread was interrupted!");
 			return null;
 		}
 	}

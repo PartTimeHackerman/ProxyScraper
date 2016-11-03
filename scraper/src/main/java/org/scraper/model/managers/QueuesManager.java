@@ -1,7 +1,7 @@
 package org.scraper.model.managers;
 
-import org.scraper.model.Main;
 import org.scraper.model.Pool;
+import org.scraper.model.modles.MainModel;
 import org.scraper.model.scrapers.OCR;
 import org.scraper.model.web.Browser;
 
@@ -36,7 +36,7 @@ public class QueuesManager {
 		makeOCRs();
 	}
 	
-	public void makeBrowsers(){
+	private void makeBrowsers(){
 		Callable<?> makeBrowsers = () -> {
 			Browser browser = new Browser();
 			browsersQueue.put(browser);
@@ -47,11 +47,11 @@ public class QueuesManager {
 			pool.sendTask(makeBrowsers, false, browsersNumber);
 			
 		} catch (Exception e) {
-			Main.log.error("Failed to load browsers");
+			MainModel.log.error("Failed to load browsers");
 		}
 	}
 	
-	public void makeOCRs(){
+	private void makeOCRs(){
 		Callable<?> makeOCR = () -> {
 			OCR ocr = new OCR();
 			ocrQueue.put(ocr);
@@ -61,7 +61,7 @@ public class QueuesManager {
 		try {
 			pool.sendTask(makeOCR, false, ocrNumber);
 		} catch (Exception e) {
-			Main.log.error("Failed to load OCR");
+			MainModel.log.error("Failed to load OCR");
 		}
 	}
 	
@@ -89,6 +89,11 @@ public class QueuesManager {
 		return ocrNumber;
 	}
 	
+	public void shutdownAll() {
+		shutdownOcrs();
+		shutdownBrowsers();
+	}
+	
 	public void shutdownBrowsers() {
 		for (int i = 0; i < browsersQueue.size()-1 ; i++) {
 				pool.sendTask(() -> {
@@ -105,5 +110,9 @@ public class QueuesManager {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public void shutdownOcrs() {
+		ocrQueue.forEach(OCR::shutdown);
 	}
 }

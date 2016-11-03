@@ -1,13 +1,11 @@
 package org.scraper.model.scrapers;
 
-import org.scraper.model.Main;
 import org.scraper.model.Pool;
 import org.scraper.model.Proxy;
 import org.scraper.model.managers.AssignManager;
 import org.scraper.model.web.Domain;
 import org.scraper.model.web.Site;
 
-import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
@@ -25,20 +23,6 @@ public class ProxyScraper extends Observable {
 	
 	private List<Domain> domains;
 	
-	public static void main(String... args) throws Exception {
-		/*PropertyConfigurator.configure("log4j.properties");
-		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-		ProxyScraper ps = new ProxyScraper(new ProxyChecker(10000));
-		//ProxyChecker pc = new ProxyChecker();
-		//ps.ocrScraper("https://www.torvpn.com/en/proxy-list");
-		//ps.normalScrape("http://proxylist.hidemyass.com/");
-		//checker.checkProxyConcurrent("84.238.81.21:10200", 10000);
-		List<Proxy> prxs = ps.scrapeConcurrent(new Site("https://www.torvpn.com/en/proxy-list", ScrapeType.OCR));
-		//WebDriver driver = Browser.getBrowser(null, BrowserVersion.random(), "p");
-		//ps.cssScrape("http://proxylist.hidemyass.com/", driver);*/
-	}
-	
-	
 	public ProxyScraper(ScrapersFactory scrapersFactory, Pool pool, List<Domain> domains) {
 		this.scrapersFactory = scrapersFactory;
 		this.pool = pool;
@@ -54,9 +38,7 @@ public class ProxyScraper extends Observable {
 	}
 	
 	public List<Proxy> scrape(Site site) {
-		String url = site.getAddress();
 		List<Proxy> proxy = new ArrayList<>();
-			try {
 				
 				if (assigner != null && site.getType() == ScrapeType.UNCHECKED)
 					assigner.assign(site);
@@ -64,16 +46,10 @@ public class ProxyScraper extends Observable {
 				Scraper scraper = scrapersFactory.get(site.getType());
 				
 				proxy.addAll(scraper.scrape(site));
-				/*if (proxy.size() == 0)
-					site.setType(ScrapeType.BLACK);*/
 				
 				setChanged();
 				notifyObservers(proxy);
 				
-			} catch (IOException | InterruptedException e) {
-				Main.log.error("Scraping failed, url: {} error: {}", url, (e.getMessage() != null ? e.getMessage() : "null"));
-				//return new ArrayList<>();
-			}
 		return proxy;
 	}
 	

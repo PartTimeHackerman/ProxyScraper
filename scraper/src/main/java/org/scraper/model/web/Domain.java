@@ -13,7 +13,7 @@ public class Domain {
 		this.type = type;
 	}
 	
-	public String getDomain() {
+	public String getDomainString() {
 		return domain;
 	}
 	

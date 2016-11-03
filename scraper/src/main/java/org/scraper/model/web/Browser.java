@@ -1,15 +1,16 @@
 package org.scraper.model.web;
 
-import org.openqa.selenium.*;
+import org.openqa.selenium.Dimension;
+import org.openqa.selenium.Platform;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriverService;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
-
-import org.scraper.model.Main;
 import org.scraper.model.Proxy;
+import org.scraper.model.modles.MainModel;
 
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -26,7 +27,7 @@ public class Browser {
 		br.getBrowser().get("http://aruljohn.com/details.php");//"https://www.whatismybrowser.com/detect/is-flash-installed");
 		Object result = ((PhantomJSDriver) br.getBrowser()).executeScript("console.warn('should log return');" + "return navigator.mimeTypes['application/x-shockwave-flash'];");
 		Object result2 = ((PhantomJSDriver) br.getBrowser()).executeScript("console.warn('should log return');" + "return navigator.javaEnabled();");
-		Main.log.info(result);
+		MainModel.log.info(result);
 		br.getBrowser().quit();
 	}
 	

@@ -4,8 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.application.Platform;
 import org.scraper.model.Interval;
-import org.scraper.model.Pool;
-import org.scraper.model.modles.MainModel;
+import org.scraper.model.modles.BarModel;
 
 public class BarController {
 	@FXML
@@ -35,32 +34,29 @@ public class BarController {
 	@FXML
 	private Label ocrMax;
 	
-	private MainModel model;
-	
 	
 	@FXML
-	public void initialize(Pool pool) {
-		this.model = model;
+	public void initialize(BarModel barModel) {
 		
-		threadsField.setText("" + model.pool().getThreads());
+		threadsField.setText("" + barModel.getThreads());
 		threadsField.setOnAction(e ->
-										 model.pool().setThreads(Integer.parseInt(threadsField.getText()))
+										 barModel.setThreads(Integer.parseInt(threadsField.getText()))
 								);
 		threadsField.textProperty().addListener( (observable, oldValue, newValue) -> {
 			if(!newValue.matches("[0-9]*"))
 				threadsField.setText(oldValue);
 		});
 		
-		proxiesField.setText("" + model.getProxyManager().getLimit());
+		proxiesField.setText("" + barModel.getProxiesLimit());
 		proxiesField.setOnAction(e ->
-										 model.getProxyManager().setLimit(Integer.parseInt(proxiesField.getText()))
+										 barModel.setProxiesLimit(Integer.parseInt(proxiesField.getText()))
 								);
 		proxiesField.textProperty().addListener( (observable, oldValue, newValue) -> {
 			if(!newValue.matches("[0-9]*"))
 				proxiesField.setText(oldValue);
 		});
 		
-		checkOnFly.setOnAction(e -> model.setCheckOnFly(checkOnFly.isSelected()));
+		checkOnFly.setOnAction(e ->  barModel.setCheckOnFly(checkOnFly.isSelected()));
 		
 		Interval.addAction("threads", var -> Platform.runLater(() -> threadsUsed.setText(var.toString())));
 		Interval.addAction("threadsMax", var -> Platform.runLater(() -> threadsMax.setText(var.toString())));

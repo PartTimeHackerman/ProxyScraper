@@ -9,7 +9,6 @@ import org.scraper.model.managers.SitesManager;
 import org.scraper.model.modles.SitesModel;
 import org.scraper.model.web.Site;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -36,66 +35,64 @@ public class SitesController {
 	
 	private TableView<Site> table;
 	
+	private ObservableList<Site> all;
+	
+	private ObservableList<Site> selected;
+	
 	private SitesManager manager;
 	
 	@FXML
 	public void initialize(SitesModel model, SitesManager sitesManager, TableView<Site> table) {
 		
 		this.model = model;
-		this.table = table;
 		this.manager = sitesManager;
+		
+		this.table = table;
+		this.selected = table.getSelectionModel().getSelectedItems();
+		this.all = table.getItems();
 		
 		scrapeButton.setOnAction(event -> scrape());
 		
 		checkButton.setOnAction(event -> check());
 		
-		gatherButton.setOnAction(event -> crawl());
+		gatherButton.setOnAction(event -> gather());
 		
-		addSite.setOnAction( event -> addSites());
+		addSite.setOnAction(event -> addSites());
+		
+		depthField.textProperty().addListener((observable, oldValue, newValue) -> {
+			if (!newValue.matches("[0-9]*"))
+				depthField.setText(oldValue);
+		});
 	}
 	
-	public void addSites(){
+	public void addSites() {
 		String sitesString = addField.getText();
+		addField.clear();
+		
 		String[] sitesArr = sitesString.contains(" ") ? sitesString.split(" ") :
-							sitesString.contains("\n") ? sitesString.split("\n") : new String[]{};
+				sitesString.contains("\n") ? sitesString.split("\n") : new String[]{};
 		
 		Arrays.stream(sitesArr).forEach(siteString -> manager.addSite(siteString));
-		
 	}
 	
-	//TODO encapsulate
-	private void scrape(){
-		ObservableList<Site> selected = table.getSelectionModel().getSelectedItems();
-		
-		if (selected.size() > 0) {
-			model.scrape(selected.subList(0, selected.size()));
-		} else {
-			ObservableList<Site> all = table.getItems();
-			model.scrape(all.subList(0, all.size()));
-		}
+	private void scrape() {
+		model.scrape(getSelected());
 	}
 	
-	private void check(){
-		ObservableList<Site> selected = table.getSelectionModel().getSelectedItems();
-		List<Site> sites;
-		if (selected.size() > 0) {
-			sites = new ArrayList<>(selected.subList(0, selected.size()));
-		} else {
-			ObservableList<Site> all = table.getItems();
-			sites = new ArrayList<>(all.subList(0, all.size()));
-		}
-		model.check(sites);
+	private void check() {
+		model.check(getSelected());
 	}
 	
-	private void crawl(){
-		ObservableList<Site> selected = table.getSelectionModel().getSelectedItems();
-		
-		if (selected.size() > 0) {
-			model.crawl(selected.subList(0, selected.size()));
-		} else {
-			ObservableList<Site> all = table.getItems();
-			model.crawl(all.subList(0, all.size()));
-		}
+	private void gather() {
+		model.gather(getSelected(), Integer.parseInt(depthField.getText()));
+	}
+	
+	private List<Site> getSelected() {
+		return selected.size() > 0 ? getList(selected) : getList(all);
+	}
+	
+	private <E> List<E> getList(ObservableList<E> observableList) {
+		return observableList.subList(0, observableList.size());
 	}
 	
 }

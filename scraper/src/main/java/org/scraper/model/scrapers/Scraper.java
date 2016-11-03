@@ -13,7 +13,7 @@ public abstract class Scraper implements Comparable<Scraper> {
 	
 	protected List<Proxy> proxy = new ArrayList<>();
 	
-	public abstract List<Proxy> scrape(Site site) throws InterruptedException, IOException;
+	public abstract List<Proxy> scrape(Site site);
 	
 	public Integer getScrapedNum() {
 		return proxy.size();

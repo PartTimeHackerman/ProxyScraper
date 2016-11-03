@@ -1,9 +1,8 @@
 package org.scraper.model;
 
 import org.scraper.model.checker.Connection;
-import org.scraper.model.managers.Checkable;
 
-public class Proxy implements Checkable {
+public class Proxy {
 	
 	private String ip;
 	
@@ -100,11 +99,11 @@ public class Proxy implements Checkable {
 		this.anonymity = anonymity;
 	}
 	
-	public float getSpeed() {
+	public Long getSpeed() {
 		return speed;
 	}
 	
-	public void setSpeed(long speed) {
+	public void setSpeed(Long speed) {
 		this.speed = speed;
 	}
 	
@@ -118,26 +117,6 @@ public class Proxy implements Checkable {
 	
 	public boolean isWorking() {
 		return working;
-	}
-	
-	@Override
-	public String getText() {
-		return ipPort;
-	}
-	
-	@Override
-	public String getParamOne() {
-		return type != null ? type.name() : "";
-	}
-	
-	@Override
-	public String getParamTwo() {
-		return anonymity != null ? anonymity.name() : (isChecked() ? "BROKEN" : "UNCHECKED");
-	}
-	
-	@Override
-	public String getParamThree() {
-		return speed != null ? String.format("%.2f",(double)speed/1000)+" s." : null;
 	}
 	
 	public void setWorking(boolean working) {

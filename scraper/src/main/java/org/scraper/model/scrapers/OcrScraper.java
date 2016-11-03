@@ -8,16 +8,17 @@ import org.opencv.core.Mat;
 import org.opencv.core.MatOfByte;
 import org.opencv.core.Size;
 import org.opencv.imgcodecs.Imgcodecs;
-import org.scraper.model.Main;
 import org.scraper.model.Pool;
 import org.scraper.model.Proxy;
-import org.scraper.model.web.Site;
+import org.scraper.model.modles.MainModel;
 import org.scraper.model.web.BrowserVersion;
+import org.scraper.model.web.Site;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Callable;
 
 import static org.opencv.imgproc.Imgproc.*;
 
@@ -34,10 +35,19 @@ public class OcrScraper extends Scraper {
 	}
 	
 	@Override
-	public List<Proxy> scrape(Site site) throws InterruptedException, IOException {
+	public List<Proxy> scrape(Site site){
 		String url = site.getAddress();
-		Main.log.info("OCR scraping {}", url);
-		Document doc = Jsoup.connect(url).timeout(10000).userAgent(BrowserVersion.random().ua()).get();
+		MainModel.log.info("OCR scraping {}", url);
+		Document doc = null;
+		try {
+			doc = Jsoup.connect(url)
+					.timeout(10000)
+					.userAgent(BrowserVersion.random().ua())
+					.get();
+		} catch (IOException e) {
+			MainModel.log.info("OCR scraping {} failed!", url);
+			return proxy;
+		}
 		
 		
 		String mainUrl = doc.baseUri().substring(0,site.getAddress().indexOf("/", 8));// doc.baseUri().indexOf("/", 8));
@@ -50,7 +60,7 @@ public class OcrScraper extends Scraper {
 				imgsUrls.add(e.attr("src"));
 		}
 		
-		Main.log.info("Starting OCR {} {}", ocrs.size(), ocrs.remainingCapacity());
+		MainModel.log.info("Starting OCR {} {}", ocrs.size(), ocrs.remainingCapacity());
 		List<Callable<String>> calls = new ArrayList<>();
 		
 		for (String iurl : imgsUrls) {
@@ -70,7 +80,7 @@ public class OcrScraper extends Scraper {
 					OCR ocr = ocrs.take();
 					String read = ocr.read(mat);
 					ocrs.put(ocr);
-					Main.log.info(read);
+					MainModel.log.info(read);
 					for (Element element : imgs) {
 						if (element.attr("src").equals(iurl))
 							element.append(read);
@@ -81,7 +91,7 @@ public class OcrScraper extends Scraper {
 		}
 		pool.sendTasks(calls);
 		
-		Main.log.info("OCR Done");
+		MainModel.log.info("OCR Done");
 		
 		String txt = doc.text();
 		

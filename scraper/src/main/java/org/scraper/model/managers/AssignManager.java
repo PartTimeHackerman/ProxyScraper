@@ -1,6 +1,5 @@
 package org.scraper.model.managers;
 
-import org.scraper.model.Main;
 import org.scraper.model.Pool;
 import org.scraper.model.Proxy;
 import org.scraper.model.assigner.Assigner;
@@ -10,15 +9,13 @@ import org.scraper.model.checker.ProxyChecker;
 import org.scraper.model.modles.MainModel;
 import org.scraper.model.scrapers.ScrapeType;
 import org.scraper.model.scrapers.ScrapersFactory;
+import org.scraper.model.web.Domain;
 import org.scraper.model.web.Site;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Observable;
-import java.util.concurrent.*;
-import java.util.stream.Collectors;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class AssignManager extends Observable {
 	
@@ -28,140 +25,81 @@ public class AssignManager extends Observable {
 	
 	private Pool pool;
 	
-	private MainModel model;
+	private List<Domain> domains;
 	
-	private Boolean check;
+	private AtomicBoolean checkOnFly;
 	
-	public AssignManager(ScrapersFactory scrapersFactory, ProxyChecker checker, Pool pool, MainModel model) {
+	public AssignManager(ScrapersFactory scrapersFactory, ProxyChecker checker, Pool pool, AtomicBoolean checkOnFly, List<Domain> domains) {
 		this.scrapersFactory = scrapersFactory;
 		this.checker = checker;
 		this.pool = pool;
-		this.model = model;
-	}
-	
-	public AssignManager(ScrapersFactory scrapersFactory) {
-		this.scrapersFactory = scrapersFactory;
-	}
-	
-	public AssignManager(int size, int timeout) {
-		this.scrapersFactory = new ScrapersFactory(size);
-		this.checker = new ProxyChecker(new Pool(size), timeout, new ArrayList<>());
-		if (timeout > 0)
-			check = true;
+		this.checkOnFly = checkOnFly;
+		this.domains = domains;
 	}
 	
 	public List<Proxy> assignConcurrent(Site site) {
 		return pool.sendTask(() -> assign(site), false);
 	}
 	
-	public List<Proxy> assign(Site site) {
-		List<Proxy> proxy = new ArrayList<>();
+	public List<Proxy>assign(Site site) {
 		
-		if (model.getDataBase().getAllDomains().contains(site.getDomain())) {
-			site.setType(model.getDataBase().getAllDomains().get(model.getDataBase().getAllDomains().indexOf(site.getDomain())).getType());
-			if (site.getType() != ScrapeType.UNCHECKED && site.getType() != ScrapeType.BLACK && site.getType() != null) {
-				try {
-					proxy = scrapersFactory.get(site.getType()).scrape(site);
-					Assigner.setAvgProxies(site, proxy.size());
-				} catch (InterruptedException | IOException e) {
-					e.printStackTrace();
-				}
-				if (model.isCheckOnFly()) {
-					Assigner.setAvgWorking(site, CheckingAssigner.workingPrecent(proxy, checker));
-				}
-			}
-		} else {
-			
-			Assigner assigner;
-			if (model.isCheckOnFly()) {
-				assigner = new CheckingAssigner(scrapersFactory, checker);
-			} else {
-				assigner = new NonCheckAssigner(scrapersFactory);
-			}
-			
-			ScrapeType type = assigner.getType(site);
-			proxy = assigner.getProxy();
-			
-			site.setType(type);
-			
-			model.getDataBase().addDomain(site.getDomain());
-		}
+		List<Proxy> proxy = !domains.contains(site.getDomain())
+				? assignWithDomain(site)
+				: assignWithoutDomain(site);
 		
 		setChanged();
 		notifyObservers(proxy);
-		setChanged();
-		notifyObservers(site);
 		
-		Main.log.fatal("Site {} assigned", site);
+		MainModel.log.fatal("Site {} assigned", site);
 		
 		return proxy;
+	}
+	
+	public List<Proxy> assignWithDomain(Site site) {
+		Domain siteDomain = site.getDomain();
+		
+		ScrapeType type = domains.get(domains.indexOf(siteDomain)).getType();
+		site.setType(type);
+		
+		Assigner assigner = getAssigner();
+		ScrapeType newType = assigner.getType(site);
+		
+		if (newType != ScrapeType.BLACK
+				&& type == ScrapeType.BLACK) {
+			addDomain(site.getDomain(), type);
+		}
+		return assigner.getProxy();
+	}
+	
+	public List<Proxy> assignWithoutDomain(Site site) {
+		Assigner assigner = getAssigner();
+		assigner.getType(site);
+		
+		ScrapeType type = assigner.getType(site);
+		
+		addDomain(site.getDomain(), type);
+		
+		return assigner.getProxy();
+	}
+	
+	private void addDomain(Domain domain, ScrapeType type) {
+		Domain newDomain = new Domain(domain.getDomainString(), type);
+		domains.add(newDomain);
+	}
+	
+	private Assigner getAssigner() {
+		return checkOnFly.get()
+				? new CheckingAssigner(scrapersFactory, checker)
+				: new NonCheckAssigner(scrapersFactory);
 	}
 	
 	public List<Proxy> assignList(List<Site> sites) {
 		List<Proxy> proxy = new ArrayList<>();
 		
-		sites.parallelStream().filter(site -> site.getType() != ScrapeType.BLACK).forEach(site -> proxy.addAll(assign(site)));
-		return proxy;
+		sites.parallelStream()
+				.filter(site -> site.getType() != ScrapeType.BLACK)
+				.forEach(site -> proxy.addAll(assign(site)));
 		
-			
+		return proxy;
 	}
-	
-	
-	/*public List<Proxy> assignList(List<Site> sites) {
-		
-		BlockingQueue<Site> sitesQueue = new LinkedBlockingDeque<>(5);
-		
-		pool.sendTask(() -> {
-			sites.forEach(site -> {
-				try {
-					sitesQueue.put(site);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			});
-		}, false);
-		
-		
-		List<List<Proxy>> proxyList = new ArrayList<>();
-		
-		List<Proxy> proxy = new ArrayList<>();
-		
-		Site polled;
-		try {
-			while ((polled = sitesQueue.poll(500, TimeUnit.MILLISECONDS)) != null) {
-				proxyList.add(assignConcurrent(polled));
-			}
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		
-		*//*List<Callable<List<Proxy>>> calls = new ArrayList<>();
-		sites.stream()
-				.map(site ->
-							 calls.add(() -> assign(sitesQueue.poll(500, TimeUnit.MILLISECONDS))))
-				.collect(Collectors.toList());
-		
-		proxyList = pool.sendTasks(calls);
-		*//*
-		
-		proxyList.forEach(proxy::addAll);
-		
-		return proxy;
-	}*/
-	
-	/*
-	private boolean alreadyExists(Site site) {
-		ScrapeType type;
-		Domain siteDomain = site.getDomain();
-		List<Domain> domains = globals.getDataBase().getAllDomains();
-		
-		if (domains.contains(siteDomain)) {
-			type = domains.get(domains.indexOf(siteDomain)).getType();
-			site.setType(type);
-			return true;
-		}
-		return false;
-	}*/
-	
-	
 }

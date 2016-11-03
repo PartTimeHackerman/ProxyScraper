@@ -6,7 +6,7 @@ import java.util.List;
 
 
 public class LanguageCheck {
-	public static final List<String> langs = new ArrayList<>(Arrays.asList(
+	private static final List<String> langs = new ArrayList<>(Arrays.asList(
 			"af", "af-ZA",
 			"sq", "sq-AL",
 			"ar", "ar-SA",
@@ -82,7 +82,7 @@ public class LanguageCheck {
 		boolean is = isFromOtherLang(url, links);
 	}
 	
-	public static boolean isFromOtherLang(String url, List<String> links) {
+	static boolean isFromOtherLang(String url, List<String> links) {
 		for (String link : links) {
 			if (langs.contains(stringsIntersection(link, url).replace("/", ""))) return true;
 		}

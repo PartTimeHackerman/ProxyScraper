@@ -17,8 +17,6 @@ public class Connection {
 	
 	private Proxy proxy;
 	
-	protected Proxy.Anonymity anonymity;
-	
 	protected Proxy.Type type;
 	
 	public Connection(Proxy.Type type, Proxy proxy){
@@ -45,8 +43,8 @@ public class Connection {
 			return true;
 			
 		} catch (Exception e) {
-			if (e.getMessage() != null && e.getMessage().equals("Connection reset")) type = Proxy.Type.SOCKS;
-			//Main.log.fatal("type {}, url {}, ip {}, exception {}", proxy.type(), url, proxy.address(), e.getMessage() != null ? e.getMessage() : "");
+			if (e.getMessage() != null && e.getMessage().equals("Connection reset"))
+				type = Proxy.Type.SOCKS;
 			return false;
 		}
 	}
@@ -71,7 +69,6 @@ public class Connection {
 	
 	
 	public Proxy.Anonymity getAnonymity() {
-		if (anonymity == null) {
 			String text = getTextContent();
 			String anonymity ="";
 			if(text.contains("|"))
@@ -90,8 +87,6 @@ public class Connection {
 					return Proxy.Anonymity.TRANSPARENT;
 				}
 			}
-		}
-		return anonymity;
 	}
 	
 	public long getTime() {

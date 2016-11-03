@@ -12,7 +12,7 @@ public enum ScrapeType {
 	OCR,
 	
 	
-	// Do not add new here \/
+	// Do not add new here
 	@SerializedName("3")
 	UNCHECKED,
 	@SerializedName("4")

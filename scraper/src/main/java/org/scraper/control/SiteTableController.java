@@ -1,22 +1,18 @@
 package org.scraper.control;
 
-import javafx.beans.property.*;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.ObservableList;
+import javafx.beans.property.ListProperty;
+import javafx.beans.property.ReadOnlyIntegerWrapper;
+import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.beans.property.SimpleListProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.layout.HBox;
-import org.scraper.model.managers.SitesManager;
 import org.scraper.model.modles.SitesModel;
 import org.scraper.model.web.Site;
 
 public class SiteTableController {
-	
-	@FXML
-	private HBox textBox;
 	
 	@FXML
 	private TableView<Site> table;
@@ -49,19 +45,12 @@ public class SiteTableController {
 		ListProperty<Site> prop = new SimpleListProperty<>(table.getItems());
 		
 		sites.textProperty().bind(prop.sizeProperty().asString());
-		
-		
 	}
-	
-	private void changed(ObservableValue<? extends ObservableList<CharSequence>> observable, ObservableList<CharSequence> oldValue, ObservableList<CharSequence> newValue) {
-		//lastSize.set(oldValue.size());
-	}
-	
 	
 	@SuppressWarnings("unchecked")
 	private void setColumns() {
 		
-		siteColumn.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getText()));
+		siteColumn.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getAddress()));
 		
 		proxiesColumn.setCellValueFactory(cellData -> cellData.getValue().getAvgSites() != -1 ? new ReadOnlyIntegerWrapper(cellData.getValue().getAvgSites()) : null);
 		

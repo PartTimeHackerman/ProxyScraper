@@ -4,11 +4,10 @@ import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.scraper.model.Main;
+import org.scraper.model.modles.MainModel;
 import org.scraper.model.web.*;
 
 import java.io.IOException;
-import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -76,10 +75,10 @@ public class SitesScraper {
 						System.out.println(address);
 						
 						if (! sites.contains(address))
-							newAddrs.add(new Site(address, ScrapeType.UNCHECKED, InetAddress.getLocalHost().getHostAddress() + " " + System.getProperty("user.name")));
+							newAddrs.add(new Site(address, ScrapeType.UNCHECKED));
 					}
 				} catch (IOException e) {
-					Main.log.error("Connection failed, url: {} error: {}", url, (e.getMessage()!=null?e.getMessage():"null"));
+					MainModel.log.error("Connection failed, url: {} error: {}", url, (e.getMessage()!=null?e.getMessage():"null"));
 				}
 			}
 		}

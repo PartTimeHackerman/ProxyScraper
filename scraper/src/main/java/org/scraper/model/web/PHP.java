@@ -3,15 +3,12 @@ package org.scraper.model.web;
 import com.google.gson.Gson;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
-import org.scraper.model.Main;
 import org.scraper.model.scrapers.ScrapeType;
 
 import java.io.IOException;
-import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Properties;
 
 
 public class PHP {
@@ -38,8 +35,8 @@ public class PHP {
 
 		List<Site> addrs = new ArrayList<>();
 
-		addrs.add(new Site("asd", ScrapeType.CSS, "ss"));
-		addrs.add(new Site("yjytj", ScrapeType.OCR, "adasd"));
+		addrs.add(new Site("asd", ScrapeType.CSS));
+		addrs.add(new Site("yjytj", ScrapeType.OCR));
 
 		String json = gson.toJson(addrs);
 		String json2 = gson.toJson(prxs);
@@ -79,7 +76,7 @@ public class PHP {
 
 	public static void phpPost(PHPMethod posting, String json) {
 		try {
-			Connection.Response response = Jsoup.connect(URL)
+			Jsoup.connect(URL)
 					.timeout(20000)
 					.method(Connection.Method.POST)
 					.data(posting.cmd(), json)
@@ -118,34 +115,6 @@ public class PHP {
 			default:
 				list.addAll(new ArrayList<>(Arrays.asList((T[]) new Gson().fromJson(phpGet(method), String[].class))));
 
-		}
-	}
-
-	public static void sqlTest(){
-		java.sql.Connection connection = null;
-		try {
-			Class.forName("com.mysql.cj.jdbc.Driver");
-
-			Properties connProp = new Properties();
-			connProp.setProperty("user", "u501421373_addrs");
-			connProp.setProperty("password", "tjbmh!");
-			connProp.setProperty("connectTimeout", "10000");
-			connProp.setProperty("socketTimeout", "10000");
-
-			connection = DriverManager.getConnection("jdbc:mysql://1freehosting.com:3306/u501421373_addrs",connProp);
-
-			Statement statement = connection.createStatement();
-
-			String query = "SELECT proxy FROM Clicks WHERE clicks<5";
-
-			ResultSet result = statement.executeQuery(query);
-
-			while (result.next()){
-				Main.log.info(result.getString("proxy"));
-			}
-
-		} catch (SQLException | ClassNotFoundException e) {
-			e.printStackTrace();
 		}
 	}
 }

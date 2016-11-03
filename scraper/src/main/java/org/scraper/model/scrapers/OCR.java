@@ -22,7 +22,6 @@ public class OCR {
 	}
 
 	public String read(Object image) {
-
 		if(image instanceof String){
 			api.SetImage(pixRead((String) image));
 		}

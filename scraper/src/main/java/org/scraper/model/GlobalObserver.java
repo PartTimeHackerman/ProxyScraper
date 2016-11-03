@@ -4,13 +4,13 @@ import org.scraper.model.managers.AssignManager;
 import org.scraper.model.checker.ProxyChecker;
 import org.scraper.model.managers.ProxyManager;
 import org.scraper.model.managers.SitesManager;
-import org.scraper.model.modles.MainModel;
 import org.scraper.model.scrapers.ScrapeType;
 import org.scraper.model.web.Site;
 
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class GlobalObserver implements Observer {
 	
@@ -21,18 +21,18 @@ public class GlobalObserver implements Observer {
 	private AssignManager assignManager;
 	private ProxyChecker proxyChceker;
 	
-	private MainModel model;
+	private AtomicBoolean checkOnFly;
 	
 	public GlobalObserver(ProxyManager proxyManager,
 						  SitesManager sitesManager,
 						  AssignManager assignManager,
 						  ProxyChecker proxyChecker,
-						  MainModel model) {
+						  AtomicBoolean checkOnFly) {
 		this.proxyManager = proxyManager;
 		this.sitesManager = sitesManager;
 		this.assignManager = assignManager;
 		this.proxyChceker = proxyChecker;
-		this.model = model;
+		this.checkOnFly = checkOnFly;
 	}
 	
 	@Override
@@ -54,7 +54,7 @@ public class GlobalObserver implements Observer {
 		if (!(arg instanceof Site)) return;
 		
 		Site site = (Site) arg;
-		if (model.isCheckOnFly() && site.getType() == ScrapeType.UNCHECKED)
+		if (checkOnFly.get() && site.getType() == ScrapeType.UNCHECKED)
 			assignManager.assignConcurrent(site);
 		sitesManager.addSite(site);
 	}
@@ -63,7 +63,7 @@ public class GlobalObserver implements Observer {
 		if (!(arg instanceof Proxy)) return;
 		
 		Proxy proxy = (Proxy) arg;
-		if (model.isCheckOnFly() && !proxy.isChecked())
+		if (checkOnFly.get() && !proxy.isChecked())
 			proxyChceker.checkProxyConcurrent(proxy, false);
 		proxyManager.addProxy(proxy);
 	}

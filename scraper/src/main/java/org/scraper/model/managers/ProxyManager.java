@@ -34,6 +34,7 @@ public class ProxyManager {
 			if (proxy.isWorking()) working.add(proxy);
 			if (proxy.isChecked()) checked.add(proxy);
 			if (model != null) model.addProxy(proxy);
+			limit++;
 		} else {
 			//TODO stop everything
 		}

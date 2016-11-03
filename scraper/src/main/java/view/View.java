@@ -12,6 +12,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import org.scraper.model.Interval;
+import org.scraper.model.modles.BarModel;
 import org.scraper.model.modles.MainModel;
 import org.scraper.model.modles.ProxyModel;
 import org.scraper.model.modles.SitesModel;
@@ -30,6 +31,8 @@ public class View extends Application {
 	private static ProxyModel proxyModel;
 	
 	private static SitesModel sitesModel;
+	
+	private static BarModel barModel;
 	
 	
 	private ProxyTableController proxyTableController;
@@ -54,6 +57,7 @@ public class View extends Application {
 			Interval.setInterval(100);
 			proxyModel = new ProxyModel(model.getChecker());
 			sitesModel = new SitesModel(model.getAssigner(), model.getScraper(), model.getGather(), model.getDataBase(), model.pool());
+			barModel = new BarModel(model.pool(), model.getProxyManager(), model.getCheckOnFly());
 			
 			model.getProxyManager().setModel(proxyModel);
 			
@@ -108,7 +112,7 @@ public class View extends Application {
 		scene.getStylesheets().add(String.valueOf(getClass().getResource("/view/userAgent.css")));
 		//scene.setUserAgentStylesheet(String.valueOf(getClass().getResource("/userAgent.css")));
 		
-		barController.initialize(model);
+		barController.initialize(barModel);
 		
 		sitesController.initialize(sitesModel, model.getSitesManager(), siteTableController.getTable());
 		proxyController.initialize(proxyModel, proxyTableController.getTable());

@@ -92,10 +92,10 @@ public class ProxyTableModel {
 		ObservableList<Proxy> selected = table.getSelectionModel().getSelectedItems();
 		
 		if (selected.size() > 0) {
-			checker.checkProxies(selected.subList(0, selected.size() - 1), false);
+			checker.checkProxies(selected.subList(0, selected.size() - 1));
 		} else {
 			ObservableList<Proxy> all = table.getItems();
-			checker.checkProxies(all.subList(0, all.size() - 1), false);
+			checker.checkProxies(all.subList(0, all.size() - 1));
 		}
 	}
 	

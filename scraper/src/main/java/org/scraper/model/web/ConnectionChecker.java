@@ -1,9 +1,8 @@
-package org.scraper.model.checker;
+package org.scraper.model.web;
 
-import org.jsoup.*;
 import org.jsoup.Connection;
-import org.scraper.model.Main;
-import org.scraper.model.web.BrowserVersion;
+import org.jsoup.Jsoup;
+import org.scraper.model.modles.MainModel;
 
 import java.io.IOException;
 
@@ -13,10 +12,6 @@ public class ConnectionChecker {
 	
 	private ConnectionChecker(){}
 	
-	public static void main(String... args){
-		Main.log.info(hasConnection() + getIp());
-	}
-	
 	public static boolean hasConnection(){
 		try {
 			Jsoup
@@ -24,9 +19,10 @@ public class ConnectionChecker {
 					.userAgent(BrowserVersion.random().ua())
 					.ignoreContentType(true)
 					.execute();
+			
 			return true;
 		} catch (IOException e) {
-			Main.log.fatal("No internet connection!");
+			MainModel.log.fatal("No internet connection!");
 			return false;
 		}
 	}

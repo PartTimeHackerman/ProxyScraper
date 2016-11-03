@@ -15,14 +15,9 @@ import java.util.concurrent.TimeUnit;
 
 public class Interval {
 	
-	
-	public static void main(String[] args) throws InterruptedException {
-	}
-	
 	final static private HashMap<String, Callable> vars = new HashMap<>();
 	final static private HashMap<String, List<Action1>> actions = new HashMap<>();
 	final static private BehaviorSubject<Long> subject = BehaviorSubject.create(500L);
-	
 	
 	static {
 		subject.switchMap(inter ->

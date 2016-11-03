@@ -43,8 +43,8 @@ public class RegexMatcher {
 					&& (secondMatcher.end() - secondMatcher.group().length()) - firstMatcher.end() < maxDistance) {
 				
 				temp2 = secondMatcher.group();
-				
 				String ip;
+				
 				if (reversed) {
 					ip = temp2;
 					tempProxy = temp2 + ":" + temp1;

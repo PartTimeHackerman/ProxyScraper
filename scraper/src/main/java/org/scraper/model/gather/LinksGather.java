@@ -3,8 +3,8 @@ package org.scraper.model.gather;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
-import org.scraper.model.Main;
 import org.scraper.model.Pool;
+import org.scraper.model.modles.MainModel;
 import org.scraper.model.scrapers.ScrapeType;
 import org.scraper.model.web.BrowserVersion;
 import org.scraper.model.web.Site;
@@ -19,14 +19,14 @@ import java.util.stream.IntStream;
 
 public class LinksGather extends Observable {
 	
-	private int depth;
+	private Integer depth;
 	
 	private Pool pool;
 	
 	public static void main(String[] args) {
 		LinksGather lg = new LinksGather(2, new Pool(2));
 		List<Site> sites = lg.gather(new Site("http://proxylist.hidemyass.com/", ScrapeType.UNCHECKED));
-		sites.forEach(site -> Main.log.info(site.getAddress()));
+		sites.forEach(site -> MainModel.log.info(site.getAddress()));
 	}
 	
 	public LinksGather(int depth, Pool pool) {
@@ -34,7 +34,7 @@ public class LinksGather extends Observable {
 		this.pool = pool;
 	}
 	
-	public List<String> startGather(Site site) {
+	private List<String> startGather(Site site) {
 		List<String> all = new ArrayList<>();
 		List<String> newLinks = new ArrayList<>();
 		List<String> tempLinks = new ArrayList<>();
@@ -43,8 +43,7 @@ public class LinksGather extends Observable {
 		all.add(site.getRoot());
 		newLinks.add(site.getAddress());
 		
-		IntStream
-				.range(0, depth)
+		IntStream.range(0, depth)
 				.forEach(i -> {
 					newLinks.forEach(link -> {
 						List<String> got = gatherLinks(new Site(link, null), all);
@@ -52,7 +51,9 @@ public class LinksGather extends Observable {
 						tempLinks.addAll(got);
 					});
 					newLinks.clear();
-					newLinks.addAll(tempLinks.stream().distinct().collect(Collectors.toList()));
+					newLinks.addAll(tempLinks.stream()
+											.distinct()
+											.collect(Collectors.toList()));
 					tempLinks.clear();
 				});
 		return all;
@@ -71,16 +72,21 @@ public class LinksGather extends Observable {
 		
 		return redirects
 				.stream()
-				.map(redirect -> redirect.attr("href"))
-				.filter(link -> link != null && link.length() > 1)
-				.map(link -> link.charAt(0) == '/' ? root + link : link)
-				.map(link -> link.contains("#") ? link.split("#")[0] : link)
-				.filter(link -> link.length() > 4
-						&& !LanguageCheck.isFromOtherLang(link, all)
-						&& link.contains(root)
-						&& !all.contains(link)
-						&& link.substring(0, 4).equals("http")
-						&& !link.matches(".*\\.[a-z]{3}\\?.*"))
+				.map(redirect ->
+							 redirect.attr("href"))
+				.filter(link ->
+								link != null && link.length() > 1)
+				.map(link ->
+							 link.charAt(0) == '/' ? root + link : link)
+				.map(link ->
+							 link.contains("#") ? link.split("#")[0] : link)
+				.filter(link ->
+								link.length() > 4
+								&& !LanguageCheck.isFromOtherLang(link, all)
+								&& link.contains(root)
+								&& !all.contains(link)
+								&& link.substring(0, 4).equals("http")
+								&& !link.matches(".*\\.[a-z]{3}\\?.*"))
 				.distinct()
 				.collect(Collectors.toList());
 	}
@@ -94,9 +100,8 @@ public class LinksGather extends Observable {
 					.timeout(5000)
 					.get();
 			
-			//Main.log.debug("Gather {}!", url);
 		} catch (IOException e) {
-			Main.log.warn("Gather {} connection failed!", url);
+			MainModel.log.warn("Gather {} connection failed!", url);
 		}
 		return document;
 	}

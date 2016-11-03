@@ -1,10 +1,12 @@
 package org.scraper.model.modles;
 
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.opencv.core.Core;
 import org.scraper.model.*;
 import org.scraper.model.managers.AssignManager;
-import org.scraper.model.checker.ConnectionChecker;
+import org.scraper.model.web.ConnectionChecker;
 import org.scraper.model.checker.ProxyChecker;
 import org.scraper.model.managers.ProxyManager;
 import org.scraper.model.managers.QueuesManager;
@@ -13,16 +15,10 @@ import org.scraper.model.scrapers.ProxyScraper;
 import org.scraper.model.scrapers.ScrapersFactory;
 import org.scraper.model.gather.LinksGather;
 import org.scraper.model.web.DataBase;
-import org.scraper.model.web.LinksManager;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class MainModel {
-	
-	//private SitesModel scrapeModel;
-	
-	//private ProxyModel proxyModel;
-	
-	
-	private Model presentModel;
 	
 	private Pool globalPool;
 	
@@ -40,8 +36,6 @@ public class MainModel {
 	
 	private GlobalObserver observer;
 	
-	private LinksManager linksManager;
-	
 	private ScrapersFactory scrapersFactory;
 	
 	private ProxyChecker checker;
@@ -53,25 +47,27 @@ public class MainModel {
 	private LinksGather gather;
 	
 	
-	private Boolean checkOnFly;
+	private AtomicBoolean checkOnFly = new AtomicBoolean(false);
 	
 	private String ip;
+	
+	public static final Logger log = LogManager.getLogger(MainModel.class.getSimpleName());
 	
 	
 	public static void main(String[] args) {
 		MainModel m = new MainModel(100, 5000, 0, false, false);
 	}
 	
-	public MainModel(int threads, int timeout, int limit, boolean check, boolean click) {
+	public MainModel(int threads, int timeout, int limit, Boolean check, boolean click) {
 		//OpenCV lib
 		String sysArch = System.getProperty("os.arch");
-		sysArch = sysArch.substring(sysArch.length()-2);
-		System.loadLibrary(Core.NATIVE_LIBRARY_NAME + "x" + sysArch );
+		sysArch = sysArch.substring(sysArch.length() - 2);
+		System.loadLibrary(Core.NATIVE_LIBRARY_NAME + "x" + sysArch);
 		
 		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-			Main.log.info("SHUTDOWN HOOK!!!");
+			log.info("SHUTDOWN HOOK!!!");
 			dataBase.postAll();
-			queuesManager.shutdownBrowsers();
+			queuesManager.shutdownAll();
 		}));
 		
 		
@@ -86,9 +82,6 @@ public class MainModel {
 		
 		queuesManager = new QueuesManager(globalPool, threads / 10, threads / 10);
 		
-		linksManager = new LinksManager(globalPool, queuesManager.getBrowsersQueue(), dataBase);
-		linksManager.setOn(click);
-		
 		proxyManager = new ProxyManager(limit);
 		
 		sitesManager = new SitesManager(dataBase);
@@ -100,7 +93,7 @@ public class MainModel {
 		
 		checker = new ProxyChecker(globalPool, timeout, getProxyManager().getAll());
 		
-		assigner = new AssignManager(scrapersFactory, checker, globalPool, this);
+		assigner = new AssignManager(scrapersFactory, checker, globalPool, checkOnFly, dataBase.getAllDomains());
 		
 		scraper = new ProxyScraper(scrapersFactory, globalPool, dataBase.getAllDomains());
 		scraper.setAssigner(assigner);
@@ -108,18 +101,13 @@ public class MainModel {
 		
 		gather = new LinksGather(2, globalPool);
 		
-		
-		//scrapeModel = new SitesModel(assigner, scraper, gather);
-		
-		//proxyModel = new ProxyModel(checker);
-		
-		observer = new GlobalObserver(proxyManager, sitesManager, assigner, checker, this);
+		observer = new GlobalObserver(proxyManager, sitesManager, assigner, checker, checkOnFly);
 		checker.addObserver(observer);
 		scraper.addObserver(observer);
 		assigner.addObserver(observer);
 		gather.addObserver(observer);
 		
-		Main.log.info("Initialized");
+		MainModel.log.info("Initialized");
 		
 		synchronized (globalPool) {
 			while (!(globalPool.getPool().getActiveCount() == 0))
@@ -127,28 +115,12 @@ public class MainModel {
 		}
 	}
 	
-	public MainModel(){
-	this(100, 3000, 0, false, false);
+	public MainModel() {
+		this(100, 3000, 0, false, false);
 	}
 	
-	//@Override
-	public void scrape() {
-		pool().sendTask(() -> presentModel.scrape(), false);
-	}
-	
-	//@Override
-	public void check() {
-		presentModel.check();
-	}
-	
-	//@Override
-	public void crawl() {
-		presentModel.crawl();
-	}
-	
-	//@Override
 	public void setCheckOnFly(boolean checkOnFly) {
-		this.checkOnFly = checkOnFly;
+		this.checkOnFly.set(checkOnFly);
 	}
 	
 	//@Override
@@ -161,29 +133,16 @@ public class MainModel {
 		
 	}
 	
-	//@Override
-	public void setGatherDepth(Integer depth){
+	public void setGatherDepth(Integer depth) {
 		gather.setDepth(depth);
 	}
 	
-	public Model getPresentModel() {
-		return presentModel;
-	}
-	
-	public void setPresentModel(Model presentModel) {
-		this.presentModel = presentModel;
-	}
-	
-	public boolean isCheckOnFly() {
-		return checkOnFly;
+	public Boolean isCheckOnFly() {
+		return checkOnFly.get();
 	}
 	
 	public GlobalObserver getObserver() {
 		return observer;
-	}
-	
-	public LinksManager getLinksManager() {
-		return linksManager;
 	}
 	
 	public String getIp() {
@@ -218,10 +177,6 @@ public class MainModel {
 		return scraper;
 	}
 	
-	public boolean getCheckOnFly() {
-		return checkOnFly;
-	}
-	
 	public ProxyManager getProxyManager() {
 		return proxyManager;
 	}
@@ -242,7 +197,7 @@ public class MainModel {
 		return gather;
 	}
 	
-	public void setVarsInterval(){
+	public void setVarsInterval() {
 		Interval.addFunc("threads", () -> globalPool.getThreads() - globalPool.getPool().getActiveCount());
 		Interval.addFunc("threadsMax", () -> globalPool.getThreads());
 		
@@ -253,4 +208,7 @@ public class MainModel {
 		Interval.addFunc("ocrsMax", () -> queuesManager.getOcrNumber());
 	}
 	
+	public java.util.concurrent.atomic.AtomicBoolean getCheckOnFly() {
+		return checkOnFly;
+	}
 }

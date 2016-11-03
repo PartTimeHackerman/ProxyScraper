@@ -19,52 +19,16 @@ public class CheckingAssigner extends NonCheckAssigner {
 	
 	private ScrapeType type = ScrapeType.BLACK;
 	
-	public static void main(String[] args) {
-	}
-	
 	public CheckingAssigner(ScrapersFactory scrapersFactory, ProxyChecker checker) {
 		super(scrapersFactory);
-		
 		this.checker = checker;
 	}
 	
-	public CheckingAssigner(int size, int timeout) {
-		super(new ScrapersFactory(size));
-		
-		this.checker = new ProxyChecker(new Pool(size), timeout, new ArrayList<>());
-	}
-	
 	public ScrapeType getType(Site site) {
-		
 		type = super.getType(site);
-		
-		double workingPrecent = workingPrecent(proxy, checker);
-		
-		/*scrapers.forEach(scraper -> {
-			present = workingPrecent(scraper);
-			if (present > last) {
-				type = scraper.getType();
-				last = present;
-			}
-		});
-		*/
-		Assigner.setAvgWorking(site, workingPrecent);
-		
+		AvgAssigner.assignAvg(site, proxy, checker);
 		return type;
 	}
 	
-	public static double workingPrecent(List<Proxy> proxies, ProxyChecker checker) {
-		int all = proxies.size();
-		int workingSize = checker.checkProxies(proxies, true)
-				.stream()
-				.filter(Proxy::isWorking)
-				.collect(Collectors.toList())
-				.size();
-		
-		return workingSize / (double) all;
-	}
 	
-	/*public void setMinWorkingPrecent(double minWorkingPrecent) {
-		this.minWorkingPrecent = minWorkingPrecent;
-	}*/
 }

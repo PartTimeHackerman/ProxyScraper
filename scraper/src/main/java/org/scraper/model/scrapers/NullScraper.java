@@ -1,10 +1,9 @@
 package org.scraper.model.scrapers;
 
-import org.scraper.model.Main;
 import org.scraper.model.Proxy;
+import org.scraper.model.modles.MainModel;
 import org.scraper.model.web.Site;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,8 +14,8 @@ public class NullScraper extends Scraper {
 	}
 	
 	@Override
-	public List<Proxy> scrape(Site site) throws InterruptedException, IOException {
-		Main.log.warn("URL {} doesn't contain any proxies", site.getAddress());
+	public List<Proxy> scrape(Site site) {
+		MainModel.log.warn("URL {} doesn't contain any proxies", site.getAddress());
 		return new ArrayList<>();
 	}
 	

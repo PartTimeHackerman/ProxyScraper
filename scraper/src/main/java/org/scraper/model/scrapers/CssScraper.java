@@ -1,30 +1,39 @@
 package org.scraper.model.scrapers;
 
-import org.openqa.selenium.*;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
-import org.scraper.model.Main;
 import org.scraper.model.Proxy;
-import org.scraper.model.web.Site;
+import org.scraper.model.modles.MainModel;
 import org.scraper.model.web.Browser;
+import org.scraper.model.web.Site;
 
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 
-public class CssScraper extends Scraper {
+class CssScraper extends Scraper {
 	
 	private BlockingQueue<Browser> browsers;
 	
-	public CssScraper(BlockingQueue<Browser> browsers) {
+	CssScraper(BlockingQueue<Browser> browsers) {
 		type = ScrapeType.CSS;
 		this.browsers = browsers;
 	}
 	
 	@Override
-	public List<Proxy> scrape(Site site) throws InterruptedException {
+	public List<Proxy> scrape(Site site) {
 		String url = site.getAddress();
-		Main.log.info("CSS scraping {}", url);
+		MainModel.log.info("CSS scraping {}", url);
 		
-		Browser browser = browsers.take();
+		Browser browser;
+		try {
+			browser = browsers.take();
+		} catch (InterruptedException e) {
+			MainModel.log.fatal("CSS scraping {} failed!", url);
+			return proxy;
+		}
+		
 		WebDriver driver = browser.getBrowser();
 		
 		driver.get(url);
@@ -50,15 +59,17 @@ public class CssScraper extends Scraper {
 						"}catch(e){console.warn('CATCHING');}";
 		((PhantomJSDriver) driver).executePhantomJS(copyableBeforeAfter);
 		WebElement body;
-		try {
-			body = driver.findElements(By.tagName("body")).get(0);
-		} catch (NoSuchElementException | IndexOutOfBoundsException e) {
-			return proxy;
-		}
+		body = driver.findElement(By.tagName("body"));
 		
 		
 		String text = body.getText();
-		browsers.put(browser);
+		
+		try {
+			browsers.put(browser);
+		} catch (InterruptedException e) {
+			MainModel.log.fatal("CSS scraping {} failed!", url);
+			return proxy;
+		}
 		
 		proxy = RegexMatcher.match(text);
 		return proxy;

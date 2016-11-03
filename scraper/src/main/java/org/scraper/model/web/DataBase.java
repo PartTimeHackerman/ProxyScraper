@@ -2,6 +2,7 @@ package org.scraper.model.web;
 
 import org.apache.commons.collections.ListUtils;
 import org.scraper.model.*;
+import org.scraper.model.modles.MainModel;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -73,7 +74,7 @@ public class DataBase {
 				gotSites = true;
 			}, false);
 		} catch (Exception e) {
-			org.scraper.model.Main.log.error("Failed to get sites");
+			MainModel.log.error("Failed to get sites");
 		}
 	}
 	
@@ -81,7 +82,7 @@ public class DataBase {
 		try {
 			pool.sendTask(() -> PHP.get(domains, PHPMethod.GET_DOMAINS), false);
 		} catch (Exception e) {
-			org.scraper.model.Main.log.error("Failed to get domains");
+			MainModel.log.error("Failed to get domains");
 		}
 	}
 	
@@ -89,7 +90,7 @@ public class DataBase {
 		try {
 			pool.sendTask(() -> PHP.get(clicks, PHPMethod.GET_CLICKS), false);
 		} catch (Exception e) {
-			org.scraper.model.Main.log.error("Failed to get sites 2");
+			MainModel.log.error("Failed to get sites 2");
 		}
 	}
 	
@@ -97,7 +98,7 @@ public class DataBase {
 		try {
 			pool.sendTask(() -> PHP.get(links, PHPMethod.GET_LINKS), false);
 		} catch (Exception e) {
-			org.scraper.model.Main.log.error("Failed to get sites 3");
+			MainModel.log.error("Failed to get sites 3");
 		}
 	}
 	
@@ -105,7 +106,7 @@ public class DataBase {
 		try {
 			pool.sendTask(() -> PHP.post(sites, PHPMethod.POST_SITES), false);
 		} catch (Exception e) {
-			org.scraper.model.Main.log.error("Failed to submit sites");
+			MainModel.log.error("Failed to submit sites");
 		}
 	}
 	
@@ -113,7 +114,7 @@ public class DataBase {
 		try {
 			pool.sendTask(() -> PHP.post(domains, PHPMethod.POST_DOMAINS), false);
 		} catch (Exception e) {
-			org.scraper.model.Main.log.error("Failed to submit domains");
+			MainModel.log.error("Failed to submit domains");
 		}
 	}
 	
@@ -121,7 +122,7 @@ public class DataBase {
 		try {
 			pool.sendTask(() -> PHP.post(clicks, PHPMethod.POST_CLICKS), false);
 		} catch (Exception e) {
-			org.scraper.model.Main.log.error("Failed to submit sites 2");
+			MainModel.log.error("Failed to submit sites 2");
 		}
 	}
 	

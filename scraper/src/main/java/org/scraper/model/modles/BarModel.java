@@ -1,30 +1,28 @@
 package org.scraper.model.modles;
 
-import org.scraper.model.Pool;
+import org.scraper.model.IPool;
+import org.scraper.model.MainPool;
 import org.scraper.model.managers.ProxyManager;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class BarModel {
 	
-	private Pool pool;
-	
 	private ProxyManager proxyManager;
 	
 	private AtomicBoolean checkOnFly;
 	
-	public BarModel(Pool pool, ProxyManager proxyManager, AtomicBoolean checkOnFly){
-		this.pool = pool;
+	public BarModel(ProxyManager proxyManager, AtomicBoolean checkOnFly){
 		this.proxyManager = proxyManager;
 		this.checkOnFly = checkOnFly;
 	}
 	
 	public Integer getThreads(){
-		return pool.getThreads();
+		return MainPool.getInstance().getThreads();
 	}
 	
 	public void setThreads(Integer threads){
-		pool.setThreads(threads);
+		MainPool.getInstance().setThreads(threads);
 	}
 	
 	public Integer getProxiesLimit(){

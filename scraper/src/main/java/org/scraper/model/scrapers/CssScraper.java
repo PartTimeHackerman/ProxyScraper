@@ -10,29 +10,23 @@ import org.scraper.model.web.Browser;
 import org.scraper.model.web.Site;
 
 import java.util.List;
-import java.util.concurrent.BlockingQueue;
 
 class CssScraper extends Scraper {
 	
-	private BlockingQueue<Browser> browsers;
+	protected Browser browser;
 	
-	CssScraper(BlockingQueue<Browser> browsers) {
+	{
 		type = ScrapeType.CSS;
-		this.browsers = browsers;
+	}
+	
+	CssScraper(Browser browser) {
+		this.browser = browser;
 	}
 	
 	@Override
 	public List<Proxy> scrape(Site site) {
 		String url = site.getAddress();
 		MainModel.log.info("CSS scraping {}", url);
-		
-		Browser browser;
-		try {
-			browser = browsers.take();
-		} catch (InterruptedException e) {
-			MainModel.log.fatal("CSS scraping {} failed!", url);
-			return proxy;
-		}
 		
 		WebDriver driver = browser.getBrowser();
 		
@@ -64,14 +58,7 @@ class CssScraper extends Scraper {
 		
 		String text = body.getText();
 		
-		try {
-			browsers.put(browser);
-		} catch (InterruptedException e) {
-			MainModel.log.fatal("CSS scraping {} failed!", url);
-			return proxy;
-		}
-		
-		proxy = RegexMatcher.match(text);
+		proxy = matcher.match(text);
 		return proxy;
 	}
 	

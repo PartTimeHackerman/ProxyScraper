@@ -3,7 +3,8 @@ package org.scraper.model.gather;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
-import org.scraper.model.Pool;
+import org.scraper.model.MainPool;
+import org.scraper.model.IPool;
 import org.scraper.model.modles.MainModel;
 import org.scraper.model.scrapers.ScrapeType;
 import org.scraper.model.web.BrowserVersion;
@@ -21,17 +22,24 @@ public class LinksGather extends Observable {
 	
 	private Integer depth;
 	
-	private Pool pool;
-	
-	public static void main(String[] args) {
-		LinksGather lg = new LinksGather(2, new Pool(2));
-		List<Site> sites = lg.gather(new Site("http://proxylist.hidemyass.com/", ScrapeType.UNCHECKED));
-		sites.forEach(site -> MainModel.log.info(site.getAddress()));
+	public LinksGather(Integer depth) {
+		this.depth = depth;
 	}
 	
-	public LinksGather(int depth, Pool pool) {
-		this.depth = depth;
-		this.pool = pool;
+	public LinksGather() {
+		this.depth = 2;
+	}
+	
+	public List<Site> gather(Site site) {
+		List<String> start = startGather(site);
+		List<Site> gathered = start
+				.stream()
+				.map(link -> new Site(link, ScrapeType.UNCHECKED))
+				.collect(Collectors.toList());
+		
+		setChanged();
+		notifyObservers(gathered);
+		return gathered;
 	}
 	
 	private List<String> startGather(Site site) {
@@ -106,38 +114,19 @@ public class LinksGather extends Observable {
 		return document;
 	}
 	
-	public List<Site> gather(Site site) {
-		List<String> start = startGather(site);
-		List<Site> gathered = start
-				.stream()
-				.map(link -> new Site(link, ScrapeType.UNCHECKED))
-				.collect(Collectors.toList());
-		
-		setChanged();
-		notifyObservers(gathered);
-		return gathered;
-	}
-	
 	public List<Site> gatherList(List<Site> sites) {
+		List<List<Site>> proxyList = new ArrayList<>();
 		
-		List<Callable<List<Site>>> calls = new ArrayList<>();
-		List<List<Site>> proxyList;
-		
-		sites.stream()
-				.map(site ->
-							 calls.add(() -> gather(site)))
-				.collect(Collectors.toList());
-		
-		proxyList = pool.sendTasks(calls);
+		sites.forEach(site ->
+							proxyList.add(gather(site)));
 		
 		List<Site> proxy = new ArrayList<>();
 		
 		proxyList.forEach(proxy::addAll);
-		
 		return proxy;
 	}
 	
-	public int getDepth() {
+	public Integer getDepth() {
 		return depth;
 	}
 	

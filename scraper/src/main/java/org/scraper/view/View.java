@@ -1,16 +1,15 @@
-package view;
+package org.scraper.view;
 
-import javafx.fxml.FXML;
-import javafx.scene.input.Clipboard;
-import javafx.scene.input.ClipboardContent;
-import javafx.scene.layout.VBox;
-import org.scraper.control.*;
 import javafx.application.Application;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Label;
+import javafx.scene.control.TabPane;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import org.scraper.control.*;
 import org.scraper.model.Interval;
 import org.scraper.model.modles.BarModel;
 import org.scraper.model.modles.MainModel;
@@ -22,9 +21,9 @@ public class View extends Application {
 	@FXML
 	private Label logBar;
 	
-	private static Clipboard clipboard = Clipboard.getSystemClipboard();
+	//private static Clipboard clipboard = Clipboard.getSystemClipboard();
 	
-	private static ClipboardContent content = new ClipboardContent();
+	//private static ClipboardContent content = new ClipboardContent();
 	
 	private static MainModel model;
 	
@@ -56,12 +55,12 @@ public class View extends Application {
 			model.setVarsInterval();
 			Interval.setInterval(100);
 			proxyModel = new ProxyModel(model.getChecker());
-			sitesModel = new SitesModel(model.getAssigner(), model.getScraper(), model.getGather(), model.getDataBase(), model.pool());
-			barModel = new BarModel(model.pool(), model.getProxyManager(), model.getCheckOnFly());
+			sitesModel = new SitesModel(model.getAssigner(), model.getScraper(), model.getGather(), model.getDataBase());
+			barModel = new BarModel(model.getProxyManager(), model.getCheckOnFly());
 			
 			model.getProxyManager().setModel(proxyModel);
-			
 			model.getSitesManager().setModel(sitesModel);
+			
 			launch();
 		}
 	}

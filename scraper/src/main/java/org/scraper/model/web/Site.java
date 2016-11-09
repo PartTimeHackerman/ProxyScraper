@@ -13,7 +13,7 @@ public class Site {
 	private Integer avgWorking = -1;
 	
 	public Site(String address, ScrapeType type) {
-		this.address = address;
+		setAddress(address);
 		this.type = type;
 	}
 	
@@ -37,6 +37,14 @@ public class Site {
 	public String getRoot() {
 		String domain = getDomain().getDomainString();
 		return address.contains("https") ? "https://" + domain : "http://" + domain;
+	}
+	
+	private void setAddress(String address){
+		this.address = address.substring(0,5).equals("https")
+				? address
+				: address.substring(0,4).equals("http")
+					? address
+					: "http://" + address + "/";
 	}
 	
 	@Override

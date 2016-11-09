@@ -46,7 +46,7 @@ class NormalScraper extends Scraper{
 				.map(Element::text)
 				.collect(Collectors.joining(""));
 		
-		proxy = RegexMatcher.match(txt);
+		proxy = matcher.match(txt);
 		return proxy;
 	}
 }

@@ -2,11 +2,14 @@ package org.scraper.model.scrapers;
 
 import org.bytedeco.javacpp.tesseract;
 import org.bytedeco.javacpp.tesseract.TessBaseAPI;
+import org.opencv.core.Core;
 import org.opencv.core.Mat;
 
 import static org.bytedeco.javacpp.lept.pixRead;
 
 public class OCR {
+	
+	
 
 	private TessBaseAPI api = new TessBaseAPI();
 

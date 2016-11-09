@@ -2,7 +2,7 @@ package org.scraper.model.managers;
 
 import org.scraper.model.modles.SitesModel;
 import org.scraper.model.scrapers.ScrapeType;
-import org.scraper.model.web.DataBase;
+import org.scraper.model.web.IDataBase;
 import org.scraper.model.web.Site;
 
 import java.util.ArrayList;
@@ -20,8 +20,8 @@ public class SitesManager {
 	
 	private SitesModel model;
 	
-	public SitesManager(DataBase dataBase) {
-		addSites(dataBase.getAllSites());
+	public SitesManager(IDataBase IDataBase) {
+		addSites(IDataBase.getAllSites());
 	}
 	
 	public void addSite(Site site) {

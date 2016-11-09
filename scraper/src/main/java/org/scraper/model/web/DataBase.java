@@ -8,36 +8,23 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class DataBase {
-	
-	private Pool pool;
+public class DataBase implements IDataBase {
 	
 	private List<Site> sites = new ArrayList<>();
 	
 	private List<Domain> domains = new ArrayList<>();
-	
-	private List<String> links = new ArrayList<>();
-	
-	private List<String> clicks = new ArrayList<>();
 	
 	
 	private List<Site> newSites = Collections.synchronizedList(new ArrayList<>());
 	
 	private List<Domain> newDomains = Collections.synchronizedList(new ArrayList<>());
 	
-	private List<String> clicked = Collections.synchronizedList(new ArrayList<>());
-	
 	private Boolean gotSites = false;
 	
-	
-	public DataBase(Pool pool) {
-		this.pool = pool;
-	}
-	
+	@Override
 	public void getAll() {
-		getAll(sites, domains, clicks, links);
-		//TODO wait for database to dl what's needed
-		while (!gotSites){
+		getAll(sites, domains);
+		while (!gotSites) {
 			try {
 				Thread.sleep(500);
 			} catch (InterruptedException e) {
@@ -46,107 +33,56 @@ public class DataBase {
 		}
 	}
 	
-	private void getAll(List<Site> sites, List<Domain> domains, List<String> clicks, List<String> links) {
+	private void getAll(List<Site> sites, List<Domain> domains) {
 		getSites(sites);
 		getDomains(domains);
-		getClicks(clicks);
-		getLinks(links);
 	}
 	
+	@Override
 	public void postNew() {
-		postAll(newSites, newDomains, clicked);
+		postAll(newSites, newDomains);
 	}
 	
+	@Override
 	public void postAll() {
-		postAll(sites, domains, clicked);
+		postAll(sites, domains);
 	}
 	
-	private void postAll(List<Site> sites, List<Domain> domains, List<String> clicks) {
+	private void postAll(List<Site> sites, List<Domain> domains) {
 		postSites(sites);
 		postDomains(domains);
-		postClicks(clicks);
 	}
 	
-	private void getSites(List<Site> sites) {
-		try {
-			pool.sendTask(() -> {
-				PHP.get(sites, PHPMethod.GET_SITES);
-				gotSites = true;
-			}, false);
-		} catch (Exception e) {
-			MainModel.log.error("Failed to get sites");
-		}
+	protected void getSites(List<Site> sites) {
+		PHPConnection.get(sites, PHPMethod.GET_SITES);
+		gotSites = true;
 	}
 	
-	private void getDomains(List<Domain> domains) {
-		try {
-			pool.sendTask(() -> PHP.get(domains, PHPMethod.GET_DOMAINS), false);
-		} catch (Exception e) {
-			MainModel.log.error("Failed to get domains");
-		}
+	protected  void getDomains(List<Domain> domains) {
+		PHPConnection.get(domains, PHPMethod.GET_DOMAINS);
 	}
 	
-	private void getClicks(List<String> clicks) {
-		try {
-			pool.sendTask(() -> PHP.get(clicks, PHPMethod.GET_CLICKS), false);
-		} catch (Exception e) {
-			MainModel.log.error("Failed to get sites 2");
-		}
-	}
-	
-	private void getLinks(List<String> links) {
-		try {
-			pool.sendTask(() -> PHP.get(links, PHPMethod.GET_LINKS), false);
-		} catch (Exception e) {
-			MainModel.log.error("Failed to get sites 3");
-		}
-	}
-	
+	@Override
 	public void postSites(List<Site> sites) {
-		try {
-			pool.sendTask(() -> PHP.post(sites, PHPMethod.POST_SITES), false);
-		} catch (Exception e) {
-			MainModel.log.error("Failed to submit sites");
-		}
+		PHPConnection.post(sites, PHPMethod.POST_SITES);
 	}
 	
-	private void postDomains(List<Domain> domains) {
-		try {
-			pool.sendTask(() -> PHP.post(domains, PHPMethod.POST_DOMAINS), false);
-		} catch (Exception e) {
-			MainModel.log.error("Failed to submit domains");
-		}
+	protected  void postDomains(List<Domain> domains) {
+		PHPConnection.post(domains, PHPMethod.POST_DOMAINS);
 	}
 	
-	private void postClicks(List<String> clicks) {
-		try {
-			pool.sendTask(() -> PHP.post(clicks, PHPMethod.POST_CLICKS), false);
-		} catch (Exception e) {
-			MainModel.log.error("Failed to submit sites 2");
-		}
-	}
-	
+	@Override
 	public List<Site> getAllSites() {
 		return ListUtils.sum(sites, newSites);
 	}
 	
-	public List<String> getLinks() {
-		return links;
-	}
-	
-	public List<String> getClicks() {
-		return clicks;
-	}
-	
-	public List<String> getClicked() {
-		return clicked;
-	}
-	
+	@Override
 	public List<Domain> getAllDomains() {
 		return ListUtils.sum(domains, newDomains);
 	}
 	
 	
+	@Override
 	public void addSite(Site site) {
 		if (!sites.contains(site)) {
 			sites.add(site);
@@ -154,6 +90,7 @@ public class DataBase {
 		}
 	}
 	
+	@Override
 	public void addDomain(Domain domain) {
 		if (!domains.contains(domain)) {
 			domains.add(domain);

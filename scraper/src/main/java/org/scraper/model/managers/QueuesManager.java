@@ -1,118 +1,55 @@
 package org.scraper.model.managers;
 
-import org.scraper.model.Pool;
-import org.scraper.model.modles.MainModel;
 import org.scraper.model.scrapers.OCR;
 import org.scraper.model.web.Browser;
 
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.Callable;
-
-public class QueuesManager {
+public class QueuesManager{
 	
-	private Pool pool;
+	private static QueuesManager queuesManager;
 	
+	private Queue<Browser> browserQueue;
 	
-	private int browsersNumber;
+	private Queue<OCR> ocrQueue;
 	
-	private BlockingQueue<Browser> browsersQueue;
+	private static Integer browsers = 1, ocrs = 1;
 	
-	
-	private int ocrNumber;
-	
-	private BlockingQueue<OCR> ocrQueue;
-	
-	public QueuesManager(Pool pool, int browsersNumber, int ocrNumber){
-		
-		this.pool = pool;
-		setBrowsersNumber(browsersNumber);
-		setOcrNumber(ocrNumber);
-		
-		browsersQueue = new ArrayBlockingQueue<>(100);
-		ocrQueue = new ArrayBlockingQueue<>(ocrNumber);
-		
-		makeBrowsers();
-		makeOCRs();
+	private QueuesManager(Integer browsers, Integer ocrs){
+		browserQueue = new BrowserQueue(browsers);
+		ocrQueue = new OcrQueue(ocrs);
 	}
 	
-	private void makeBrowsers(){
-		Callable<?> makeBrowsers = () -> {
-			Browser browser = new Browser();
-			browsersQueue.put(browser);
-			return null;
-		};
-		
-		try {
-			pool.sendTask(makeBrowsers, false, browsersNumber);
-			
-		} catch (Exception e) {
-			MainModel.log.error("Failed to load browsers");
+	public static QueuesManager getInstance(){
+		if (queuesManager == null){
+			synchronized (QueuesManager.class){
+				if(queuesManager == null)
+					queuesManager = new QueuesManager(browsers, ocrs);
+			}
 		}
+		return queuesManager;
 	}
 	
-	private void makeOCRs(){
-		Callable<?> makeOCR = () -> {
-			OCR ocr = new OCR();
-			ocrQueue.put(ocr);
-			return null;
-		};
-		
-		try {
-			pool.sendTask(makeOCR, false, ocrNumber);
-		} catch (Exception e) {
-			MainModel.log.error("Failed to load OCR");
-		}
+	public static void setBrowsers(Integer browsers){
+		QueuesManager.browsers = browsers;
+		if(queuesManager != null)
+			queuesManager.browserQueue.setSize(browsers);
 	}
 	
-	public BlockingQueue<Browser> getBrowsersQueue() {
-		return browsersQueue;
+	public static void setOcrs(Integer ocrs){
+		QueuesManager.ocrs = ocrs;
+		if(queuesManager != null)
+			queuesManager.ocrQueue.setSize(ocrs);
 	}
 	
-	public BlockingQueue<OCR> getOcrQueue() {
+	public void shutdownAll(){
+		browserQueue.shutdownAll();
+		ocrQueue.shutdownAll();
+	}
+	
+	public Queue<Browser> getBrowserQueue() {
+		return browserQueue;
+	}
+	
+	public Queue<OCR> getOcrQueue() {
 		return ocrQueue;
-	}
-	
-	public void setBrowsersNumber(int browsersNumber) {
-		this.browsersNumber = browsersNumber <= 0 ? 1 : browsersNumber;
-	}
-	
-	public void setOcrNumber(int ocrNumber) {
-		this.ocrNumber = ocrNumber <= 0 ? 1 : ocrNumber;
-	}
-	
-	public int getBrowsersNumber() {
-		return browsersNumber;
-	}
-	
-	public int getOcrNumber() {
-		return ocrNumber;
-	}
-	
-	public void shutdownAll() {
-		shutdownOcrs();
-		shutdownBrowsers();
-	}
-	
-	public void shutdownBrowsers() {
-		for (int i = 0; i < browsersQueue.size()-1 ; i++) {
-				pool.sendTask(() -> {
-					try {
-						browsersQueue.take().shutdown();
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-				}, false);
-		}
-		try {
-			browsersQueue.take().shutdown();
-			Thread.sleep(500);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	public void shutdownOcrs() {
-		ocrQueue.forEach(OCR::shutdown);
 	}
 }

@@ -19,25 +19,17 @@ public class Browser {
 	
 	private WebDriver browser;
 	
-	
-	public static void main(String... args) {
-		Browser br = new Browser();
-		//br.click("http://tell-my-ip.com/","68.67.80.202:41271","socks");
-		//"http://aruljohn.com/details.php"
-		br.getBrowser().get("http://aruljohn.com/details.php");//"https://www.whatismybrowser.com/detect/is-flash-installed");
-		Object result = ((PhantomJSDriver) br.getBrowser()).executeScript("console.warn('should log return');" + "return navigator.mimeTypes['application/x-shockwave-flash'];");
-		Object result2 = ((PhantomJSDriver) br.getBrowser()).executeScript("console.warn('should log return');" + "return navigator.javaEnabled();");
-		MainModel.log.info(result);
-		br.getBrowser().quit();
+	public Browser() {
+		setUp();
 	}
 	
-	public Browser() {
+	protected void setUp(){
 		browser = getBrowser(null, BrowserVersion.random(), "p", true);
 	}
 	
 	public void changeProxy(Proxy proxy) {
 		if (proxy == null) {
-			String js = "phantom.setProxy('',0);";
+			String js = "phantom.setUpProxy('',0);";
 			((PhantomJSDriver) browser).executePhantomJS(js);
 			return;
 		}
@@ -45,12 +37,12 @@ public class Browser {
 		String ip = proxy.getIp(), port = "" + proxy.getPort();
 		Proxy.Type type = proxy.getType();
 		
-		String js = "phantom.setProxy('" + ip + "'," + port + ",'" + (type == Proxy.Type.SOCKS ? "socks5" : "http") + "');";
+		String js = "phantom.setUpProxy('" + ip + "'," + port + ",'" + (type == Proxy.Type.SOCKS ? "socks5" : "http") + "');";
 		
 		((PhantomJSDriver) browser).executePhantomJS(js);
 	}
 	
-	public WebDriver getBrowser(String proxy, BrowserVersion version, String browser, Boolean debug) {
+	private WebDriver getBrowser(String proxy, BrowserVersion version, String browser, Boolean debug) {
 		
 		if (!debug) {
 			java.util.logging.Logger.getLogger(PhantomJSDriverService.class.getName()).setLevel(Level.OFF);
@@ -69,6 +61,7 @@ public class Browser {
 			capabilities.setCapability(CapabilityType.PROXY, browserProxy);
 		}
 		
+		capabilities.setCapability(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, System.getProperty("user.dir")+"\\phantomjs.exe");
 		capabilities.setCapability(PhantomJSDriverService.PHANTOMJS_PAGE_CUSTOMHEADERS_PREFIX + "Referer", "https://www.facebook.com/");
 		capabilities.setCapability(PhantomJSDriverService.PHANTOMJS_PAGE_CUSTOMHEADERS_PREFIX + "Accept-Language", "fr-FR,fr;q=0.8,en-US;q=0.6,en;q=0.4");
 		capabilities.setCapability(PhantomJSDriverService.PHANTOMJS_PAGE_CUSTOMHEADERS_PREFIX + "Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");

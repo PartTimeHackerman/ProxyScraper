@@ -14,14 +14,10 @@ public class GatheredChecker {
 		this.scraper = scraper;
 	}
 	
-	public GatheredChecker(int size) {
-		scraper = new ProxyScraper(size);
-	}
-	
 	public List<Site> check(List<Site> sites) {
 		List<Site> checked = sites.stream()
 				.map(site ->
-							 scraper.scrapeConcurrent(site, false).size() > 0 ? site : null)
+							 scraper.scrape(site).size() > 0 ? site : null)
 				.filter(site -> site != null)
 				.collect(Collectors.toList());
 

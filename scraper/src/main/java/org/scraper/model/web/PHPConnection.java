@@ -3,6 +3,7 @@ package org.scraper.model.web;
 import com.google.gson.Gson;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
+import org.scraper.model.modles.MainModel;
 import org.scraper.model.scrapers.ScrapeType;
 
 import java.io.IOException;
@@ -11,7 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 
 
-public class PHP {
+public class PHPConnection {
 
 	public static final String URL = "http://absolutelydisgusting.ml/prx.php";
 
@@ -74,7 +75,7 @@ public class PHP {
 	}
 
 
-	public static void phpPost(PHPMethod posting, String json) {
+	private static void phpPost(PHPMethod posting, String json) {
 		try {
 			Jsoup.connect(URL)
 					.timeout(20000)
@@ -87,34 +88,40 @@ public class PHP {
 		}
 	}
 
-	public static String phpGet(PHPMethod getting) {
-		String getted = "";
+	public static String phpGet(PHPMethod method) {
+		String parsed = "[]";
 		try {
 			Connection.Response response = Jsoup.connect(URL)
 					.method(Connection.Method.POST)
-					.data(getting.cmd(), "")
+					.data(method.cmd(), "")
 					.execute();
-			getted = response.parse().text();
+			parsed = response.parse().text();
 		} catch (IOException e) {
-			e.printStackTrace();
+			MainModel.log.fatal("Can't connect to database!");
 		}
-		return getted;
+		return parsed;
 	}
 
 
-	public static <T> void get(java.util.Collection<T> list, PHPMethod method) {
+	public static void get(java.util.Collection list, PHPMethod method) {
 		list.clear();
 		
 		switch (method) {
 			case GET_SITES:
-				list.addAll(new ArrayList<>(Arrays.asList((T[]) new Gson().fromJson(phpGet(method), Site[].class))));
+				list.addAll(new ArrayList<>(Arrays.asList(new Gson().fromJson(phpGet(method), Site[].class))));
 				break;
 			case GET_DOMAINS:
-				list.addAll(new ArrayList<>(Arrays.asList((T[]) new Gson().fromJson(phpGet(method), Domain[].class))));
+				list.addAll(new ArrayList<>(Arrays.asList(new Gson().fromJson(phpGet(method), Domain[].class))));
 				break;
 			default:
-				list.addAll(new ArrayList<>(Arrays.asList((T[]) new Gson().fromJson(phpGet(method), String[].class))));
+				list.addAll(new ArrayList<>(Arrays.asList(new Gson().fromJson(phpGet(method), String[].class))));
 
 		}
 	}
+	
+	/*private static List getList(PHPMethod method, Class clazz){
+		return new ArrayList<>(Arrays.asList(new Gson().fromJson(phpGet(method), Site[].class)));
+	}*/
+	
+	
 }

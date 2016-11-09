@@ -1,12 +1,12 @@
 package org.scraper.model;
 
-import org.scraper.model.checker.Connection;
+import org.scraper.model.checker.IConnection;
 
 public class Proxy {
 	
 	private String ip;
 	
-	private int port;
+	private Integer port;
 	
 	private String ipPort;
 	
@@ -20,7 +20,7 @@ public class Proxy {
 	
 	private boolean working;
 	
-	public Proxy(String ip, int port) {
+	public Proxy(String ip, Integer port) {
 		setIp(ip);
 		setPort(port);
 		setIpPort(ip + ":" + port);
@@ -32,7 +32,7 @@ public class Proxy {
 		this(ipPort.split(":")[0], Integer.parseInt(ipPort.split(":")[1]));
 	}
 	
-	public Proxy setProxy(Connection connection) {
+	public Proxy setUpProxy(IConnection connection) {
 		setType(connection.getType());
 		setAnonymity(connection.getAnonymity());
 		setSpeed(connection.getTime());
@@ -59,7 +59,7 @@ public class Proxy {
 		this.ip = ip;
 	}
 	
-	public int getPort() {
+	public Integer getPort() {
 		return port;
 	}
 	
@@ -125,7 +125,7 @@ public class Proxy {
 	
 	
 	public enum Type {
-		ALL, //TODO this is for view only, encapsulate it or somerhing
+		ALL, //TODO this is for org.scraper.view only, encapsulate it or somerhing
 		HTTP,
 		HTTPS,
 		SOCKS

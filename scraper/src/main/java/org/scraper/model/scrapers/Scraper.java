@@ -3,7 +3,6 @@ package org.scraper.model.scrapers;
 import org.scraper.model.Proxy;
 import org.scraper.model.web.Site;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,23 +12,23 @@ public abstract class Scraper implements Comparable<Scraper> {
 	
 	protected List<Proxy> proxy = new ArrayList<>();
 	
-	public abstract List<Proxy> scrape(Site site);
+	protected IProxyMatcher matcher = new ByNextMatcher();
 	
-	public Integer getScrapedNum() {
-		return proxy.size();
-	}
+	public abstract List<Proxy> scrape(Site site);
 	
 	public List<Proxy> getScraped() {
 		return proxy;
 	}
 	
-	
 	public ScrapeType getType() {
 		return type;
 	}
 	
-	
+	private Integer getScrapedNum() {
+		return proxy.size();
+	}
 	@Override
+	
 	public int compareTo(Scraper o){
 		int compare = getScrapedNum() - o.getScrapedNum();
 		if(compare==0 && getType().ordinal() > o.getType().ordinal()) return -1;
@@ -37,4 +36,7 @@ public abstract class Scraper implements Comparable<Scraper> {
 		return compare;
 	}
 	
+	public void setMatcher(IProxyMatcher matcher) {
+		this.matcher = matcher;
+	}
 }

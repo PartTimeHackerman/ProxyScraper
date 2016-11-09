@@ -7,13 +7,13 @@ import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.scraper.model.Proxy;
-import org.scraper.model.checker.ProxyChecker;
+import org.scraper.model.checker.IProxyChecker;
 
 import java.util.List;
 
 public class ProxyModel {
 	
-	private ProxyChecker checker;
+	private IProxyChecker checker;
 	
 	private ObservableList<Proxy> visible = FXCollections.observableArrayList();
 	
@@ -29,7 +29,7 @@ public class ProxyModel {
 	
 	private Proxy.Anonymity visibleAnonymity = Proxy.Anonymity.ALL;
 	
-	public ProxyModel(ProxyChecker checker) {
+	public ProxyModel(IProxyChecker checker) {
 		this.checker = checker;
 	}
 	

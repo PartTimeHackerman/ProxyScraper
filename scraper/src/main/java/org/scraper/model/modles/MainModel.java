@@ -5,29 +5,25 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.opencv.core.Core;
 import org.scraper.model.*;
-import org.scraper.model.managers.AssignManager;
-import org.scraper.model.web.ConnectionChecker;
+import org.scraper.model.managers.AssignManagerConcurrent;
 import org.scraper.model.checker.ProxyChecker;
-import org.scraper.model.managers.ProxyManager;
-import org.scraper.model.managers.QueuesManager;
-import org.scraper.model.managers.SitesManager;
+import org.scraper.model.checker.ProxyCheckerConcurrent;
+import org.scraper.model.gather.LinkGatherConcurrent;
+import org.scraper.model.managers.*;
+import org.scraper.model.scrapers.ProxyScraperConcurrent;
+import org.scraper.model.web.ConnectionChecker;
+import org.scraper.model.checker.IProxyChecker;
 import org.scraper.model.scrapers.ProxyScraper;
 import org.scraper.model.scrapers.ScrapersFactory;
 import org.scraper.model.gather.LinksGather;
-import org.scraper.model.web.DataBase;
+import org.scraper.model.web.DataBaseConcurrent;
+import org.scraper.model.web.IDataBase;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class MainModel {
 	
-	private Pool globalPool;
-	
-	private Pool sitesPool;
-	
-	private QueuesManager queuesManager;
-	
-	
-	private DataBase dataBase;
+	private IDataBase dataBase;
 	
 	private ProxyManager proxyManager;
 	
@@ -54,33 +50,27 @@ public class MainModel {
 	public static final Logger log = LogManager.getLogger(MainModel.class.getSimpleName());
 	
 	
-	public static void main(String[] args) {
-		MainModel m = new MainModel(100, 5000, 0, false, false);
-	}
-	
-	public MainModel(int threads, int timeout, int limit, Boolean check, boolean click) {
-		//OpenCV lib
-		String sysArch = System.getProperty("os.arch");
-		sysArch = sysArch.substring(sysArch.length() - 2);
-		System.loadLibrary(Core.NATIVE_LIBRARY_NAME + "x" + sysArch);
+	public MainModel(int threads, Integer timeout, Integer limit, Boolean check) {
 		
 		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
 			log.info("SHUTDOWN HOOK!!!");
 			dataBase.postAll();
-			queuesManager.shutdownAll();
+			QueuesManager.getInstance().shutdownAll();
 		}));
 		
+		if(!ConnectionChecker.hasConnection())
+			MainModel.log.fatal("NO INTERNET CONNECTION!");
+		
+		MainPool.setThreadsStatic(threads);
+		
+		QueuesManager.setBrowsers(threads / 10);
+		QueuesManager.setOcrs(threads / 10);
 		
 		setCheckOnFly(check);
 		
-		globalPool = new Pool(threads);
-		sitesPool = new Pool(10);
-		
-		dataBase = new DataBase(globalPool);
+		dataBase = new DataBaseConcurrent();
 		dataBase.getAll();
 		
-		
-		queuesManager = new QueuesManager(globalPool, threads / 10, threads / 10);
 		
 		proxyManager = new ProxyManager(limit);
 		
@@ -88,35 +78,42 @@ public class MainModel {
 		
 		ip = ConnectionChecker.getIp();
 		
-		scrapersFactory = new ScrapersFactory(globalPool, queuesManager.getBrowsersQueue(), queuesManager.getOcrQueue());
+		scrapersFactory = new ScrapersFactory();
 		
 		
-		checker = new ProxyChecker(globalPool, timeout, getProxyManager().getAll());
+		checker = new ProxyCheckerConcurrent(timeout, getProxyManager().getAll());
 		
-		assigner = new AssignManager(scrapersFactory, checker, globalPool, checkOnFly, dataBase.getAllDomains());
+		assigner = new AssignManagerConcurrent(scrapersFactory, checker, checkOnFly, dataBase.getAllDomains());
 		
-		scraper = new ProxyScraper(scrapersFactory, globalPool, dataBase.getAllDomains());
+		scraper = new ProxyScraperConcurrent(scrapersFactory);
 		scraper.setAssigner(assigner);
 		
 		
-		gather = new LinksGather(2, globalPool);
+		gather = new LinkGatherConcurrent();
 		
-		observer = new GlobalObserver(proxyManager, sitesManager, assigner, checker, checkOnFly);
+		observer = GlobalObserver.getInstance();
+		observer.setAssignManager(assigner);
+		observer.setCheckOnFly(checkOnFly);
+		observer.setProxyChceker(checker);
+		observer.setSitesManager(sitesManager);
+		observer.setProxyManager(proxyManager);
+		
 		checker.addObserver(observer);
 		scraper.addObserver(observer);
 		assigner.addObserver(observer);
 		gather.addObserver(observer);
 		
-		MainModel.log.info("Initialized");
 		
-		synchronized (globalPool) {
-			while (!(globalPool.getPool().getActiveCount() == 0))
-				globalPool.notify();
+		synchronized (MainPool.getInstance()) {
+			while (!(MainPool.getInstance().getExecutor().getActiveCount() == 0))
+				MainPool.getInstance().notify();
+			
 		}
+		MainModel.log.info("Initialized");
 	}
 	
 	public MainModel() {
-		this(100, 3000, 0, false, false);
+		this(100, 3000, 0, false);
 	}
 	
 	public void setCheckOnFly(boolean checkOnFly) {
@@ -149,15 +146,7 @@ public class MainModel {
 		return ip;
 	}
 	
-	public Pool pool() {
-		return globalPool;
-	}
-	
-	public Pool getSitesPool() {
-		return sitesPool;
-	}
-	
-	public DataBase getDataBase() {
+	public IDataBase getDataBase() {
 		return dataBase;
 	}
 	
@@ -165,11 +154,7 @@ public class MainModel {
 		return scrapersFactory;
 	}
 	
-	public QueuesManager getQueuesManager() {
-		return queuesManager;
-	}
-	
-	public ProxyChecker getChecker() {
+	public IProxyChecker getChecker() {
 		return checker;
 	}
 	
@@ -198,14 +183,14 @@ public class MainModel {
 	}
 	
 	public void setVarsInterval() {
-		Interval.addFunc("threads", () -> globalPool.getThreads() - globalPool.getPool().getActiveCount());
-		Interval.addFunc("threadsMax", () -> globalPool.getThreads());
+		Interval.addFunc("threads", () -> MainPool.getInstance().getThreads() - MainPool.getInstance().getActiveThreads());
+		Interval.addFunc("threadsMax", () -> MainPool.getInstance().getThreads());
 		
-		Interval.addFunc("browsers", () -> queuesManager.getBrowsersQueue().size());
-		Interval.addFunc("browsersMax", () -> queuesManager.getBrowsersNumber());
+		Interval.addFunc("browsers", () -> QueuesManager.getInstance().getBrowserQueue().remainingCapacity());
+		Interval.addFunc("browsersMax", () -> QueuesManager.getInstance().getBrowserQueue().getSize());
 		
-		Interval.addFunc("ocrs", () -> queuesManager.getOcrQueue().size());
-		Interval.addFunc("ocrsMax", () -> queuesManager.getOcrNumber());
+		Interval.addFunc("ocrs", () -> QueuesManager.getInstance().getOcrQueue().remainingCapacity());
+		Interval.addFunc("ocrsMax", () -> QueuesManager.getInstance().getOcrQueue().getSize());
 	}
 	
 	public java.util.concurrent.atomic.AtomicBoolean getCheckOnFly() {

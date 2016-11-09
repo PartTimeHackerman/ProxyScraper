@@ -1,7 +1,7 @@
 package org.scraper.model.assigner;
 
 import org.scraper.model.Proxy;
-import org.scraper.model.checker.ProxyChecker;
+import org.scraper.model.checker.IProxyChecker;
 import org.scraper.model.web.Site;
 
 import java.util.List;
@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 public class AvgAssigner {
 	
-	public static void assignAvg(Site site, List<Proxy> proxies, ProxyChecker checker){
+	public static void assignAvg(Site site, List<Proxy> proxies, IProxyChecker checker){
 		assignAvgProxies(site, proxies.size());
 		
 		if (checker != null){
@@ -39,7 +39,7 @@ public class AvgAssigner {
 		site.setAvgWorking(avgWorking);
 	}
 	
-	private static double workingPrecent(List<Proxy> proxies, ProxyChecker checker) {
+	private static double workingPrecent(List<Proxy> proxies, IProxyChecker checker) {
 		int all = proxies.size();
 		int workingSize = checker.checkProxies(proxies)
 				.stream()

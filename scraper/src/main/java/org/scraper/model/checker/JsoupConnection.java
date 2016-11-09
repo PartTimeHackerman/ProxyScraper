@@ -7,7 +7,7 @@ import org.scraper.model.web.BrowserVersion;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 
-public class Connection {
+public class JsoupConnection implements IConnection {
 	
 	private long time;
 	
@@ -19,12 +19,13 @@ public class Connection {
 	
 	protected Proxy.Type type;
 	
-	public Connection(Proxy.Type type, Proxy proxy){
+	public JsoupConnection(Proxy.Type type, Proxy proxy){
 		this.type = type;
 		this.proxy = proxy;
 		netProxy = getNetProxy(type);
 	}
 	
+	@Override
 	public boolean connect(String url, Integer timeout) {
 		try {
 			long connectionTime = System.currentTimeMillis();
@@ -59,6 +60,7 @@ public class Connection {
 		return new java.net.Proxy(prxType, new InetSocketAddress(proxy.getIp(), proxy.getPort()));
 	}
 	
+	@Override
 	public String getTextContent() {
 		try {
 			return response.parse().text();
@@ -68,9 +70,10 @@ public class Connection {
 	}
 	
 	
+	@Override
 	public Proxy.Anonymity getAnonymity() {
 			String text = getTextContent();
-			String anonymity ="";
+			String anonymity = "";
 			if(text.contains("|"))
 			 anonymity = text.split("\\|")[1];
 			switch (anonymity) {
@@ -89,10 +92,12 @@ public class Connection {
 			}
 	}
 	
+	@Override
 	public long getTime() {
 		return time;
 	}
 	
+	@Override
 	public Proxy.Type getType() {
 		return type;
 	}

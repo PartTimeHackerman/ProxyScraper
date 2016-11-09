@@ -3,11 +3,12 @@ package org.scraper.model.modles;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.scraper.model.Pool;
+import org.scraper.model.IPool;
+import org.scraper.model.MainPool;
 import org.scraper.model.managers.AssignManager;
 import org.scraper.model.gather.LinksGather;
 import org.scraper.model.scrapers.ProxyScraper;
-import org.scraper.model.web.DataBase;
+import org.scraper.model.web.IDataBase;
 import org.scraper.model.web.Site;
 
 import java.util.ArrayList;
@@ -21,18 +22,15 @@ public class SitesModel {
 	
 	private LinksGather gather;
 	
-	private DataBase dataBase;
-	
-	private Pool pool;
+	private IDataBase IDataBase;
 	
 	private ObservableList<Site> visible = FXCollections.observableArrayList();
 	
-	public SitesModel(AssignManager assigner, ProxyScraper scraper, LinksGather gather, DataBase dataBase, Pool pool) {
+	public SitesModel(AssignManager assigner, ProxyScraper scraper, LinksGather gather, IDataBase IDataBase) {
 		this.assigner = assigner;
 		this.scraper = scraper;
 		this.gather = gather;
-		this.dataBase = dataBase;
-		this.pool = pool;
+		this.IDataBase = IDataBase;
 	}
 	
 	public void addSite(Site site){
@@ -48,10 +46,10 @@ public class SitesModel {
 	}
 	
 	public void check(List<Site> sites) {
-		pool.sendTask(() ->{
+		MainPool.getInstance().sendTask(() ->{
 		assigner.assignList(sites);
-		dataBase.postSites(new ArrayList<>(sites));
-		},false);
+		IDataBase.postSites(new ArrayList<>(sites));
+		}, false);
 	}
 	
 	public void gather(List<Site> sites, Integer depth){

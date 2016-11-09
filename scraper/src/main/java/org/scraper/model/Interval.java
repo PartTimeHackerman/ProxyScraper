@@ -4,24 +4,24 @@ import rx.Observable;
 import rx.Subscriber;
 import rx.functions.Action1;
 import rx.subjects.BehaviorSubject;
-import rx.subjects.PublishSubject;
-import rx.subjects.Subject;
 
-import java.util.*;
-import java.util.concurrent.BlockingQueue;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.Callable;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 public class Interval {
 	
-	final static private HashMap<String, Callable> vars = new HashMap<>();
-	final static private HashMap<String, List<Action1>> actions = new HashMap<>();
-	final static private BehaviorSubject<Long> subject = BehaviorSubject.create(500L);
+	private static Long interval = 500L;
+	private static final HashMap<String, Callable> vars = new HashMap<>();
+	private static final HashMap<String, List<Action1>> actions = new HashMap<>();
+	private static final BehaviorSubject<Long> subject = BehaviorSubject.create(interval);
+	
 	
 	static {
 		subject.switchMap(inter ->
-								  Observable.interval(inter, TimeUnit.MILLISECONDS)
+								  Observable.interval(0, inter, TimeUnit.MILLISECONDS)
 										  .publish()
 										  .refCount())
 				.subscribe(getSubscriber());
@@ -29,6 +29,11 @@ public class Interval {
 	
 	public static void setInterval(long interval) {
 		subject.onNext(interval);
+		Interval.interval = interval;
+	}
+	
+	public static Long getInterval(){
+		return interval;
 	}
 	
 	private static <T> Subscriber<T> getSubscriber(){

@@ -7,9 +7,9 @@ import org.scraper.model.web.Site;
 import java.util.ArrayList;
 import java.util.List;
 
-public class NullScraper extends Scraper {
+class NullScraper extends Scraper {
 	
-	public NullScraper(){
+	NullScraper(){
 		type = ScrapeType.BLACK;
 	}
 	

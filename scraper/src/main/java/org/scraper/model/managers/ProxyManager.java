@@ -2,8 +2,8 @@ package org.scraper.model.managers;
 
 import org.scraper.model.Proxy;
 import org.scraper.model.modles.ProxyModel;
-import org.scraper.model.scrapers.RegexMatcher;
-import org.scraper.model.web.DataBase;
+import org.scraper.model.scrapers.ByNextMatcher;
+import org.scraper.model.scrapers.IProxyMatcher;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,6 +22,8 @@ public class ProxyManager {
 	private String proxyPattern = "[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}.*[0-9]";
 	
 	private ProxyModel model;
+	
+	private IProxyMatcher matcher = new ByNextMatcher();
 	
 	public ProxyManager(int limit) {
 		setLimit(limit);
@@ -43,7 +45,7 @@ public class ProxyManager {
 	public void addProxy(String proxyString) {
 		if (!proxyString.matches(proxyPattern)) return;
 		
-		Proxy proxy = RegexMatcher.matchOne(proxyString);
+		Proxy proxy = matcher.matchOne(proxyString);
 		proxy = getIfPresent(proxy);
 		addProxy(proxy);
 	}

@@ -8,28 +8,34 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class RegexMatcher {
+public class ByNextMatcher implements IProxyMatcher {
 	
-	private static Pattern ipPattern = Pattern.compile("[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}");
-	private static Pattern portPattern = Pattern.compile("[0-9]{1,5}");
-	private static Pattern ipPortPattern = Pattern.compile(ipPattern + ":" + portPattern);
-	
-	
-	public static List<Proxy> match(String text) {
+	@Override
+	public List<Proxy> match(String text) {
 		List<Proxy> proxy;
 		
-		proxy = patternMatch(text, ipPattern, portPattern);
-		if (proxy.size() < 5)
-			proxy = patternMatch(text, portPattern, ipPattern);
+		proxy = patternMatch(text, false);
+		if (proxy.size() < 1)
+			proxy = patternMatch(text, true);
 		
 		return proxy;
 	}
 	
-	private static List<Proxy> patternMatch(String text, Pattern firstPattern, Pattern secondPattern) {
+	private List<Proxy> patternMatch(String text, boolean reversed) {
 		List<Proxy> proxy = new ArrayList<>();
 		List<String> ips = new ArrayList<>();
-		boolean reversed = false;
-		if (firstPattern == portPattern) reversed = true;
+		
+		Pattern firstPattern;
+		Pattern secondPattern;
+		
+		if(reversed){
+			firstPattern = portPattern;
+			secondPattern = ipPattern;
+		}
+		else {
+			firstPattern = ipPattern;
+			secondPattern = portPattern;
+		}
 		
 		int maxDistance = 10;
 		
@@ -63,7 +69,15 @@ public class RegexMatcher {
 		return proxy;
 	}
 	
-	public static Proxy matchOne(String text){
-		return patternMatch(text, ipPattern, portPattern).get(0);
+	@Override
+	public  Proxy matchOne(String text) {
+		List<Proxy> proxies;
+		if (!(proxies = patternMatch(text, false)).isEmpty()) {
+			return proxies.get(0);
+		} else {
+			if (!(proxies = patternMatch(text, true)).isEmpty())
+				return proxies.get(0);
+		}
+		return null;
 	}
 }

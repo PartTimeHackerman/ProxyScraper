@@ -1,9 +1,8 @@
 package org.scraper.model.scrapers;
 
-import org.scraper.model.Pool;
+import org.scraper.model.IPool;
 import org.scraper.model.Proxy;
 import org.scraper.model.managers.AssignManager;
-import org.scraper.model.web.Domain;
 import org.scraper.model.web.Site;
 
 import java.util.ArrayList;
@@ -17,24 +16,10 @@ public class ProxyScraper extends Observable {
 	
 	private ScrapersFactory scrapersFactory;
 	
-	private Pool pool;
-	
 	private AssignManager assigner;
 	
-	private List<Domain> domains;
-	
-	public ProxyScraper(ScrapersFactory scrapersFactory, Pool pool, List<Domain> domains) {
+	public ProxyScraper(ScrapersFactory scrapersFactory) {
 		this.scrapersFactory = scrapersFactory;
-		this.pool = pool;
-		this.domains = domains;
-	}
-	
-	public ProxyScraper(int size) {
-		this.scrapersFactory = new ScrapersFactory(size);
-	}
-	
-	public List<Proxy> scrapeConcurrent(Site site, Boolean wait) {
-		return pool.sendTask(() -> scrape(site), wait);
 	}
 	
 	public List<Proxy> scrape(Site site) {
@@ -54,19 +39,12 @@ public class ProxyScraper extends Observable {
 	}
 	
 	public List<Proxy> scrapeList(List<Site> sites) {
+		List<List<Proxy>> proxyList = new ArrayList<>(sites.size());
 		
-		List<Callable<List<Proxy>>> calls = new ArrayList<>();
-		List<List<Proxy>> proxyList;
-		
-		sites.stream()
-				.map(site ->
-							 calls.add(() -> scrape(site)))
-				.collect(Collectors.toList());
-		
-		proxyList = pool.sendTasks(calls);
+		sites.forEach(site ->
+							  proxyList.add(scrape(site)));
 		
 		List<Proxy> proxy = new ArrayList<>();
-		
 		proxyList.forEach(proxy::addAll);
 		
 		return proxy;

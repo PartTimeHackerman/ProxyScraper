@@ -1,11 +1,12 @@
 package org.scraper.model.managers;
 
-import org.scraper.model.Pool;
+import org.scraper.model.IPool;
 import org.scraper.model.Proxy;
-import org.scraper.model.assigner.Assigner;
+import org.scraper.model.assigner.IAssigner;
+import org.scraper.model.assigner.BestOfAllFinder;
 import org.scraper.model.assigner.CheckingAssigner;
 import org.scraper.model.assigner.NonCheckAssigner;
-import org.scraper.model.checker.ProxyChecker;
+import org.scraper.model.checker.IProxyChecker;
 import org.scraper.model.modles.MainModel;
 import org.scraper.model.scrapers.ScrapeType;
 import org.scraper.model.scrapers.ScrapersFactory;
@@ -21,24 +22,17 @@ public class AssignManager extends Observable {
 	
 	private ScrapersFactory scrapersFactory;
 	
-	private ProxyChecker checker;
-	
-	private Pool pool;
+	private IProxyChecker checker;
 	
 	private List<Domain> domains;
 	
 	private AtomicBoolean checkOnFly;
 	
-	public AssignManager(ScrapersFactory scrapersFactory, ProxyChecker checker, Pool pool, AtomicBoolean checkOnFly, List<Domain> domains) {
+	public AssignManager(ScrapersFactory scrapersFactory, IProxyChecker checker, AtomicBoolean checkOnFly, List<Domain> domains) {
 		this.scrapersFactory = scrapersFactory;
 		this.checker = checker;
-		this.pool = pool;
 		this.checkOnFly = checkOnFly;
 		this.domains = domains;
-	}
-	
-	public List<Proxy> assignConcurrent(Site site) {
-		return pool.sendTask(() -> assign(site), false);
 	}
 	
 	public List<Proxy>assign(Site site) {
@@ -61,7 +55,7 @@ public class AssignManager extends Observable {
 		ScrapeType type = domains.get(domains.indexOf(siteDomain)).getType();
 		site.setType(type);
 		
-		Assigner assigner = getAssigner();
+		IAssigner assigner = getAssigner();
 		ScrapeType newType = assigner.getType(site);
 		
 		if (newType != ScrapeType.BLACK
@@ -72,7 +66,7 @@ public class AssignManager extends Observable {
 	}
 	
 	public List<Proxy> assignWithoutDomain(Site site) {
-		Assigner assigner = getAssigner();
+		IAssigner assigner = getAssigner();
 		assigner.getType(site);
 		
 		ScrapeType type = assigner.getType(site);
@@ -87,10 +81,10 @@ public class AssignManager extends Observable {
 		domains.add(newDomain);
 	}
 	
-	private Assigner getAssigner() {
+	private IAssigner getAssigner() {
 		return checkOnFly.get()
-				? new CheckingAssigner(scrapersFactory, checker)
-				: new NonCheckAssigner(scrapersFactory);
+				? new CheckingAssigner(new BestOfAllFinder(scrapersFactory), checker)
+				: new NonCheckAssigner(new BestOfAllFinder(scrapersFactory));
 	}
 	
 	public List<Proxy> assignList(List<Site> sites) {

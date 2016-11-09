@@ -1,7 +1,7 @@
 package org.scraper.model;
 
+import org.scraper.model.checker.IProxyChecker;
 import org.scraper.model.managers.AssignManager;
-import org.scraper.model.checker.ProxyChecker;
 import org.scraper.model.managers.ProxyManager;
 import org.scraper.model.managers.SitesManager;
 import org.scraper.model.scrapers.ScrapeType;
@@ -14,25 +14,28 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class GlobalObserver implements Observer {
 	
+	private static GlobalObserver observer;
+	
 	private ProxyManager proxyManager;
 	
 	private SitesManager sitesManager;
 	
 	private AssignManager assignManager;
-	private ProxyChecker proxyChceker;
+	private IProxyChecker proxyChceker;
 	
 	private AtomicBoolean checkOnFly;
 	
-	public GlobalObserver(ProxyManager proxyManager,
-						  SitesManager sitesManager,
-						  AssignManager assignManager,
-						  ProxyChecker proxyChecker,
-						  AtomicBoolean checkOnFly) {
-		this.proxyManager = proxyManager;
-		this.sitesManager = sitesManager;
-		this.assignManager = assignManager;
-		this.proxyChceker = proxyChecker;
-		this.checkOnFly = checkOnFly;
+	private GlobalObserver() {}
+	
+	public static GlobalObserver getInstance(){
+		if(observer==null){
+			synchronized (GlobalObserver.class){
+				if(observer==null){
+					observer = new GlobalObserver();
+				}
+			}
+		}
+		return observer;
 	}
 	
 	@Override
@@ -49,13 +52,12 @@ public class GlobalObserver implements Observer {
 		}
 	}
 	
-	
 	private void handleSite(Object arg) {
 		if (!(arg instanceof Site)) return;
 		
 		Site site = (Site) arg;
 		if (checkOnFly.get() && site.getType() == ScrapeType.UNCHECKED)
-			assignManager.assignConcurrent(site);
+			assignManager.assign(site);
 		sitesManager.addSite(site);
 	}
 	
@@ -64,7 +66,27 @@ public class GlobalObserver implements Observer {
 		
 		Proxy proxy = (Proxy) arg;
 		if (checkOnFly.get() && !proxy.isChecked())
-			proxyChceker.checkProxyConcurrent(proxy, false);
+			proxyChceker.checkProxy(proxy);
 		proxyManager.addProxy(proxy);
+	}
+	
+	public void setProxyManager(ProxyManager proxyManager) {
+		this.proxyManager = proxyManager;
+	}
+	
+	public void setSitesManager(SitesManager sitesManager) {
+		this.sitesManager = sitesManager;
+	}
+	
+	public void setAssignManager(AssignManager assignManager) {
+		this.assignManager = assignManager;
+	}
+	
+	public void setProxyChceker(IProxyChecker proxyChceker) {
+		this.proxyChceker = proxyChceker;
+	}
+	
+	public void setCheckOnFly(AtomicBoolean checkOnFly) {
+		this.checkOnFly = checkOnFly;
 	}
 }

@@ -33,12 +33,6 @@ public class ProxyManagerTest {
 	}
 	
 	@Test
-	public void addProxy1() throws Exception {
-		proxyManager.addProxy("333.333.333.333:3333");
-		assertTrue(proxyManager.getAll().size() == 1);
-	}
-	
-	@Test
 	public void getIfPresent() throws Exception {
 		Proxy http = new Proxy("111.111.111.111:1111");
 		http.setType(Proxy.Type.HTTP);

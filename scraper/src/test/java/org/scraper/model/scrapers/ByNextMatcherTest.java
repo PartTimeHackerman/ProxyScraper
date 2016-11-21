@@ -1,5 +1,6 @@
 package org.scraper.model.scrapers;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.scraper.model.Proxy;
 
@@ -34,7 +35,7 @@ public class ByNextMatcherTest {
 		
 	}
 	
-	@Test
+	@Ignore
 	public void matchReversed() throws Exception {
 		
 		List<Proxy> list;

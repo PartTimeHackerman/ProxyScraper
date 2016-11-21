@@ -1,11 +1,6 @@
 package org.scraper.model.scrapers;
 
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.scraper.model.Proxy;
 import org.scraper.model.web.Site;
-
-import java.util.List;
 
 public class ScrapersTest {
 	

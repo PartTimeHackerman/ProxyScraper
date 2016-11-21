@@ -1,18 +1,18 @@
 package org.scraper.control;
 
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import org.scraper.model.managers.SitesManager;
 import org.scraper.model.modles.SitesModel;
+import org.scraper.model.scrapers.ScrapeType;
 import org.scraper.model.web.Site;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
-public class SitesController {
+public class SitesController implements ISaveable, ILoader {
 	@FXML
 	private Button scrapeButton;
 	
@@ -31,25 +31,22 @@ public class SitesController {
 	@FXML
 	private TextField depthField;
 	
-	private SitesModel model;
-	
-	private TableView<Site> table;
-	
-	private ObservableList<Site> all;
-	
-	private ObservableList<Site> selected;
-	
-	private SitesManager manager;
+	@FXML
+	private TextField avgSites;
 	
 	@FXML
-	public void initialize(SitesModel model, SitesManager sitesManager, TableView<Site> table) {
+	private TextField avgWorking;
+	
+	private SitesModel model;
+	
+	private ISelectable<Site> selected;
+	
+	@FXML
+	public void initialize(SitesModel model, ISelectable<Site> selected) {
 		
 		this.model = model;
-		this.manager = sitesManager;
 		
-		this.table = table;
-		this.selected = table.getSelectionModel().getSelectedItems();
-		this.all = table.getItems();
+		this.selected = selected;
 		
 		scrapeButton.setOnAction(event -> scrape());
 		
@@ -63,36 +60,59 @@ public class SitesController {
 			if (!newValue.matches("[0-9]*"))
 				depthField.setText(oldValue);
 		});
+		
+		avgSites.setOnAction(event ->
+									 model.filterAvgSites(parseToInt(avgSites.getText())));
+		
+		avgWorking.setOnAction(event ->
+									   model.filterAvgWorking(parseToInt(avgWorking.getText())));
+		
 	}
 	
 	public void addSites() {
 		String sitesString = addField.getText();
 		addField.clear();
 		
-		String[] sitesArr = sitesString.contains(" ") ? sitesString.split(" ") :
-				sitesString.contains("\n") ? sitesString.split("\n") : new String[]{};
+		String[] sitesArr = sitesString.contains(" ")
+				? sitesString.split(" ")
+				: sitesString.contains("\n")
+				? sitesString.split("\\n")
+				: new String[]{sitesString};
 		
-		Arrays.stream(sitesArr).forEach(siteString -> manager.addSite(siteString));
+		Arrays.stream(sitesArr).forEach(siteString -> model.addSite(siteString));
 	}
 	
 	private void scrape() {
-		model.scrape(getSelected());
+		model.scrape(selected.getSelected());
 	}
 	
 	private void check() {
-		model.check(getSelected());
+		model.check(selected.getSelected());
 	}
 	
 	private void gather() {
-		model.gather(getSelected(), Integer.parseInt(depthField.getText()));
+		model.gather(selected.getSelected(), Integer.parseInt(depthField.getText()));
 	}
 	
-	private List<Site> getSelected() {
-		return selected.size() > 0 ? getList(selected) : getList(all);
+	private Integer parseToInt(String toParse) {
+		return toParse.equals("") ? 0 : Integer.parseInt(toParse);
 	}
 	
-	private <E> List<E> getList(ObservableList<E> observableList) {
-		return observableList.subList(0, observableList.size());
+	@Override
+	public void save(File file) {
+		List<String> selectedAsStrings = selected.getSelected().stream()
+				.map(Site::getAddress)
+				.collect(Collectors.toList());
+		
+		saveFile(selectedAsStrings, file);
+	}
+	
+	@Override
+	public void load(File file) {
+		List<String> loaded = readFile(file);
+		
+		loaded.forEach(string ->
+							   model.addSite(new Site(string, ScrapeType.UNCHECKED)));
 	}
 	
 }

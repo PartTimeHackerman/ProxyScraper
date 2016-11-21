@@ -1,14 +1,19 @@
 package org.scraper.control;
 
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleButton;
 import org.scraper.model.Proxy;
 import org.scraper.model.modles.ProxyModel;
 
+import java.io.File;
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
-public class ProxyController {
+public class ProxyController implements ISaveable, ILoader {
 	
 	@FXML
 	private ComboBox<Proxy.Type> typeFilter;
@@ -23,28 +28,22 @@ public class ProxyController {
 	
 	private ProxyModel model;
 	
-	private TableView<Proxy> table;
+	private ISelectable<Proxy> selectable;
+	
 	
 	@FXML
-	public void initialize(ProxyModel model, TableView<Proxy> table) {
+	public void initialize(ProxyModel model, ProxyTableController selectable) {
 		this.model = model;
-		this.table = table;
+		this.selectable = selectable;
 		
 		setupInput();
 	}
 	
 	public void check() {
-		ObservableList<Proxy> selected = table.getSelectionModel().getSelectedItems();
-		
-		if (selected.size() > 0) {
-			model.check(selected.subList(0, selected.size()));
-		} else {
-			ObservableList<Proxy> all = table.getItems();
-			model.check(all.subList(0, all.size()));
-		}
+		model.check(selectable.getSelected());
 	}
 	
-	private void setupInput(){
+	private void setupInput() {
 		setupFilters();
 		
 		showBroken.setOnAction(event ->
@@ -60,7 +59,7 @@ public class ProxyController {
 		setupTimeoutFilter();
 	}
 	
-	private void setupTypeFilter(){
+	private void setupTypeFilter() {
 		Arrays.stream(Proxy.Type.values())
 				.forEach(type ->
 								 typeFilter.getItems().add(type));
@@ -69,7 +68,7 @@ public class ProxyController {
 									   model.filterType(typeFilter.getSelectionModel().getSelectedItem()));
 	}
 	
-	private void setupAnonymityFilter(){
+	private void setupAnonymityFilter() {
 		Arrays.stream(Proxy.Anonymity.values())
 				.forEach(anonymity ->
 								 anonymityFilter.getItems().add(anonymity));
@@ -78,8 +77,28 @@ public class ProxyController {
 											model.filterAnonymity(anonymityFilter.getSelectionModel().getSelectedItem()));
 	}
 	
-	private void setupTimeoutFilter(){
+	private void setupTimeoutFilter() {
 		filterTimeoutField.setOnAction(event ->
-											  model.filterTimeout(Double.valueOf(filterTimeoutField.getText()).floatValue() * 1000));
+											   model.filterTimeout(Double.valueOf(filterTimeoutField.getText()).floatValue() * 1000));
+	}
+	
+	
+	@Override
+	public void save(File file) {
+		List<String> selectedAsStrings = selectable.getSelected().stream()
+				.map(Proxy::getIpPort)
+				.collect(Collectors.toList());
+		
+		saveFile(selectedAsStrings, file);
+		
+	}
+	
+	@Override
+	public void load(File file) {
+		List<String> loaded = readFile(file);
+		
+		loaded.forEach(string ->
+							   model.addProxy(string));
+		
 	}
 }

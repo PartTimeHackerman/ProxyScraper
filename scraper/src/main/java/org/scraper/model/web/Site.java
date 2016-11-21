@@ -8,9 +8,13 @@ public class Site {
 	
 	private ScrapeType type;
 	
-	private Integer avgSites = -1;
+	private Integer avgSites = 0;
 	
-	private Integer avgWorking = -1;
+	private Integer avgWorking = 0;
+	
+	private Boolean assignedAvgSites = false;
+	
+	private Boolean assignedAvgWorking = false;
 	
 	public Site(String address, ScrapeType type) {
 		setAddress(address);
@@ -49,7 +53,7 @@ public class Site {
 	
 	@Override
 	public boolean equals(Object o) {
-		return (o instanceof Site && ((Site) o).address.equals(address));// && ((Site) o).type == type);
+		return (o instanceof Site && ((Site) o).address.equals(address));
 	}
 	
 	@Override
@@ -57,20 +61,39 @@ public class Site {
 		return address.hashCode();
 	}
 	
+	@Override
+	public String toString(){
+		StringBuilder siteString = new StringBuilder(address);
+		siteString.append(" Type: ").append(type);
+		siteString.append(" Avg. sites: ").append(assignedAvgSites ? avgSites : "UNKNOWN");
+		siteString.append(" Avg. working: ").append(assignedAvgWorking ? avgWorking : "UNKNOWN");
+		return siteString.toString();
+	}
+	
 	
 	public Integer getAvgWorking() {
-		return avgWorking != null ? avgWorking : 0;
+		return avgWorking;
 	}
 	
 	public void setAvgWorking(Integer avgWorking) {
 		this.avgWorking = avgWorking;
+		assignedAvgWorking = true;
 	}
 	
 	public Integer getAvgSites() {
-		return avgSites != null ? avgSites : 0;
+		return avgSites;
 	}
 	
 	public void setAvgSites(Integer avgSites) {
 		this.avgSites = avgSites;
+		assignedAvgSites = true;
+	}
+	
+	public Boolean isAvgSitesAssigned() {
+		return assignedAvgSites;
+	}
+	
+	public Boolean isAvgWorkingAssigned() {
+		return assignedAvgWorking;
 	}
 }

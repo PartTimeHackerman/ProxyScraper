@@ -1,6 +1,6 @@
 package org.scraper.model.managers;
 
-import org.scraper.model.scrapers.OCR;
+import org.scraper.model.scrapers.ocr.OCR;
 import org.scraper.model.web.Browser;
 
 public class QueuesManager{

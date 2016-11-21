@@ -1,8 +1,6 @@
 package org.scraper.model.managers;
 
-import org.scraper.model.modles.MainModel;
-import org.scraper.model.scrapers.OCR;
-import org.scraper.model.web.Browser;
+import org.scraper.model.MainLogger;
 
 import java.util.ArrayList;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -30,6 +28,10 @@ public abstract class Queue<T> {
 		return queue.size();
 	}
 	
+	public Integer getMaxSize() {
+		return queue.size() + queue.remainingCapacity();
+	}
+	
 	public Integer remainingCapacity() {
 		return queue.remainingCapacity();
 	}
@@ -38,7 +40,7 @@ public abstract class Queue<T> {
 		try {
 			return queue.take();
 		} catch (InterruptedException e) {
-			MainModel.log.warn("Can't take object from queue");
+			MainLogger.log().warn("Can't take object from queue");
 			return null;
 		}
 	}
@@ -47,7 +49,7 @@ public abstract class Queue<T> {
 		try {
 			queue.offer(o, 1000, TimeUnit.MILLISECONDS);
 		} catch (InterruptedException e) {
-			MainModel.log.warn("Can't put object in queue");
+			MainLogger.log().warn("Can't put object in queue");
 		}
 	}
 	

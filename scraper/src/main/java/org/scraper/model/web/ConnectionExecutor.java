@@ -1,7 +1,7 @@
 package org.scraper.model.web;
 
 import org.jsoup.Connection;
-import org.scraper.model.modles.MainModel;
+import org.scraper.model.MainLogger;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -14,7 +14,7 @@ public class ConnectionExecutor implements IConnectionExecutor {
 		try {
 			return connection.execute();
 		} catch (IOException e) {
-			MainModel.log.fatal(e);
+			MainLogger.log().fatal(e);
 			return null;
 		}
 	}
@@ -29,7 +29,7 @@ public class ConnectionExecutor implements IConnectionExecutor {
 		try {
 			return execute(connection).parse().text();
 		} catch (IOException e) {
-			MainModel.log.fatal(e);
+			MainLogger.log().fatal(e);
 			return null;
 		}
 	}

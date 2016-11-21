@@ -4,8 +4,8 @@ package org.scraper.model.scrapers;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.scraper.model.MainLogger;
 import org.scraper.model.Proxy;
-import org.scraper.model.modles.MainModel;
 import org.scraper.model.web.BrowserVersion;
 import org.scraper.model.web.Site;
 
@@ -22,7 +22,7 @@ class NormalScraper extends Scraper{
 	@Override
 	public List<Proxy> scrape(Site site) {
 		String url = site.getAddress();
-		MainModel.log.info("Normal scraping {}", url);
+		MainLogger.log().info("Normal scraping {}", url);
 		
 		Document doc;
 		try {
@@ -32,7 +32,7 @@ class NormalScraper extends Scraper{
 					.userAgent(BrowserVersion.random().ua())
 					.get();
 		} catch (IOException e) {
-			MainModel.log.info("Normal scraping {} failed!", url);
+			MainLogger.log().info("Normal scraping {} failed!", url);
 			return proxy;
 		}
 		

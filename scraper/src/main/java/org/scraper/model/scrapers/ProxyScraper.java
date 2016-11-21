@@ -1,6 +1,5 @@
 package org.scraper.model.scrapers;
 
-import org.scraper.model.IPool;
 import org.scraper.model.Proxy;
 import org.scraper.model.managers.AssignManager;
 import org.scraper.model.web.Site;
@@ -8,8 +7,6 @@ import org.scraper.model.web.Site;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
-import java.util.concurrent.Callable;
-import java.util.stream.Collectors;
 
 
 public class ProxyScraper extends Observable {

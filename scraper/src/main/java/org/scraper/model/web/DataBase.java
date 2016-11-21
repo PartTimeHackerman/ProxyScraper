@@ -1,8 +1,6 @@
 package org.scraper.model.web;
 
 import org.apache.commons.collections.ListUtils;
-import org.scraper.model.*;
-import org.scraper.model.modles.MainModel;
 
 import java.util.ArrayList;
 import java.util.Collections;

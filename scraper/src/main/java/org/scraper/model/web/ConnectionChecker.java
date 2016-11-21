@@ -2,7 +2,7 @@ package org.scraper.model.web;
 
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
-import org.scraper.model.modles.MainModel;
+import org.scraper.model.MainLogger;
 
 import java.io.IOException;
 
@@ -22,7 +22,7 @@ public class ConnectionChecker {
 			
 			return true;
 		} catch (IOException e) {
-			MainModel.log.fatal("No internet connection!");
+			MainLogger.log().fatal("No internet connection!");
 			return false;
 		}
 	}

@@ -4,14 +4,13 @@ import org.scraper.model.web.Browser;
 import org.scraper.model.web.BrowserConcurrent;
 
 import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
 import java.util.stream.IntStream;
 
 public class BrowserQueue extends Queue<Browser> {
 	
 	public BrowserQueue(Integer size){
 		queue = new ArrayBlockingQueue<>(size);
-		//create();
+		create();
 	}
 	
 	@Override
@@ -19,13 +18,13 @@ public class BrowserQueue extends Queue<Browser> {
 		try {
 			return queue.take();
 		} catch (InterruptedException e) {
-			return new Browser();
+			return new BrowserConcurrent();
 		}
 	}
 	
 	@Override
 	void create() {
-		IntStream.range(0, getSize()+1)
+		IntStream.range(0, getMaxSize())
 				.forEach(i -> {
 					try {
 						queue.put(new BrowserConcurrent());

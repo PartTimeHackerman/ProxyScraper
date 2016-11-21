@@ -3,19 +3,19 @@ package org.scraper.model.web;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriverService;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.scraper.model.Proxy;
-import org.scraper.model.modles.MainModel;
 
+import java.io.File;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
 public class Browser {
+	
+	private final static String PATH = new File("phantomjs.exe").getAbsolutePath();
 	
 	private WebDriver browser;
 	
@@ -23,8 +23,10 @@ public class Browser {
 		setUp();
 	}
 	
+	protected Browser(Object explicit) {}
+	
 	protected void setUp(){
-		browser = getBrowser(null, BrowserVersion.random(), "p", true);
+		browser = getBrowser(null, BrowserVersion.random(), false);
 	}
 	
 	public void changeProxy(Proxy proxy) {
@@ -42,7 +44,7 @@ public class Browser {
 		((PhantomJSDriver) browser).executePhantomJS(js);
 	}
 	
-	private WebDriver getBrowser(String proxy, BrowserVersion version, String browser, Boolean debug) {
+	private WebDriver getBrowser(String proxy, BrowserVersion version, Boolean debug) {
 		
 		if (!debug) {
 			java.util.logging.Logger.getLogger(PhantomJSDriverService.class.getName()).setLevel(Level.OFF);
@@ -61,13 +63,14 @@ public class Browser {
 			capabilities.setCapability(CapabilityType.PROXY, browserProxy);
 		}
 		
-		capabilities.setCapability(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, System.getProperty("user.dir")+"\\phantomjs.exe");
+		capabilities.setCapability(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, PATH);
+		
+		capabilities.setCapability(PhantomJSDriverService.PHANTOMJS_CLI_ARGS, new String[]{"--webdriver-loglevel=" + (debug ? "INFO" : "OFF"), "--ignore-ssl-errors=true", "--ssl-protocol=any"});
+		
 		capabilities.setCapability(PhantomJSDriverService.PHANTOMJS_PAGE_CUSTOMHEADERS_PREFIX + "Referer", "https://www.facebook.com/");
 		capabilities.setCapability(PhantomJSDriverService.PHANTOMJS_PAGE_CUSTOMHEADERS_PREFIX + "Accept-Language", "fr-FR,fr;q=0.8,en-US;q=0.6,en;q=0.4");
 		capabilities.setCapability(PhantomJSDriverService.PHANTOMJS_PAGE_CUSTOMHEADERS_PREFIX + "Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
 		
-		
-		capabilities.setCapability(PhantomJSDriverService.PHANTOMJS_CLI_ARGS, new String[]{"--webdriver-loglevel=" + (debug ? "INFO" : "OFF"), "--ignore-ssl-errors=true", "--ssl-protocol=any"});
 		capabilities.setCapability(PhantomJSDriverService.PHANTOMJS_PAGE_SETTINGS_PREFIX + "userAgent", version.ua());
 		capabilities.setCapability(PhantomJSDriverService.PHANTOMJS_PAGE_SETTINGS_PREFIX + "loadImages", false);
 		capabilities.setCapability(PhantomJSDriverService.PHANTOMJS_PAGE_SETTINGS_PREFIX + "javascriptEnabled", true);
@@ -75,25 +78,12 @@ public class Browser {
 		capabilities.setCapability(PhantomJSDriverService.PHANTOMJS_PAGE_SETTINGS_PREFIX + "javascriptCanCloseWindows", false);
 		capabilities.setCapability(PhantomJSDriverService.PHANTOMJS_PAGE_SETTINGS_PREFIX + "debug", debug);
 		
-		capabilities.setCapability("marionette", false);
+		//capabilities.setCapability("marionette", false);
 		capabilities.setPlatform(version.pl());
 		capabilities.setBrowserName(version.nm());
 		capabilities.setVersion(String.valueOf((int) (Math.random() * 48)));
 		
-		ChromeOptions options = new ChromeOptions();
-		options.addArguments("--user-agent=" + version.ua());
-		capabilities.setCapability(ChromeOptions.CAPABILITY, options);
-		WebDriver driver;
-		switch (browser) {
-			case "c":
-				driver = new ChromeDriver(capabilities);
-				break;
-			case "p":
-				driver = new PhantomJSDriver(capabilities);
-				break;
-			default:
-				driver = new ChromeDriver(capabilities);
-		}
+		WebDriver driver = new PhantomJSDriver(capabilities);
 		
 		driver.manage().timeouts().implicitlyWait(2000, TimeUnit.MILLISECONDS);
 		driver.manage().timeouts().setScriptTimeout(3000,TimeUnit.MILLISECONDS);

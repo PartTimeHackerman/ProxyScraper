@@ -4,8 +4,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
+import org.scraper.model.MainLogger;
 import org.scraper.model.Proxy;
-import org.scraper.model.modles.MainModel;
 import org.scraper.model.web.Browser;
 import org.scraper.model.web.Site;
 
@@ -19,6 +19,9 @@ class CssScraper extends Scraper {
 		type = ScrapeType.CSS;
 	}
 	
+	CssScraper() {
+	}
+	
 	CssScraper(Browser browser) {
 		this.browser = browser;
 	}
@@ -26,7 +29,7 @@ class CssScraper extends Scraper {
 	@Override
 	public List<Proxy> scrape(Site site) {
 		String url = site.getAddress();
-		MainModel.log.info("CSS scraping {}", url);
+		MainLogger.log().info("CSS scraping {}", url);
 		
 		WebDriver driver = browser.getBrowser();
 		
@@ -63,4 +66,7 @@ class CssScraper extends Scraper {
 	}
 	
 	
+	protected void setBrowser(Browser browser) {
+		this.browser = browser;
+	}
 }

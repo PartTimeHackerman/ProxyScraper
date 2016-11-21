@@ -41,7 +41,7 @@ public class GlobalObserver implements Observer {
 	@Override
 	public void update(Observable o, Object arg) {
 		if (arg instanceof List) {
-			List list = (List) arg;
+			List<Object> list = (List) arg;
 			list.forEach(e -> {
 				handleSite(e);
 				handleProxy(e);

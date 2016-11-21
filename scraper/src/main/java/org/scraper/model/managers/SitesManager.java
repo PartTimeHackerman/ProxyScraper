@@ -16,8 +16,6 @@ public class SitesManager {
 	
 	private List<Site> working = Collections.synchronizedList(new ArrayList<>());
 	
-	private static String sitePattern = ".*\\.[a-z]{2,3}.*";
-	
 	private SitesModel model;
 	
 	public SitesManager(IDataBase IDataBase) {
@@ -30,13 +28,6 @@ public class SitesManager {
 			if (site.getType() != ScrapeType.UNCHECKED) working.add(site);
 			if (model != null) model.addSite(site);
 		}
-	}
-	
-	public void addSite(String siteString) {
-		if (!siteString.matches(sitePattern)) return;
-		Site site = new Site(siteString, ScrapeType.UNCHECKED);
-		if (!all.contains(site))
-			addSite(site);
 	}
 	
 	public void addSites(List<Site> all) {

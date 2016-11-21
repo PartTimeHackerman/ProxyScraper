@@ -1,7 +1,5 @@
 package org.scraper.model;
 
-import org.scraper.model.modles.MainModel;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
@@ -69,7 +67,7 @@ public class MainPool implements IPool {
 			try {
 				return wait ? future.get() : null;
 			} catch (InterruptedException | ExecutionException e) {
-				MainModel.log.fatal(Thread.currentThread().getName() + " thread was interrupted!");
+				MainLogger.log().fatal(Thread.currentThread().getName() + " thread was interrupted!");
 			}
 		}
 		
@@ -85,7 +83,7 @@ public class MainPool implements IPool {
 		if (wait) try {
 			future.get();
 		} catch (InterruptedException | ExecutionException e) {
-			MainModel.log.fatal("Some thread was interrupted!");
+			MainLogger.log().fatal("Some thread was interrupted!");
 		}
 		
 		return null;
@@ -109,11 +107,11 @@ public class MainPool implements IPool {
 				try {
 					list.add(future.get());
 				} catch (Exception e) {
-					MainModel.log.catching(e.getCause());
+					MainLogger.log().catching(e.getCause());
 				}
 			});
 		} catch (InterruptedException e) {
-			MainModel.log.fatal("Some thread was interrupted!");
+			MainLogger.log().fatal("Some thread was interrupted!");
 		}
 		list.removeIf(r -> r == null);
 		return list;

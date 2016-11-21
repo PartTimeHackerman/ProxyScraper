@@ -1,10 +1,8 @@
 package org.scraper.model.managers;
 
 import org.scraper.model.IConcurrent;
-import org.scraper.model.IPool;
 import org.scraper.model.Proxy;
 import org.scraper.model.checker.IProxyChecker;
-import org.scraper.model.managers.AssignManager;
 import org.scraper.model.scrapers.ScrapersFactory;
 import org.scraper.model.web.Domain;
 import org.scraper.model.web.Site;
@@ -19,7 +17,7 @@ public class AssignManagerConcurrent extends AssignManager implements IConcurren
 	}
 	
 	@Override
-	public List<Proxy>assign(Site site) {
+	public List<Proxy> assign(Site site) {
 		return send(() -> super.assign(site));
 	}
 	

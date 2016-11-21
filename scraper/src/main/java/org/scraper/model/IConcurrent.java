@@ -3,8 +3,6 @@ package org.scraper.model;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-import static javafx.scene.input.KeyCode.R;
-
 public interface IConcurrent {
 	
 	default <V> V send(Callable<V> callable){

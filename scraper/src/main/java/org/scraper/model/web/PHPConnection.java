@@ -3,7 +3,7 @@ package org.scraper.model.web;
 import com.google.gson.Gson;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
-import org.scraper.model.modles.MainModel;
+import org.scraper.model.MainLogger;
 import org.scraper.model.scrapers.ScrapeType;
 
 import java.io.IOException;
@@ -97,7 +97,7 @@ public class PHPConnection {
 					.execute();
 			parsed = response.parse().text();
 		} catch (IOException e) {
-			MainModel.log.fatal("Can't connect to database!");
+			MainLogger.log().fatal("Can't connect to database!");
 		}
 		return parsed;
 	}

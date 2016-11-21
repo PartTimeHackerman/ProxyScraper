@@ -1,8 +1,9 @@
-package org.scraper.model.gather;
+package org.scraper.model.web;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 public class LanguageCheck {
@@ -16,7 +17,7 @@ public class LanguageCheck {
 			"be", "be-BY",
 			"bg", "bg-BG",
 			"ca", "ca-ES",
-			"zh", "zh-CHS",
+			"zh", "cn", "zh-CHS",
 			"hr", "hr-HR",
 			"cs", "cs-CZ",
 			"da", "da-DK",
@@ -39,11 +40,11 @@ public class LanguageCheck {
 			"is", "is-IS",
 			"id", "id-ID",
 			"it", "it-IT",
-			"ja", "ja-JP",
+			"ja", "jp", "ja-JP",
 			"kn", "kn-IN",
 			"kk", "kk-KZ",
 			"kok", "kok-IN",
-			"ko", "ko-KR",
+			"ko", "kr", "ko-KR",
 			"ky", "ky-KZ",
 			"lv", "lv-LV",
 			"lt", "lt-LT",
@@ -82,9 +83,19 @@ public class LanguageCheck {
 		boolean is = isFromOtherLang(url, links);
 	}
 	
-	static boolean isFromOtherLang(String url, List<String> links) {
+	public static boolean isFromOtherLang(Site site, List<Site> sites) {
+			return isFromOtherLang(site.getAddress(),
+								   sites.stream()
+										   .map(Site::getAddress)
+										   .collect(Collectors.toList()));
+	}
+	
+	public static boolean isFromOtherLang(String url, List<String> links) {
 		for (String link : links) {
-			if (langs.contains(stringsIntersection(link, url).replace("/", ""))) return true;
+			if (langs.contains(stringsIntersection(link, url)
+									   .replace("/", "")
+									   .toLowerCase()))
+				return true;
 		}
 		return false;
 	}

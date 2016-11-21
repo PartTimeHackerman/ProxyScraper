@@ -1,6 +1,5 @@
 package org.scraper.model.modles;
 
-import org.scraper.model.IPool;
 import org.scraper.model.MainPool;
 import org.scraper.model.managers.ProxyManager;
 

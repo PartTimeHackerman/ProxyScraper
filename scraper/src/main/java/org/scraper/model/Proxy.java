@@ -1,6 +1,6 @@
 package org.scraper.model;
 
-import org.scraper.model.checker.IConnection;
+import org.scraper.model.checker.ConnectionCheck;
 
 public class Proxy {
 	
@@ -14,7 +14,7 @@ public class Proxy {
 	
 	private Anonymity anonymity;
 	
-	private Long speed = 0l;
+	private Long speed = 0L;
 	
 	private boolean checked;
 	
@@ -32,18 +32,23 @@ public class Proxy {
 		this(ipPort.split(":")[0], Integer.parseInt(ipPort.split(":")[1]));
 	}
 	
-	public Proxy setUpProxy(IConnection connection) {
-		setType(connection.getType());
-		setAnonymity(connection.getAnonymity());
-		setSpeed(connection.getTime());
-		setWorking(true);
-		return this;
+	public void setUpProxy(ConnectionCheck connection) {
+		if (connection != null) {
+			setType(connection.getType());
+			setAnonymity(connection.getAnonymity());
+			setSpeed(connection.getTime());
+			setWorking(true);
+		}
 	}
 	
 	
 	@Override
 	public String toString() {
-		return getIpPort() + " " + getType() + " " + getAnonymity() + " " + getSpeed();
+		StringBuilder proxySting = new StringBuilder(getIpPort());
+		proxySting.append(" Type: ").append(getTypeString());
+		proxySting.append(" Anonymity: ").append(getAnonymity());
+		proxySting.append(" Speed: ").append(getSpeed());
+		return proxySting.toString();
 	}
 	
 	@Override
@@ -80,7 +85,11 @@ public class Proxy {
 	}
 	
 	public String getTypeString() {
-		return type != null ? type.name() : "";
+		return type != null
+				? type.name()
+				: isChecked()
+					? "BROKEN"
+					: "UNKNOWN";
 	}
 	
 	public void setType(Type type) {
@@ -92,7 +101,11 @@ public class Proxy {
 	}
 	
 	public String getAnonymityString() {
-		return anonymity != null ? anonymity.name() : "";
+		return anonymity != null
+				? anonymity.name()
+				: isChecked()
+					? "BROKEN"
+					: "UNKNOWN";
 	}
 	
 	public void setAnonymity(Anonymity anonymity) {
@@ -125,14 +138,14 @@ public class Proxy {
 	
 	
 	public enum Type {
-		ALL, //TODO this is for org.scraper.view only, encapsulate it or somerhing
+		ALL,
 		HTTP,
 		HTTPS,
 		SOCKS
 	}
 	
 	public enum Anonymity {
-		ALL, //TODO as above
+		ALL,
 		TRANSPARENT,
 		ANONYMOUS,
 		ELITE

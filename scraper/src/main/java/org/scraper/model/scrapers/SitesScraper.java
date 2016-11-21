@@ -4,8 +4,9 @@ import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.scraper.model.modles.MainModel;
-import org.scraper.model.web.*;
+import org.scraper.model.MainLogger;
+import org.scraper.model.web.BrowserVersion;
+import org.scraper.model.web.Site;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -78,7 +79,7 @@ public class SitesScraper {
 							newAddrs.add(new Site(address, ScrapeType.UNCHECKED));
 					}
 				} catch (IOException e) {
-					MainModel.log.error("Connection failed, url: {} error: {}", url, (e.getMessage()!=null?e.getMessage():"null"));
+					MainLogger.log().error("Connection failed, url: {} error: {}", url, (e.getMessage()!=null?e.getMessage():"null"));
 				}
 			}
 		}

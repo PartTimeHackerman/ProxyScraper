@@ -1,15 +1,21 @@
 package org.scraper.model.gather;
 
 import org.scraper.model.IConcurrent;
-import org.scraper.model.scrapers.ScrapeType;
 import org.scraper.model.web.Site;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
-import java.util.stream.Collectors;
 
 public class LinkGatherConcurrent extends LinksGather implements IConcurrent {
+	
+	public LinkGatherConcurrent(){
+		super();
+	}
+	
+	public LinkGatherConcurrent(Integer depth){
+		super(depth);
+	}
 	
 	public List<Site> gather(Site site, Boolean wait) {
 		return send(() -> super.gather(site), wait);

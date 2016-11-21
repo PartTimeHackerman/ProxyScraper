@@ -3,18 +3,15 @@ package org.scraper.model.gather;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
-import org.scraper.model.MainPool;
-import org.scraper.model.IPool;
-import org.scraper.model.modles.MainModel;
 import org.scraper.model.scrapers.ScrapeType;
 import org.scraper.model.web.BrowserVersion;
+import org.scraper.model.web.LanguageCheck;
 import org.scraper.model.web.Site;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
-import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -48,7 +45,6 @@ public class LinksGather extends Observable {
 		List<String> tempLinks = new ArrayList<>();
 		
 		all.add(site.getAddress());
-		all.add(site.getRoot());
 		newLinks.add(site.getAddress());
 		
 		IntStream.range(0, depth)
@@ -108,9 +104,7 @@ public class LinksGather extends Observable {
 					.timeout(5000)
 					.get();
 			
-		} catch (IOException e) {
-			MainModel.log.warn("Gather {} connection failed!", url);
-		}
+		} catch (IOException ignored) {}
 		return document;
 	}
 	

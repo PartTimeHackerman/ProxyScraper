@@ -1,9 +1,10 @@
 package org.scraper.model.checker;
 
+import org.scraper.model.MainLogger;
 import org.scraper.model.Proxy;
-import org.scraper.model.modles.MainModel;
 
-import java.util.*;
+import java.util.List;
+import java.util.Observable;
 
 public class ProxyChecker extends Observable implements IProxyChecker {
 	
@@ -18,7 +19,7 @@ public class ProxyChecker extends Observable implements IProxyChecker {
 	
 	@Override
 	public List<Proxy> checkProxies(List<Proxy> proxies) {
-		MainModel.log.info("Checking list of size {}", proxies.size());
+		MainLogger.log().info("Checking list of size {}", proxies.size());
 		
 		proxies.forEach(this::checkProxy);
 		
@@ -30,7 +31,7 @@ public class ProxyChecker extends Observable implements IProxyChecker {
 		if (all.contains(proxy)) {
 			Proxy doubled = all.get(all.indexOf(proxy));
 			if (doubled.isChecked()) {
-				MainModel.log.info("Proxy double {}", doubled);
+				MainLogger.log().info("Proxy double {}", doubled);
 				return doubled;
 			}
 		}
@@ -38,15 +39,15 @@ public class ProxyChecker extends Observable implements IProxyChecker {
 		String ip = proxy.getIp();
 		Integer port = proxy.getPort();
 		if (port >= 69129) {
-			MainModel.log.warn("Proxy {}:{} port out of range > 69129", ip, port);
+			MainLogger.log().warn("Proxy {}:{} port out of range > 69129", ip, port);
 			return proxy;
 		}
 		
 		setProxy(proxy);
 		if (proxy.isWorking()) {
-			MainModel.log.info("Proxy {}", proxy);
+			MainLogger.log().info("Proxy {}", proxy);
 		} else {
-			MainModel.log.warn("Proxy {} not working!", proxy.getIpPort());
+			MainLogger.log().warn("Proxy {} not working!", proxy.getIpPort());
 		}
 		
 		proxy.setChecked(true);
@@ -55,26 +56,7 @@ public class ProxyChecker extends Observable implements IProxyChecker {
 	
 	
 	private void setProxy(Proxy proxy) {
-		String httpsUrl = "https://www.google.cat/";
-		String ping = "http://absolutelydisgusting.ml/ping.php";
-		
-		IConnection https = new JsoupConnection(Proxy.Type.HTTPS, proxy);
-		boolean connected = https.connect(httpsUrl, timeout);
-		
-		if (connected) {
-			proxy.setUpProxy(https);
-		} else if (https.getType() == Proxy.Type.SOCKS) {
-			IConnection socks = new JsoupConnection(Proxy.Type.SOCKS, proxy);
-			if (socks.connect(ping, timeout))
-				proxy.setUpProxy(socks);
-			connected = true;
-		}
-		
-		if (!connected) {
-			IConnection http = new JsoupConnection(Proxy.Type.HTTP, proxy);
-			if (http.connect(ping, timeout)) {
-				proxy.setUpProxy(http);
-			}
-		}
+		IConnectionCheckers handlers = new ConnectionCheckersExternal();
+		proxy.setUpProxy(handlers.check(proxy, timeout));
 	}
 }

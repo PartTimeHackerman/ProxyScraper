@@ -1,7 +1,6 @@
 package org.scraper.model.checker;
 
 import org.scraper.model.IConcurrent;
-import org.scraper.model.IPool;
 import org.scraper.model.Proxy;
 
 import java.util.List;

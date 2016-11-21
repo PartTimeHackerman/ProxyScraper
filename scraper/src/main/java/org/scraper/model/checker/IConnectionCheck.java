@@ -2,14 +2,13 @@ package org.scraper.model.checker;
 
 import org.scraper.model.Proxy;
 
-public interface IConnection {
-	boolean connect(String url, Integer timeout);
+public interface IConnectionCheck {
 	
-	String getTextContent();
+	IConnectionCheck connect(Proxy proxy, Integer timeout);
 	
 	Proxy.Anonymity getAnonymity();
 	
-	long getTime();
+	Long getTime();
 	
 	Proxy.Type getType();
 }

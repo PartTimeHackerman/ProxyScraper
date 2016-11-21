@@ -1,16 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
-
-<HBox id="textBox" fx:id="textBox" alignment="TOP_CENTER" maxWidth="620.0" stylesheets="@userAgent.css" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.scraper.control.ProxyTableController">
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<HBox id="textBox" fx:id="textBox" alignment="TOP_CENTER" minWidth="620.0" stylesheets="@userAgent.css" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.scraper.control.ProxyTableController">
     <children>
-      <VBox alignment="TOP_CENTER" spacing="3.0">
+      <VBox spacing="3.0">
          <children>
             <TableView fx:id="table" maxHeight="1.7976931348623157E308" minHeight="0.0" minWidth="-Infinity" prefHeight="450.0" prefWidth="600.0" VBox.vgrow="ALWAYS">
                <columns>

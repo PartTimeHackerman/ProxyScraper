@@ -7,22 +7,23 @@ import org.scraper.model.scrapers.ScrapersFactory;
 import org.scraper.model.web.Site;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-public class BestOfAllFinder implements IScrapeMethodFinder {
+public class ChainFinder implements IScrapeMethodFinder {
 	
 	private ScrapersFactory scrapersFactory;
 	
 	private List<Proxy> proxies = new ArrayList<>();
 	
-	public BestOfAllFinder(ScrapersFactory scrapersFactory) {
+	private Integer minimumProxies = 10;
+	
+	public ChainFinder(ScrapersFactory scrapersFactory) {
 		this.scrapersFactory = scrapersFactory;
 	}
 	
 	@Override
 	public ScrapeType findBest(Site site) {
-		
+		proxies.clear();
 		if (site.getType() != ScrapeType.UNCHECKED
 				&& site.getType() != ScrapeType.BLACK) {
 			Scraper scraper = scrapersFactory.get(site.getType());
@@ -33,13 +34,13 @@ public class BestOfAllFinder implements IScrapeMethodFinder {
 		
 		List<Scraper> scrapers = scrapersFactory.getAll();
 		
-		scrapers.forEach(scraper ->
-								 scraper.scrape(site));
-		
-		Collections.sort(scrapers, Collections.reverseOrder());
-		Scraper winner = scrapers.get(0);
-		proxies = winner.getScraped();
-		return winner.getType();
+		for (Scraper scraper : scrapers) {
+			if (scraper.scrape(site).size() > minimumProxies) {
+				proxies = scraper.getScraped();
+				return scraper.getType();
+			}
+		}
+		return ScrapeType.BLACK;
 	}
 	
 	@Override

@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 public class AvgAssigner {
 	
-	public static void assignAvg(Site site, List<Proxy> proxies, IProxyChecker checker){
+	static void assignAvg(Site site, List<Proxy> proxies, IProxyChecker checker){
 		assignAvgProxies(site, proxies.size());
 		
 		if (checker != null){
@@ -18,7 +18,7 @@ public class AvgAssigner {
 		}
 	}
 	
-	public static void assignAvg(Site site, List<Proxy> proxies){
+	static void assignAvg(Site site, List<Proxy> proxies){
 		assignAvg(site, proxies, null);
 	}
 	

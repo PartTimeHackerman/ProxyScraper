@@ -35,7 +35,7 @@ public class ChainFinder implements IScrapeMethodFinder {
 		List<Scraper> scrapers = scrapersFactory.getAll();
 		
 		for (Scraper scraper : scrapers) {
-			if (scraper.scrape(site).size() > minimumProxies) {
+			if (scraper.scrape(site).size() >= minimumProxies) {
 				proxies = scraper.getScraped();
 				return scraper.getType();
 			}

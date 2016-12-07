@@ -9,7 +9,7 @@ import java.util.stream.IntStream;
 
 public class MainPool implements IPool {
 	
-	private static IPool pool;
+	private static MainPool pool;
 	
 	private ThreadPoolExecutor executor;
 	
@@ -21,7 +21,7 @@ public class MainPool implements IPool {
 										  new LinkedBlockingQueue<>());
 	}
 	
-	public static IPool getInstance() {
+	public static MainPool getInstance() {
 		if (pool == null) {
 			synchronized (MainPool.class) {
 				if (pool == null)
@@ -122,9 +122,42 @@ public class MainPool implements IPool {
 		return executor;
 	}
 	
-	@Override
 	public <T> ExecutorCompletionService<T> getCompletionService() {
 		return new ExecutorCompletionService<>(executor);
+	}
+	
+	public <T,R> List<R> subPool(List<T> list, Function<T,R> function, Integer threads){
+		threads = threads > getThreads() ? getThreads() : threads;
+		threads = threads >= list.size() ? list.size() : threads;
+		
+		Integer responses = list.size();
+		
+		CompletionService<R> completionService = getCompletionService();
+		
+		List<R> completed = new ArrayList<>();
+		
+		for (int i = 0; i < threads; i++) {
+			T element = list.get(0);
+			list.remove(element);
+			completionService.submit(() -> function.apply(element));
+		}
+		
+		while (completed.size() < responses ){
+			R completedFunc = null;
+			try {
+				completedFunc = completionService.take().get();
+			} catch (InterruptedException | ExecutionException ignored) {}
+			
+			completed.add(completedFunc);
+			
+			if(list.isEmpty()) break;
+			T element = list.get(0);
+			list.remove(element);
+			
+			completionService.submit(() -> function.apply(element));
+		}
+		
+		return completed;
 	}
 	
 	public static void setThreadsStatic(Integer threads) {

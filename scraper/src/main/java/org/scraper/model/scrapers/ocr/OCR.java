@@ -1,5 +1,6 @@
 package org.scraper.model.scrapers.ocr;
 
+
 import org.bytedeco.javacpp.tesseract;
 import org.bytedeco.javacpp.tesseract.TessBaseAPI;
 
@@ -35,7 +36,7 @@ public class OCR {
 		api.End();
 	}
 	
-	public void setFilter(IOcrFilter filter) {
+	public void setFilter(org.scraper.model.scrapers.ocr.IOcrFilter filter) {
 		this.filter = filter;
 	}
 }

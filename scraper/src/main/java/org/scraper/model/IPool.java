@@ -26,8 +26,6 @@ public interface IPool {
 	
 	ThreadPoolExecutor getExecutor();
 	
-	<T> ExecutorCompletionService<T> getCompletionService();
-	
 	void setThreads(Integer threads);
 	
 	Integer getThreads();

@@ -5,6 +5,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.scraper.model.MainLogger;
+import org.scraper.model.MainPool;
 import org.scraper.model.Proxy;
 import org.scraper.model.scrapers.ocr.Image;
 import org.scraper.model.scrapers.ocr.OCR;
@@ -15,6 +16,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class OcrScraper extends Scraper {
@@ -65,7 +67,7 @@ public class OcrScraper extends Scraper {
 		imgs.stream()
 				.map(e -> e.attr("src"))
 				.filter(url -> !imgsUrls.contains(url))
-				.filter(url -> url.contains(siteRoot))
+				//.filter(url -> url.contains(siteRoot))
 				.forEach(imgsUrls::add);
 		
 		return imgsUrls;
@@ -97,7 +99,8 @@ public class OcrScraper extends Scraper {
 	}
 	
 	protected void ocrAndReplace(List<Connection.Response> responses) {
-		responses.forEach(response -> {
+		//responses.forEach(response -> {
+		Function<Connection.Response, Connection.Response> replace = response -> {
 			byte[] bytes = response.bodyAsBytes();
 			Image image = new Image(bytes);
 			//Assume it's proxy image
@@ -114,7 +117,9 @@ public class OcrScraper extends Scraper {
 						.filter(element -> responseUrl.contains(element.attr("src")))
 						.forEach(element -> element.append(imgText));
 			}
-		});
+			return null;
+		};//);
+		MainPool.getInstance().forEach(responses, replace);
 	}
 	
 	private String getImageUrl(String url){

@@ -1,6 +1,7 @@
 package org.scraper.model.managers;
 
 import org.scraper.model.MainLogger;
+import org.scraper.model.MainPool;
 import org.scraper.model.Proxy;
 import org.scraper.model.assigner.*;
 import org.scraper.model.checker.IProxyChecker;
@@ -13,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 public class AssignManager extends Observable {
 	
@@ -22,13 +24,13 @@ public class AssignManager extends Observable {
 	
 	private AtomicBoolean checkOnFly;
 	
-	private IScrapeMethodFinder scrapeMethodFinder;
+	private ScrapersFactory scrapersFactory;
 	
 	public AssignManager(ScrapersFactory scrapersFactory, IProxyChecker checker, AtomicBoolean checkOnFly, List<Domain> domains) {
 		this.checker = checker;
 		this.checkOnFly = checkOnFly;
 		this.domains = domains;
-		this.scrapeMethodFinder = new ChainFinder(scrapersFactory);
+		this.scrapersFactory = scrapersFactory;
 	}
 	
 	public List<Proxy> assign(Site site) {
@@ -52,11 +54,11 @@ public class AssignManager extends Observable {
 		
 		IAssigner assigner = getAssigner();
 		ScrapeType newType = assigner.getType(site);
+		site.setType(newType);
 		
 		if (newType != ScrapeType.BLACK
 				&& type == ScrapeType.BLACK) {
 			addDomain(site.getDomain(), type);
-			site.setType(newType);
 		}
 		return assigner.getProxy();
 	}
@@ -79,16 +81,18 @@ public class AssignManager extends Observable {
 	
 	private IAssigner getAssigner() {
 		return checkOnFly.get()
-				? new CheckingAssigner(scrapeMethodFinder, checker)
-				: new NonCheckAssigner(scrapeMethodFinder);
+				? new CheckingAssigner(new ChainFinder(scrapersFactory), checker)
+				: new NonCheckAssigner(new ChainFinder(scrapersFactory));
 	}
 	
 	public List<Proxy> assignList(List<Site> sites) {
 		List<Proxy> proxy = new ArrayList<>();
 		
-		sites.parallelStream()
+		sites = sites.stream()
 				.filter(site -> site.getType() != ScrapeType.BLACK)
-				.forEach(site -> proxy.addAll(assign(site)));
+				.collect(Collectors.toList());
+		
+		MainPool.getInstance().subPool(sites, site -> proxy.addAll(assign(site)), QueuesManager.getInstance().getBrowserQueue().getSize());
 		
 		MainLogger.log().debug("List assign done");
 		

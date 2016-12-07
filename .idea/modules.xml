@@ -3,7 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/Scraper.iml" filepath="$PROJECT_DIR$/.idea/modules/Scraper.iml" />
-      <module fileurl="file://$PROJECT_DIR$/scraper/scraper.iml" filepath="$PROJECT_DIR$/scraper/scraper.iml" group="Scraper" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/scraper/scraper.iml" filepath="$PROJECT_DIR$/.idea/modules/scraper/scraper.iml" />
     </modules>
   </component>
 </project>

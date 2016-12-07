@@ -4,6 +4,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.scraper.model.Proxy;
 import org.scraper.model.TestsUtils;
+import org.scraper.model.assigner.IAssigner;
+import org.scraper.model.assigner.NonCheckAssigner;
 import org.scraper.model.scrapers.ScrapeType;
 
 import java.util.List;

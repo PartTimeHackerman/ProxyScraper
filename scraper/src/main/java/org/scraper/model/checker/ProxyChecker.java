@@ -56,7 +56,7 @@ public class ProxyChecker extends Observable implements IProxyChecker {
 	
 	
 	private void setProxy(Proxy proxy) {
-		IConnectionCheckers handlers = new ConnectionCheckersExternal();
+		IConnectionCheckers handlers = new ConnectionCheckersScript();
 		proxy.setUpProxy(handlers.check(proxy, timeout));
 	}
 }

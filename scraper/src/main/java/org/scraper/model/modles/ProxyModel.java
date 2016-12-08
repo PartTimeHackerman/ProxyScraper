@@ -70,7 +70,7 @@ public class ProxyModel implements IConcurrent, IDeleter<Proxy>, IClipboard<Prox
 		
 		Platform.runLater(() -> {
 			all.add(proxy);
-			if (proxy.isWorking() || showBroken)
+			if (proxy.isWorking() || !proxy.isChecked() || showBroken)
 				visible.add(proxy);
 		});
 	}

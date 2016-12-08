@@ -4,7 +4,7 @@ import org.scraper.model.Proxy;
 
 public class ConnectionCheckScript extends ConnectionCheck {
 	
-	private static final String URL = "http://absolutelydisgusting.ml/ping.php";
+	private static final String URL = "http://lifechangertoworse.ga/ping.php";
 	private static final String TITLE = "Letters";
 	
 	public ConnectionCheckScript(Proxy.Type type) {

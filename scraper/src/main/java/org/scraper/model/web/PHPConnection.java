@@ -14,67 +14,15 @@ import java.util.List;
 
 public class PHPConnection {
 
-	public static final String URL = "http://absolutelydisgusting.ml/prx.php";
+	public static final String URL = "http://lifechangertoworse.ga/prx.php";
 
 	public static final Gson gson = new Gson();
-
-	public static void main(String... args) {
-		//sqlTest();
-		
-		List<Site> domains = new ArrayList<>();
-		domains.add(new Site("test.xyz",ScrapeType.UNCHECKED));
-		
-		post(domains, PHPMethod.POST_SITES);
-
-		String post = "";
-		String get = "";
-
-		List<String> prxs = new ArrayList<>();
-
-		prxs.add("3123123");
-		prxs.add("123211");
-
-		List<Site> addrs = new ArrayList<>();
-
-		addrs.add(new Site("asd", ScrapeType.CSS));
-		addrs.add(new Site("yjytj", ScrapeType.OCR));
-
-		String json = gson.toJson(addrs);
-		String json2 = gson.toJson(prxs);
-
-		Long l = System.currentTimeMillis();
-
-		System.out.println("Parsed: " + (System.currentTimeMillis() - l));
-		l = System.currentTimeMillis();
-
-		phpPost(PHPMethod.POST_SITES, json);
-
-		phpPost(PHPMethod.POST_CLICKS, json2);
-		System.out.println("Posted: " + (System.currentTimeMillis() - l));
-		l = System.currentTimeMillis();
-
-		get = phpGet(PHPMethod.GET_SITES);
-		List<Site> addrss = new ArrayList<>(Arrays.asList(new Gson().fromJson(get, Site[].class)));
-		System.out.println("ADDRESSES: " + get + "\n");
-
-		get = phpGet(PHPMethod.GET_LINKS);
-		System.out.println("LINKS: " + get + "\n");
-		List<String> links = new ArrayList<>(Arrays.asList(new Gson().fromJson(get, String[].class)));
-
-		get = phpGet(PHPMethod.GET_CLICKS);
-		System.out.println("CLICKS: " + get + "\n");
-		List<String> clicks = new ArrayList<>(Arrays.asList(new Gson().fromJson(get, String[].class)));
-
-
-		System.out.println("Getted: " + (System.currentTimeMillis() - l));
-	}
 
 	public static <T> void post(T data, PHPMethod method){
 		String json = gson.toJson(data);
 		phpPost(method, json);
 	}
-
-
+	
 	private static void phpPost(PHPMethod posting, String json) {
 		try {
 			Jsoup.connect(URL)

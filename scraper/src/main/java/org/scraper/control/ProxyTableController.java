@@ -37,8 +37,8 @@ public class ProxyTableController implements ISelectable<Proxy> {
 	@FXML
 	private Label proxies;
 	
-	@FXML
-	private Label working;
+	//@FXML
+	//private Label working;
 	
 	private ObservableList<Proxy> all;
 	
@@ -54,7 +54,7 @@ public class ProxyTableController implements ISelectable<Proxy> {
 		table.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 		
 		proxies.textProperty().bind(model.getAllSize().asString());
-		working.textProperty().bind(model.getWorkingSize().asString());
+		//working.textProperty().bind(model.getWorkingSize().asString());
 		
 		selected = table.getSelectionModel().getSelectedItems();
 		all = table.getItems();
@@ -78,7 +78,7 @@ public class ProxyTableController implements ISelectable<Proxy> {
 			@Override
 			public void onChanged(Change<? extends Proxy> c) {
 				table.refresh();
-				MainLogger.log().info("table changed");
+				//MainLogger.log().info("table changed");
 			}
 		});
 	}

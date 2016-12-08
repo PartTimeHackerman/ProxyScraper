@@ -8,13 +8,14 @@ public class Site {
 	
 	private ScrapeType type;
 	
-	private Integer avgSites = 0;
+	private int avgSites = 0;
 	
-	private Integer avgWorking = 0;
+	private int avgWorking = 0;
 	
-	private Boolean assignedAvgSites = false;
+	private boolean assignedAvgSites = false;
 	
-	private Boolean assignedAvgWorking = false;
+	private boolean assignedAvgWorking = false;
+	
 	
 	public Site(String address, ScrapeType type) {
 		setAddress(address);
@@ -65,8 +66,8 @@ public class Site {
 	public String toString(){
 		StringBuilder siteString = new StringBuilder(address);
 		siteString.append(" Type: ").append(type);
-		siteString.append(" Avg. sites: ").append(assignedAvgSites ? avgSites : "UNKNOWN");
-		siteString.append(" Avg. working: ").append(assignedAvgWorking ? avgWorking : "UNKNOWN");
+		siteString.append(" Avg. sites: ").append(isAvgSitesAssigned() ? avgSites : "UNKNOWN");
+		siteString.append(" Avg. working: ").append(isAvgWorkingAssigned() ? avgWorking : "UNKNOWN");
 		return siteString.toString();
 	}
 	
@@ -90,10 +91,10 @@ public class Site {
 	}
 	
 	public Boolean isAvgSitesAssigned() {
-		return assignedAvgSites;
+		return assignedAvgSites || avgSites > 0;
 	}
 	
 	public Boolean isAvgWorkingAssigned() {
-		return assignedAvgWorking;
+		return assignedAvgWorking || avgWorking > 0;
 	}
 }

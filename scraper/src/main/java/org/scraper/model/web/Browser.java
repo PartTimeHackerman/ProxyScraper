@@ -8,6 +8,7 @@ import org.openqa.selenium.phantomjs.PhantomJSDriverService;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.scraper.model.Proxy;
+import org.scraper.model.TempFileManager;
 
 import java.io.File;
 import java.util.concurrent.TimeUnit;
@@ -15,7 +16,7 @@ import java.util.logging.Level;
 
 public class Browser {
 	
-	private final static String PATH = new File("phantomjs.exe").getAbsolutePath();
+	private final static String PATH = TempFileManager.loadResource(Browser.class,"phantomjs.exe").getAbsolutePath();
 	
 	private WebDriver browser;
 	

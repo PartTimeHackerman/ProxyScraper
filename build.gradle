@@ -3,6 +3,10 @@ version '1.0'
 
 apply plugin: 'java'
 apply plugin: 'idea'
+apply plugin: 'application'
+
+mainClassName = "org.scraper.control.ViewController"
+applicationDefaultJvmArgs = ["-Dgreeting.language=en"]
 
 //sourceCompatibility = 1.5
 
@@ -12,21 +16,50 @@ repositories {
 
 allprojects {
     repositories { mavenCentral() }
-
 }
+
+jar {
+
+    archiveName = "Scraper.jar"
+
+    from {
+
+        configurations.runtime.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+
+        configurations.compile.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
+
+    manifest {
+        attributes 'Main-Class': mainClassName
+    }
+
+    exclude 'META-INF/*.RSA', 'META-INF/*.SF','META-INF/*.DSA'
+}
+
+dependencies {
+    compile project(':scraper')
+}
+
 project(":scraper") {
     apply plugin: "java"
+
+
 
     dependencies {
 
         compile fileTree(dir: 'marvin\\framework', include: '*.jar')
+
         testCompile group: 'junit', name: 'junit', version: '4.11'
 
-        compile group: 'org.bytedeco.javacpp-presets', name: 'tesseract', version: '3.04.01' + '-1.2'
-        compile group: 'org.bytedeco.javacpp-presets', name: 'tesseract', version: '3.04.01' + '-1.2', classifier: 'windows-x86_64'
+        compile group: 'org.bytedeco.javacpp-presets', name: 'tesseract', version: '3.04.01' + '-1.3'
+        compile group: 'org.bytedeco.javacpp-presets', name: 'tesseract', version: '3.04.01' + '-1.3', classifier: 'windows-x86_64'
 
-        compile group: 'org.bytedeco.javacpp-presets', name: 'leptonica', version: '1.73' + '-1.2'
-        compile group: 'org.bytedeco.javacpp-presets', name: 'leptonica', version: '1.73' + '-1.2', classifier: 'windows-x86_64'
+        compile group: 'org.bytedeco.javacpp-presets', name: 'leptonica', version: '1.73' + '-1.3'
+        compile group: 'org.bytedeco.javacpp-presets', name: 'leptonica', version: '1.73' + '-1.3', classifier: 'windows-x86_64'
 
         //compile 'org.bytedeco:javacv:1.0'
         //compile 'org.bytedeco.javacpp-presets:opencv:3.1.0-1.2:windows-x86_64'
@@ -36,13 +69,13 @@ project(":scraper") {
         compile group: 'com.codeborne', name: 'phantomjsdriver', version: '1.3.0'
 
         // https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-java
-        compile group: 'org.seleniumhq.selenium', name: 'selenium-java', version: '3.0.0-beta2'
+        compile group: 'org.seleniumhq.selenium', name: 'selenium-java', version: '3.0.1'
 
         // https://mvnrepository.com/artifact/org.jsoup/jsoup
         compile group: 'org.jsoup', name: 'jsoup', version: '1.10.1'
 
         // https://mvnrepository.com/artifact/org.slf4j/slf4j-api
-        compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.21'
+        //compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.21'
 
         // https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core
         compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.6.2'
@@ -54,4 +87,7 @@ project(":scraper") {
         compile group: 'io.reactivex', name: 'rxjava', version: '1.2.1'
     }
 
+    configurations {
+        all*.exclude group: 'com.github.detro.ghostdriver', module: 'phantomjsdriver'
+    }
 }

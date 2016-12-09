@@ -24,7 +24,7 @@ public class NonCheckAssignerTest {
 	}
 	
 	
-	@Test
+	/*@Test
 	public void getType() throws Exception {
 		ScrapeType type = assigner.getType(TestsUtils.cssSite);
 		assertEquals(type, ScrapeType.CSS);
@@ -34,6 +34,6 @@ public class NonCheckAssignerTest {
 	public void getProxy() throws Exception {
 		List<Proxy> proxies = assigner.getProxy();
 		assertTrue(!proxies.isEmpty());
-	}
+	}*/
 	
 }

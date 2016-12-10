@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<BorderPane prefHeight="700.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1">
+   <center>
+      <TabPane tabClosingPolicy="ALL_TABS" tabMaxHeight="30.0" tabMaxWidth="300.0" tabMinWidth="300.0" BorderPane.alignment="TOP_LEFT">
+         <tabs>
+            <Tab closable="false" text="Proxy">
+               <content>
+                  <BorderPane />
+               </content>
+            </Tab>
+            <Tab closable="false" text="Site">
+               <content>
+                  <BorderPane />
+               </content>
+            </Tab>
+         </tabs>
+         <opaqueInsets>
+            <Insets />
+         </opaqueInsets>
+         <BorderPane.margin>
+            <Insets bottom="5.0" />
+         </BorderPane.margin>
+      </TabPane>
+   </center>
+   <bottom>
+      <VBox BorderPane.alignment="CENTER">
+         <children>
+            <Separator>
+               <VBox.margin>
+                  <Insets left="10.0" right="10.0" />
+               </VBox.margin>
+            </Separator>
+            <Label fx:id="logBar" />
+         </children>
+      </VBox>
+   </bottom>
+</BorderPane>

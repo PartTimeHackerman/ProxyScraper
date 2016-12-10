@@ -51,7 +51,7 @@ project(":scraper") {
 
     dependencies {
 
-        compile fileTree(dir: 'marvin\\framework', include: '*.jar')
+        compile fileTree(dir: 'libs\\marvin\\framework', include: '*.jar')
 
         testCompile group: 'junit', name: 'junit', version: '4.11'
 

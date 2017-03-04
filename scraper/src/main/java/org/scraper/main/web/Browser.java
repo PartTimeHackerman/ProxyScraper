@@ -7,6 +7,7 @@ import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriverService;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
+import org.scraper.main.MainLogger;
 import org.scraper.main.Proxy;
 import org.scraper.main.TempFileManager;
 
@@ -15,24 +16,25 @@ import java.util.logging.Level;
 
 public class Browser {
 	
-	private final static String PATH = TempFileManager.loadResource(Browser.class,"phantomjs.exe").getAbsolutePath();
+	private final static String PATH = TempFileManager.loadResource(Browser.class, "phantomjs.exe").getAbsolutePath();
 	
-	private WebDriver browser;
+	private WebDriver driver;
 	
 	public Browser() {
 		setUp();
 	}
 	
-	protected Browser(Object explicit) {}
+	protected Browser(Object explicit) {
+	}
 	
-	protected void setUp(){
-		browser = getBrowser(null, BrowserVersion.random(), false);
+	protected void setUp() {
+		driver = getBrowser(null, BrowserVersion.random(), false);
 	}
 	
 	public void changeProxy(Proxy proxy) {
 		if (proxy == null) {
 			String js = "phantom.setUpProxy('',0);";
-			((PhantomJSDriver) browser).executePhantomJS(js);
+			((PhantomJSDriver) driver).executePhantomJS(js);
 			return;
 		}
 		
@@ -41,7 +43,7 @@ public class Browser {
 		
 		String js = "phantom.setUpProxy('" + ip + "'," + port + ",'" + (type == Proxy.Type.SOCKS ? "socks5" : "http") + "');";
 		
-		((PhantomJSDriver) browser).executePhantomJS(js);
+		((PhantomJSDriver) driver).executePhantomJS(js);
 	}
 	
 	private WebDriver getBrowser(String proxy, BrowserVersion version, Boolean debug) {
@@ -86,7 +88,7 @@ public class Browser {
 		WebDriver driver = new PhantomJSDriver(capabilities);
 		
 		driver.manage().timeouts().implicitlyWait(2000, TimeUnit.MILLISECONDS);
-		driver.manage().timeouts().setScriptTimeout(3000,TimeUnit.MILLISECONDS);
+		driver.manage().timeouts().setScriptTimeout(3000, TimeUnit.MILLISECONDS);
 		driver.manage().window().setSize(new Dimension(800, 600));
 		setupDriver(driver, version.pl());
 		
@@ -235,12 +237,28 @@ public class Browser {
 		//phantom.executePhantomJS(onUrlChanged);
 	}
 	
-	public WebDriver getBrowser() {
-		return browser;
+	public WebDriver getDriver() {
+		return driver;
+	}
+	
+	public Long getPID(PhantomJSDriver driver) {
+		String returnPidScript =
+				"var system = require('system');" +
+						"var pid = system.pid;" +
+						"return pid;";
+		
+		return (Long) driver.executePhantomJS(returnPidScript);
 	}
 	
 	public void shutdown() {
-		browser.quit();
+		driver.close();
+		driver.quit();
+		
+		try {
+			Runtime.getRuntime().exec("taskkill /F /PID " + getPID((PhantomJSDriver) driver));
+		} catch (Exception e) {
+			MainLogger.log().fatal("Driver is already closed :)");
+		}
 	}
 }
 

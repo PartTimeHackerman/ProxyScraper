@@ -31,7 +31,7 @@ class CssScraper extends Scraper {
 		String url = site.getAddress();
 		MainLogger.log().info("CSS scraping {}", url);
 		
-		WebDriver driver = browser.getBrowser();
+		WebDriver driver = browser.getDriver();
 		
 		driver.get(url);
 		if (driver.findElements(By.tagName("body")).size() == 0)

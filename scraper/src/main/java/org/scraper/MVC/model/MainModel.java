@@ -31,7 +31,6 @@ public class MainModel {
 	
 	private SitesManager sitesManager;
 	
-	
 	private GlobalObserver observer;
 	
 	private ScrapersFactory scrapersFactory;
@@ -43,7 +42,6 @@ public class MainModel {
 	private AssignManager assigner;
 	
 	private LinksGather gather;
-	
 	
 	private AtomicBoolean checkOnFly = new AtomicBoolean(false);
 	

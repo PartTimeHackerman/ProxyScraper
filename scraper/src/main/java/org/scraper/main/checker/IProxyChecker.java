@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface IProxyChecker {
 	
-	List<Proxy> checkProxies(List<Proxy> proxies);
+	void checkProxies(List<Proxy> proxies);
 	
-	Proxy checkProxy(Proxy proxy);
+	void checkProxy(Proxy proxy);
 }

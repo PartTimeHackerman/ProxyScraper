@@ -13,7 +13,7 @@ public class OcrQueue extends Queue<OCR> {
 	}
 	
 	@Override
-	void create() {
+	public void create() {
 		IntStream.range(0, getMaxSize())
 				.forEach(i -> {
 					try {
@@ -25,7 +25,7 @@ public class OcrQueue extends Queue<OCR> {
 	}
 	
 	@Override
-	void shutdownAll() {
+	void shutdown() {
 		queue.forEach(OCR::shutdown);
 	}
 }

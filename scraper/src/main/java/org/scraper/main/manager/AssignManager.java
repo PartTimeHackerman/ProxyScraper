@@ -1,16 +1,20 @@
 package org.scraper.main.manager;
 
 import org.scraper.main.MainLogger;
-import org.scraper.main.MainPool;
 import org.scraper.main.Proxy;
-import org.scraper.main.assigner.*;
+import org.scraper.main.assigner.ChainFinder;
+import org.scraper.main.assigner.CheckingAssigner;
+import org.scraper.main.assigner.IAssigner;
+import org.scraper.main.assigner.NonCheckAssigner;
 import org.scraper.main.checker.IProxyChecker;
+import org.scraper.main.data.DomainsRepo;
 import org.scraper.main.scraper.ScrapeType;
 import org.scraper.main.scraper.ScrapersFactory;
-import org.scraper.main.web.Domain;
-import org.scraper.main.web.Site;
+import org.scraper.main.data.Domain;
+import org.scraper.main.data.Site;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Observable;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -20,22 +24,22 @@ public class AssignManager extends Observable {
 	
 	private IProxyChecker checker;
 	
-	private List<Domain> domains;
+	private DomainsRepo domainsRepo;
 	
 	private AtomicBoolean checkOnFly;
 	
 	private ScrapersFactory scrapersFactory;
 	
-	public AssignManager(ScrapersFactory scrapersFactory, IProxyChecker checker, AtomicBoolean checkOnFly, List<Domain> domains) {
+	public AssignManager(ScrapersFactory scrapersFactory, IProxyChecker checker, DomainsRepo domainsRepo, AtomicBoolean checkOnFly) {
 		this.checker = checker;
+		this.domainsRepo = domainsRepo;
 		this.checkOnFly = checkOnFly;
-		this.domains = domains;
 		this.scrapersFactory = scrapersFactory;
 	}
 	
 	public List<Proxy> assign(Site site) {
 		
-		List<Proxy> proxy = domains.contains(site.getDomain())
+		List<Proxy> proxy = domainsRepo.contains(site.getDomain())
 				? assignWithDomain(site)
 				: assignWithoutDomain(site);
 		
@@ -50,7 +54,7 @@ public class AssignManager extends Observable {
 	public List<Proxy> assignWithDomain(Site site) {
 		Domain siteDomain = site.getDomain();
 		
-		ScrapeType type = domains.get(domains.indexOf(siteDomain)).getType();
+		ScrapeType type = domainsRepo.getDomainScrapeType(siteDomain);
 		
 		IAssigner assigner = getAssigner();
 		ScrapeType newType = assigner.getType(site);
@@ -76,7 +80,7 @@ public class AssignManager extends Observable {
 	
 	private void addDomain(Domain domain, ScrapeType type) {
 		Domain newDomain = new Domain(domain.getDomainString(), type);
-		domains.add(newDomain);
+		domainsRepo.add(newDomain);
 	}
 	
 	private IAssigner getAssigner() {
@@ -85,14 +89,15 @@ public class AssignManager extends Observable {
 				: new NonCheckAssigner(new ChainFinder(scrapersFactory));
 	}
 	
-	public List<Proxy> assignList(List<Site> sites) {
+	public List<Proxy> assignList(Collection<Site> sites) {
 		List<Proxy> proxy = new ArrayList<>();
 		
 		sites = sites.stream()
 				.filter(site -> site.getType() != ScrapeType.BLACK)
 				.collect(Collectors.toList());
 		
-		MainPool.getInstance().subPool(sites, site -> proxy.addAll(assign(site)), QueuesManager.getInstance().getBrowserQueue().getSize());
+		sites.forEach(site ->
+							  proxy.addAll(assign(site)));
 		
 		MainLogger.log().debug("List assign done");
 		

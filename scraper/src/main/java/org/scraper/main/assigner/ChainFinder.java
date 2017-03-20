@@ -2,9 +2,9 @@ package org.scraper.main.assigner;
 
 import org.scraper.main.Proxy;
 import org.scraper.main.scraper.ScrapeType;
-import org.scraper.main.scraper.Scraper;
+import org.scraper.main.scraper.ScraperAbstract;
 import org.scraper.main.scraper.ScrapersFactory;
-import org.scraper.main.web.Site;
+import org.scraper.main.data.Site;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,15 +26,15 @@ public class ChainFinder implements IScrapeMethodFinder {
 		proxies.clear();
 		if (site.getType() != ScrapeType.UNCHECKED
 				&& site.getType() != ScrapeType.BLACK) {
-			Scraper scraper = scrapersFactory.get(site.getType());
+			ScraperAbstract scraper = scrapersFactory.get(site.getType());
 			scraper.scrape(site);
 			proxies = scraper.getScraped();
 			return scraper.getType();
 		}
 		
-		List<Scraper> scrapers = scrapersFactory.getAll();
+		List<ScraperAbstract> scrapers = scrapersFactory.getAll();
 		
-		for (Scraper scraper : scrapers) {
+		for (ScraperAbstract scraper : scrapers) {
 			if (scraper.scrape(site).size() >= minimumProxies) {
 				proxies = scraper.getScraped();
 				return scraper.getType();

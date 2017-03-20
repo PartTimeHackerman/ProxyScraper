@@ -1,6 +1,6 @@
 package org.scraper.main.scraper;
 
-import org.scraper.main.web.Site;
+import org.scraper.main.data.Site;
 
 public class ScrapersTest {
 	

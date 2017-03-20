@@ -7,13 +7,13 @@ import org.jsoup.nodes.Element;
 import org.scraper.main.MainLogger;
 import org.scraper.main.Proxy;
 import org.scraper.main.web.BrowserVersion;
-import org.scraper.main.web.Site;
+import org.scraper.main.data.Site;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-class NormalScraper extends Scraper{
+class NormalScraper extends ScraperAbstract {
 	
 	NormalScraper(){
 		type = ScrapeType.NORMAL;

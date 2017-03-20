@@ -6,7 +6,10 @@ import org.scraper.main.TempFileManager;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 
 import static marvin.MarvinPluginCollection.scale;
 import static marvin.MarvinPluginCollection.thresholding;

@@ -1,15 +1,20 @@
 package org.scraper.main.web;
 
+import org.scraper.main.data.Domain;
+import org.scraper.main.data.Site;
+
 import java.util.List;
 
 public interface IDataBase {
-	void getAll();
+	void getSitesAndDomains();
 	
 	void postNew();
 	
-	void postAll();
+	void postSitesAndDomains();
 	
 	void postSites(List<Site> sites);
+	
+	void postDomains(List<Domain> domains);
 	
 	List<Site> getAllSites();
 	

@@ -1,6 +1,8 @@
 package org.scraper.main;
 
-import rx.*;
+import rx.Notification;
+import rx.Observable;
+import rx.Subscription;
 import rx.functions.Action1;
 import rx.subjects.BehaviorSubject;
 import rx.subjects.PublishSubject;

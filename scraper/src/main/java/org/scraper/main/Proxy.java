@@ -25,7 +25,6 @@ public class Proxy {
 		setPort(port);
 		setIpPort(ip + ":" + port);
 		setChecked(false);
-		
 	}
 	
 	public Proxy(String ipPort) {

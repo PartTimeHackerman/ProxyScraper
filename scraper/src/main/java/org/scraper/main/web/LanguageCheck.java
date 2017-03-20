@@ -1,5 +1,7 @@
 package org.scraper.main.web;
 
+import org.scraper.main.data.Site;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

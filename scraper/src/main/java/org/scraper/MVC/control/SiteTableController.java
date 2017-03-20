@@ -12,8 +12,8 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import org.scraper.MVC.model.SitesModel;
-import org.scraper.main.web.Site;
+import org.scraper.MVC.model.SitesModelFX;
+import org.scraper.main.data.Site;
 
 import java.util.List;
 
@@ -37,14 +37,14 @@ public class SiteTableController implements ISelectable<Site>{
 	@FXML
 	private Label sites;
 	
-	private SitesModel model;
+	private SitesModelFX model;
 	
 	private ObservableList<Site> all;
 	
 	private ObservableList<Site> selected;
 	
 	@FXML
-	public void initialize(SitesModel model) {
+	public void initialize(SitesModelFX model) {
 		this.model = model;
 		
 		setColumns();
@@ -79,9 +79,9 @@ public class SiteTableController implements ISelectable<Site>{
 		
 		siteColumn.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getAddress()));
 		
-		proxiesColumn.setCellValueFactory(cellData -> cellData.getValue().isAvgSitesAssigned() ? new ReadOnlyIntegerWrapper(cellData.getValue().getAvgSites()) : null);
+		proxiesColumn.setCellValueFactory(cellData -> cellData.getValue().isAvgSitesAssigned() ? new ReadOnlyIntegerWrapper(cellData.getValue().getAvgProxies()) : null);
 		
-		workingColumn.setCellValueFactory(cellData -> cellData.getValue().isAvgWorkingAssigned() ? new ReadOnlyIntegerWrapper(cellData.getValue().getAvgWorking()) : null);
+		workingColumn.setCellValueFactory(cellData -> cellData.getValue().isAvgWorkingAssigned() ? new ReadOnlyIntegerWrapper(cellData.getValue().getAvgWorkingProxies()) : null);
 		
 		typeColumn.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getType().name()));
 		

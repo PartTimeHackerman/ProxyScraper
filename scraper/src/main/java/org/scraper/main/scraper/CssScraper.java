@@ -7,11 +7,12 @@ import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.scraper.main.MainLogger;
 import org.scraper.main.Proxy;
 import org.scraper.main.web.Browser;
-import org.scraper.main.web.Site;
+import org.scraper.main.data.Site;
 
+import java.util.ArrayList;
 import java.util.List;
 
-class CssScraper extends Scraper {
+class CssScraper extends ScraperAbstract {
 	
 	protected Browser browser;
 	
@@ -28,11 +29,15 @@ class CssScraper extends Scraper {
 	
 	@Override
 	public List<Proxy> scrape(Site site) {
+		return scrapeByDriver(site);
+	}
+	
+	
+	public List<Proxy> scrapeByDriver(Site site) {
 		String url = site.getAddress();
 		MainLogger.log().info("CSS scraping {}", url);
 		
 		WebDriver driver = browser.getDriver();
-		
 		driver.get(url);
 		if (driver.findElements(By.tagName("body")).size() == 0)
 			return proxy;
@@ -53,7 +58,7 @@ class CssScraper extends Scraper {
 						"[].forEach.call(document.getElementsByTagName(\"br\"), function (e) { e.innerHTML += \"||newline||\";});" +
 						"[].forEach.call(document.getElementsByTagName(\"p\"), function (e) { e.innerHTML += \"||newline||\";});" +
 						"[].forEach.call(document.getElementsByTagName(\"tr\"), function (e) { e.innerHTML += \"||newline||\";});" +
-						"}catch(e){console.warn('CATCHING');}";
+						"}catch(e){console.warn('CATCHING' + e);}";
 		((PhantomJSDriver) driver).executePhantomJS(copyableBeforeAfter);
 		WebElement body;
 		body = driver.findElement(By.tagName("body"));

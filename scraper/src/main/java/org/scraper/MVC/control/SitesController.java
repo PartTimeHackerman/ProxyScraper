@@ -3,9 +3,9 @@ package org.scraper.MVC.control;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
-import org.scraper.MVC.model.SitesModel;
+import org.scraper.MVC.model.SitesUtility;
 import org.scraper.main.scraper.ScrapeType;
-import org.scraper.main.web.Site;
+import org.scraper.main.data.Site;
 
 import java.io.File;
 import java.util.Arrays;
@@ -37,12 +37,12 @@ public class SitesController implements ISaveable, ILoader {
 	@FXML
 	private TextField avgWorking;
 	
-	private SitesModel model;
+	private SitesUtility model;
 	
 	private ISelectable<Site> selected;
 	
 	@FXML
-	public void initialize(SitesModel model, ISelectable<Site> selected) {
+	public void initialize(SitesUtility model, ISelectable<Site> selected) {
 		
 		this.model = model;
 		
@@ -62,7 +62,7 @@ public class SitesController implements ISaveable, ILoader {
 		});
 		
 		avgSites.setOnAction(event ->
-									 model.filterAvgSites(parseToInt(avgSites.getText())));
+									 model.filterAvgProxies(parseToInt(avgSites.getText())));
 		
 		avgWorking.setOnAction(event ->
 									   model.filterAvgWorking(parseToInt(avgWorking.getText())));
@@ -87,7 +87,7 @@ public class SitesController implements ISaveable, ILoader {
 	}
 	
 	private void check() {
-		model.check(selected.getSelected());
+		model.assgn(selected.getSelected());
 	}
 	
 	private void gather() {

@@ -1,37 +1,36 @@
 package org.scraper.MVC.model;
 
-
-import org.scraper.main.GlobalObserver;
 import org.scraper.main.Interval;
 import org.scraper.main.MainLogger;
-import org.scraper.main.MainPool;
+import org.scraper.main.Pool;
 import org.scraper.main.checker.IProxyChecker;
 import org.scraper.main.checker.ProxyChecker;
 import org.scraper.main.checker.ProxyCheckerConcurrent;
+import org.scraper.main.data.DataBaseLocal;
+import org.scraper.main.data.DomainsRepo;
+import org.scraper.main.data.ProxyRepo;
+import org.scraper.main.data.SitesRepo;
 import org.scraper.main.gather.LinkGatherConcurrent;
 import org.scraper.main.gather.LinksGather;
-import org.scraper.main.manager.AssignManager;
-import org.scraper.main.manager.ProxyManager;
-import org.scraper.main.manager.QueuesManager;
-import org.scraper.main.manager.SitesManager;
+import org.scraper.main.limiter.Limiter;
+import org.scraper.main.manager.*;
 import org.scraper.main.scraper.ProxyScraper;
 import org.scraper.main.scraper.ProxyScraperConcurrent;
 import org.scraper.main.scraper.ScrapersFactory;
 import org.scraper.main.web.ConnectionChecker;
-import org.scraper.main.web.DataBaseConcurrent;
 import org.scraper.main.web.IDataBase;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class MainModel {
 	
+	private DomainsRepo domainsRepo;
+	
 	private IDataBase dataBase;
 	
-	private ProxyManager proxyManager;
+	private ProxyRepo proxyRepo;
 	
-	private SitesManager sitesManager;
-	
-	private GlobalObserver observer;
+	private SitesRepo sitesRepo;
 	
 	private ScrapersFactory scrapersFactory;
 	
@@ -46,62 +45,67 @@ public class MainModel {
 	private AtomicBoolean checkOnFly = new AtomicBoolean(false);
 	
 	private String ip;
+	private Limiter limiter;
+	private Pool pool;
 	
 	public MainModel(int threads, Integer timeout, Integer limit, Boolean check) {
 		
+/*
 		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
 			MainLogger.log().info("SHUTDOWN HOOK!!!");
-			dataBase.postAll();
-			QueuesManager.getInstance().shutdownAll();
+			dataBase.postSitesAndDomains();
+			QueuesManager.getInstance().shutdown();
 		}));
 		
 		if(!ConnectionChecker.hasConnection())
 			MainLogger.log().fatal("NO INTERNET CONNECTION!");
 		
-		MainPool.setThreadsStatic(threads);
+		Pool.setDefaultThreads(threads);
 		
 		QueuesManager.setBrowsers(threads / 10);
 		QueuesManager.setOcrs(threads / 10 / 2);
 		
 		setCheckOnFly(check);
 		
-		dataBase = new DataBaseConcurrent();
-		dataBase.getAll();
+		proxyRepo = new ProxyRepo(null);
+		sitesRepo = new SitesRepo();
+		domainsRepo = new DomainsRepo();
 		
-		proxyManager = new ProxyManager(limit);
-		sitesManager = new SitesManager(dataBase);
+		dataBase = new DataBaseLocal(sitesRepo, domainsRepo);
+		dataBase.getSitesAndDomains();
 		
 		ip = ConnectionChecker.getIp();
 		
-		scrapersFactory = new ScrapersFactory();
+		ScrapersFactory scrapersFactory = new ScrapersFactory();
 		
-		checker = new ProxyCheckerConcurrent(timeout, getProxyManager().getAll());
+		checker = new ProxyCheckerConcurrent(timeout, getProxyRepo().getAll());
 		
-		assigner = new AssignManager(scrapersFactory, checker, checkOnFly, dataBase.getAllDomains());
+		assigner = new AssignManagerConcurrent(scrapersFactory, checker, checkOnFly, domainsRepo);
 		
 		scraper = new ProxyScraperConcurrent(scrapersFactory);
 		scraper.setAssigner(assigner);
 		
-		gather = new LinkGatherConcurrent();
+		gather = new LinkGatherConcurrent(sitesRepo,1);
 		
-		observer = GlobalObserver.getInstance();
+		GlobalObserver observer = GlobalObserver.getInstance();
 		observer.setAssignManager(assigner);
 		observer.setCheckOnFly(checkOnFly);
 		observer.setProxyChceker(checker);
-		observer.setSitesManager(sitesManager);
-		observer.setProxyManager(proxyManager);
+		observer.setSitesRepo(sitesRepo);
+		observer.setProxyRepo(proxyRepo);
 		
 		checker.addObserver(observer);
 		scraper.addObserver(observer);
 		assigner.addObserver(observer);
 		gather.addObserver(observer);
 		
-		synchronized (MainPool.getInstance()) {
-			while (!(MainPool.getInstance().getExecutor().getActiveCount() == 0))
-				MainPool.getInstance().notify();
+		synchronized (Pool.getInstance()) {
+			while (!(Pool.getInstance().getExecutor().getActiveCount() == 0))
+				Pool.getInstance().notify();
 			
 		}
 		MainLogger.log().info("Initialized");
+*/
 	}
 	
 	public MainModel() {
@@ -109,14 +113,15 @@ public class MainModel {
 	}
 	
 	public void setVarsInterval() {
-		Interval.addFunc("threads", () -> MainPool.getInstance().getThreads() - MainPool.getInstance().getActiveThreads());
-		Interval.addFunc("threadsMax", () -> MainPool.getInstance().getThreads());
+		/*Interval.start();
+		Interval.addFunc("threads", () -> Pool.getInstance().getThreads() - Pool.getInstance().getActiveThreads());
+		Interval.addFunc("threadsMax", () -> Pool.getInstance().getThreads());
 		
 		Interval.addFunc("browsers", () -> QueuesManager.getInstance().getBrowserQueue().getSize());
 		Interval.addFunc("browsersMax", () -> QueuesManager.getInstance().getBrowserQueue().getMaxSize());
 		
 		Interval.addFunc("ocrs", () -> QueuesManager.getInstance().getOcrQueue().getSize());
-		Interval.addFunc("ocrsMax", () -> QueuesManager.getInstance().getOcrQueue().getMaxSize());
+		Interval.addFunc("ocrsMax", () -> QueuesManager.getInstance().getOcrQueue().getMaxSize());*/
 	}
 	
 	public void setCheckOnFly(boolean checkOnFly) {
@@ -135,16 +140,16 @@ public class MainModel {
 		return scraper;
 	}
 	
-	public ProxyManager getProxyManager() {
-		return proxyManager;
+	public ProxyRepo getProxyRepo() {
+		return proxyRepo;
 	}
 	
 	public AssignManager getAssigner() {
 		return assigner;
 	}
 	
-	public SitesManager getSitesManager() {
-		return sitesManager;
+	public SitesRepo getSitesRepo() {
+		return sitesRepo;
 	}
 	
 	public LinksGather getGather() {
@@ -153,5 +158,13 @@ public class MainModel {
 	
 	public AtomicBoolean getCheckOnFly() {
 		return checkOnFly;
+	}
+	
+	public Limiter getLimiter() {
+		return limiter;
+	}
+	
+	public Pool getPool() {
+		return pool;
 	}
 }

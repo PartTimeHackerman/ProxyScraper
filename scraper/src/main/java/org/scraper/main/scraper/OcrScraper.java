@@ -4,13 +4,13 @@ import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
+import org.scraper.main.IConcurrent;
 import org.scraper.main.MainLogger;
-import org.scraper.main.MainPool;
 import org.scraper.main.Proxy;
 import org.scraper.main.scraper.ocr.Image;
 import org.scraper.main.scraper.ocr.OCR;
 import org.scraper.main.web.BrowserVersion;
-import org.scraper.main.web.Site;
+import org.scraper.main.data.Site;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -19,7 +19,7 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class OcrScraper extends Scraper {
+public class OcrScraper extends ScraperAbstract {
 	
 	private String siteRoot;
 	
@@ -66,6 +66,7 @@ public class OcrScraper extends Scraper {
 		
 		imgs.stream()
 				.map(e -> e.attr("src"))
+				.distinct()
 				.filter(url -> !imgsUrls.contains(url))
 				//.filter(url -> url.contains(siteRoot))
 				.forEach(imgsUrls::add);
@@ -119,7 +120,7 @@ public class OcrScraper extends Scraper {
 			}
 			return null;
 		};//);
-		MainPool.getInstance().forEach(responses, replace);
+		responses.forEach(response -> replace.apply(response));
 	}
 	
 	private String getImageUrl(String url){

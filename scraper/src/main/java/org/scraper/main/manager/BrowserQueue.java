@@ -1,5 +1,6 @@
 package org.scraper.main.manager;
 
+import org.scraper.main.MainLogger;
 import org.scraper.main.web.Browser;
 import org.scraper.main.web.BrowserConcurrent;
 
@@ -8,7 +9,7 @@ import java.util.stream.IntStream;
 
 public class BrowserQueue extends Queue<Browser> {
 	
-	public BrowserQueue(Integer size){
+	public BrowserQueue(Integer size) {
 		queue = new ArrayBlockingQueue<>(size);
 		create();
 	}
@@ -18,24 +19,32 @@ public class BrowserQueue extends Queue<Browser> {
 		try {
 			return queue.take();
 		} catch (InterruptedException e) {
-			return new BrowserConcurrent();
+			return new Browser();
 		}
 	}
 	
 	@Override
-	void create() {
+	public void create() {
 		IntStream.range(0, getMaxSize())
-				.forEach(i -> {
-					try {
-						queue.put(new BrowserConcurrent());
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-				});
+				.forEach(i -> putToQueue());
+	}
+	
+	private void putToQueue() {
+		new Thread(() ->
+				   {
+					   try {
+						   queue.put(new Browser());
+					   } catch (InterruptedException e) {
+						   MainLogger.log().error("Thread was interrupted");
+					   }
+				   }).start();
 	}
 	
 	@Override
-	public void shutdownAll() {
-		queue.forEach(Browser::shutdown);
+	public void shutdown() {
+		queue.forEach(browser -> {
+			queue.clear();
+			new Thread(browser::shutdown).start();
+		});
 	}
 }

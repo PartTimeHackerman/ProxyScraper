@@ -11,8 +11,8 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import org.scraper.MVC.model.ProxyModelFX;
 import org.scraper.main.Proxy;
-import org.scraper.MVC.model.ProxyModel;
 
 import java.util.List;
 
@@ -45,7 +45,7 @@ public class ProxyTableController implements ISelectable<Proxy> {
 	
 	
 	@FXML
-	public void initialize(ProxyModel model) {
+	public void initialize(ProxyModelFX model) {
 		setColumns();
 		
 		table.setItems(model.getVisible());
@@ -84,7 +84,7 @@ public class ProxyTableController implements ISelectable<Proxy> {
 		String help =
 		"Upper menu bar:\n" +
 		"Threads input - set number of avaiable threads\n" +
-		"Check on fly button - check proxies right after scrape\n" +
+		"Check on fly button - assgn proxies right after scrape\n" +
 		"Threads field - shows avaiable threads\n" +
 		"Browsers field - shows avaiable browsers (needed for most sites)\n" +
 		"OCRs field - shows avaiable ocrs (needed for sites that have proxies saved in images)\n" +
@@ -93,8 +93,8 @@ public class ProxyTableController implements ISelectable<Proxy> {
 		"Table - You can sort proxies by eg. Timeout by clicking on corresponging column,\n" +
 		"filter by Type, Anonimity and Timout and save and load proxies from .txt files through left menu.\n" +
 		"Show broken - show or hide broken proxies. \n" +
-		"Check Proxies - check ALL proxies in table.       \n" +
-		"To check, copy (CTRL+C), or delete specyfic proxy select it ( or select several by holding CTRL an selecting).\n" +
+		"Check Proxies - assgn ALL proxies in table.       \n" +
+		"To assgn, copy (CTRL+C), or delete specyfic proxy select it ( or select several by holding CTRL an selecting).\n" +
 		"\n" +
 		"Sites tab:\n" +
 		"Most of options are self explanatory and similar to Proxy tab.\n" +

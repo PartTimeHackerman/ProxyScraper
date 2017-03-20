@@ -3,46 +3,38 @@ package org.scraper.main.manager;
 import org.scraper.main.scraper.ocr.OCR;
 import org.scraper.main.web.Browser;
 
-public class QueuesManager{
-	
-	private static QueuesManager queuesManager;
+public class QueuesManager {
 	
 	private Queue<Browser> browserQueue;
 	
 	private Queue<OCR> ocrQueue;
 	
-	private static Integer browsers = 1, ocrs = 1;
+	private Integer browsers = 1, ocrs = 1;
 	
-	private QueuesManager(Integer browsers, Integer ocrs){
+	public QueuesManager(Integer browsers, Integer ocrs) {
+		this.browsers = browsers;
+		this.ocrs = ocrs;
+		//create();
+	}
+	
+	public void setBrowsers(Integer browsers) {
+		this.browsers = browsers;
+		browserQueue.setSize(browsers);
+	}
+	
+	public void setOcrs(Integer ocrs) {
+		this.ocrs = ocrs;
+		ocrQueue.setSize(ocrs);
+	}
+	
+	public void create() {
 		browserQueue = new BrowserQueue(browsers);
 		ocrQueue = new OcrQueue(ocrs);
 	}
 	
-	public static QueuesManager getInstance(){
-		if (queuesManager == null){
-			synchronized (QueuesManager.class){
-				if(queuesManager == null)
-					queuesManager = new QueuesManager(browsers, ocrs);
-			}
-		}
-		return queuesManager;
-	}
-	
-	public static void setBrowsers(Integer browsers){
-		QueuesManager.browsers = browsers;
-		if(queuesManager != null)
-			queuesManager.browserQueue.setSize(browsers);
-	}
-	
-	public static void setOcrs(Integer ocrs){
-		QueuesManager.ocrs = ocrs;
-		if(queuesManager != null)
-			queuesManager.ocrQueue.setSize(ocrs);
-	}
-	
-	public void shutdownAll(){
-		browserQueue.shutdownAll();
-		ocrQueue.shutdownAll();
+	public void shutdown() {
+		browserQueue.shutdown();
+		ocrQueue.shutdown();
 	}
 	
 	public Queue<Browser> getBrowserQueue() {

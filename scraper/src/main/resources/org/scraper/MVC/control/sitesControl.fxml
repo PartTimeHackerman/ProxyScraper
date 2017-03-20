@@ -17,8 +17,8 @@
          <children>
             <Label text="Average working ≥" GridPane.rowIndex="1" />
             <Label text="Average sites ≥ " />
-            <TextField fx:id="avgSites" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="25.0" prefWidth="50.0" GridPane.columnIndex="1" />
-            <TextField fx:id="avgWorking" maxHeight="-Infinity" maxWidth="-Infinity" prefWidth="50.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <TextField fx:id="avgProxies" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="25.0" prefWidth="50.0" GridPane.columnIndex="1" />
+            <TextField fx:id="avgWorkingProxies" maxHeight="-Infinity" maxWidth="-Infinity" prefWidth="50.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
          </children>
       </GridPane>
       <Separator prefWidth="200.0" />

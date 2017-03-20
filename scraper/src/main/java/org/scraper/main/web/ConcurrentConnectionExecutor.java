@@ -3,32 +3,25 @@ package org.scraper.main.web;
 import org.jsoup.Connection;
 import org.scraper.main.IConcurrent;
 import org.scraper.main.MainLogger;
+import org.scraper.main.Pool;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.stream.Collectors;
 
 public class ConcurrentConnectionExecutor extends ConnectionExecutor implements IConcurrent {
 	
-	private static ConnectionExecutor connectionExecutor;
+	private Pool pool;
 	
-	private ConcurrentConnectionExecutor() {
-	}
-	
-	public static ConnectionExecutor getInstance() {
-		if (connectionExecutor == null) {
-			synchronized (ConcurrentConnectionExecutor.class) {
-				if (connectionExecutor == null)
-					connectionExecutor = new ConcurrentConnectionExecutor();
-			}
-		}
-		return connectionExecutor;
+	public ConcurrentConnectionExecutor(Pool pool) {
+		this.pool = pool;
 	}
 	
 	@Override
 	public Connection.Response execute(Connection connection) {
-		return send(connection::execute);
+		return send(connection::execute, pool);
 	}
 	
 	@Override
@@ -54,7 +47,7 @@ public class ConcurrentConnectionExecutor extends ConnectionExecutor implements 
 								 responses.add(() ->
 													   super.execute(connection)));
 		
-		return sendTasks(responses);
+		return pool.sendTasks(responses);
 	}
 	
 	@Override
@@ -65,7 +58,7 @@ public class ConcurrentConnectionExecutor extends ConnectionExecutor implements 
 								 responses.add(() ->
 													   super.executeAsBytes(connection)));
 		
-		return sendTasks(responses);
+		return pool.sendTasks(responses);
 	}
 	
 	@Override
@@ -76,6 +69,6 @@ public class ConcurrentConnectionExecutor extends ConnectionExecutor implements 
 								 responses.add(() ->
 													   super.executeParse(connection)));
 		
-		return sendTasks(responses);
+		return pool.sendTasks(responses);
 	}
 }

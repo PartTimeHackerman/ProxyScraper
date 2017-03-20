@@ -1,5 +1,6 @@
 package org.scraper.main;
 
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.Appender;
@@ -58,6 +59,14 @@ public class MainLogger {
 			loggerConfig.addAppender(appender, null, null);
 		}
 		config.getRootLogger().addAppender(appender, null, null);
+	}
+	
+	public void setLevel(Level level){
+		LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
+		Configuration config = ctx.getConfiguration();
+		LoggerConfig loggerConfig = config.getLoggerConfig(name);
+		loggerConfig.setLevel(level);
+		ctx.updateLoggers();
 	}
 	
 	public class LoggerOutputStream extends OutputStream {

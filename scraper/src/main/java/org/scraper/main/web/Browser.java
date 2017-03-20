@@ -47,7 +47,6 @@ public class Browser {
 	}
 	
 	private WebDriver getBrowser(String proxy, BrowserVersion version, Boolean debug) {
-		
 		if (!debug) {
 			java.util.logging.Logger.getLogger(PhantomJSDriverService.class.getName()).setLevel(Level.OFF);
 			java.util.logging.Logger.getLogger(PhantomJSDriver.class.getName()).setLevel(Level.OFF);
@@ -257,7 +256,7 @@ public class Browser {
 		try {
 			Runtime.getRuntime().exec("taskkill /F /PID " + getPID((PhantomJSDriver) driver));
 		} catch (Exception e) {
-			MainLogger.log().fatal("Driver is already closed :)");
+			MainLogger.log().fatal("Driver is already closed");
 		}
 	}
 }

@@ -3,13 +3,15 @@ package org.scraper.main.gather;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
+import org.scraper.main.data.SitesRepo;
 import org.scraper.main.scraper.ScrapeType;
 import org.scraper.main.web.BrowserVersion;
 import org.scraper.main.web.LanguageCheck;
-import org.scraper.main.web.Site;
+import org.scraper.main.data.Site;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Observable;
 import java.util.stream.Collectors;
@@ -18,13 +20,15 @@ import java.util.stream.IntStream;
 public class LinksGather extends Observable {
 	
 	private Integer depth;
+	private SitesRepo sitesRepo;
 	
 	public LinksGather(Integer depth) {
 		this.depth = depth;
 	}
 	
-	public LinksGather() {
-		this.depth = 2;
+	public LinksGather(SitesRepo sitesRepo, Integer depth) {
+		this(depth);
+		this.sitesRepo = sitesRepo;
 	}
 	
 	public List<Site> gather(Site site) {
@@ -36,22 +40,23 @@ public class LinksGather extends Observable {
 		
 		setChanged();
 		notifyObservers(gathered);
+		
 		return gathered;
 	}
 	
 	private List<String> startGather(Site site) {
-		List<String> all = new ArrayList<>();
+		List<String> links = new ArrayList<>();
 		List<String> newLinks = new ArrayList<>();
 		List<String> tempLinks = new ArrayList<>();
 		
-		all.add(site.getAddress());
+		links.add(site.getAddress());
 		newLinks.add(site.getAddress());
 		
 		IntStream.range(0, depth)
 				.forEach(i -> {
 					newLinks.forEach(link -> {
-						List<String> got = gatherLinks(new Site(link, null), all);
-						all.addAll(got);
+						List<String> got = gatherLinks(new Site(link, null), links);
+						links.addAll(got);
 						tempLinks.addAll(got);
 					});
 					newLinks.clear();
@@ -60,7 +65,9 @@ public class LinksGather extends Observable {
 											.collect(Collectors.toList()));
 					tempLinks.clear();
 				});
-		return all;
+		
+		removeDuplicates(links);
+		return links;
 	}
 	
 	private List<String> gatherLinks(Site site, List<String> all) {
@@ -84,13 +91,17 @@ public class LinksGather extends Observable {
 							 link.charAt(0) == '/' ? root + link : link)
 				.map(link ->
 							 link.contains("#") ? link.split("#")[0] : link)
+				.map(link ->
+							 link.endsWith("/") ? link.substring(0, link.length() - 1) : link)
 				.filter(link ->
 								link.length() > 4
-								&& !LanguageCheck.isFromOtherLang(link, all)
-								&& link.contains(root)
-								&& !all.contains(link)
-								&& link.substring(0, 4).equals("http")
-								&& !link.matches(".*\\.[a-z]{3}\\?.*"))
+										&& !isLinkToFile(link)
+										&& link.substring(0, 4).equals("http")
+										&& !link.matches(".*\\.[a-z]{3}\\?.*")
+										&& link.contains(root)
+										&& !all.contains(link)
+										&& !link.equals(address)
+										&& !LanguageCheck.isFromOtherLang(link, all))
 				.distinct()
 				.collect(Collectors.toList());
 	}
@@ -104,20 +115,33 @@ public class LinksGather extends Observable {
 					.timeout(5000)
 					.get();
 			
-		} catch (IOException ignored) {}
+		} catch (IOException ignored) {
+		}
 		return document;
 	}
 	
-	public List<Site> gatherList(List<Site> sites) {
-		List<List<Site>> proxyList = new ArrayList<>();
+	public List<Site> gatherSites(Collection<Site> sites) {
+		List<List<Site>> gatheredSitesLists = new ArrayList<>();
 		
 		sites.forEach(site ->
-							proxyList.add(gather(site)));
+							  gatheredSitesLists.add(gather(site)));
 		
-		List<Site> proxy = new ArrayList<>();
+		List<Site> gatheredSites = new ArrayList<>();
 		
-		proxyList.forEach(proxy::addAll);
-		return proxy;
+		gatheredSitesLists.forEach(gatheredSites::addAll);
+		return gatheredSites;
+	}
+	
+	private void removeDuplicates(List<String> adresses) {
+		adresses.removeIf(siteAddress ->
+								  sitesRepo.contains(siteAddress));
+	}
+	
+	private boolean isLinkToFile(String link) {
+		return link.endsWith(".exe")
+				|| link.endsWith(".css")
+				|| link.endsWith(".png")
+				|| link.endsWith(".jpg");
 	}
 	
 	public Integer getDepth() {

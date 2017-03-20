@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.scraper.main.MainLogger;
+import org.scraper.main.data.Domain;
+import org.scraper.main.data.Site;
 
 import java.io.IOException;
 import java.util.ArrayList;

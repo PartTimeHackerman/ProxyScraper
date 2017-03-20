@@ -1,10 +1,12 @@
 package org.scraper.MVC.control;
 
-import javafx.fxml.FXML;
-import javafx.scene.control.*;
 import javafx.application.Platform;
+import javafx.fxml.FXML;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleButton;
+import org.scraper.MVC.model.GeneralOptions;
 import org.scraper.main.Interval;
-import org.scraper.MVC.model.BarModel;
 
 public class BarController {
 	@FXML
@@ -36,11 +38,11 @@ public class BarController {
 	
 	
 	@FXML
-	public void initialize(BarModel barModel) {
+	public void initialize(GeneralOptions generalOptions) {
 		
-		threadsField.setText("" + barModel.getThreads());
+		threadsField.setText("" + generalOptions.getThreads());
 		threadsField.setOnAction(e ->
-										 barModel.setThreads(Integer.parseInt(threadsField.getText()))
+										 generalOptions.setThreads(Integer.parseInt(threadsField.getText()))
 								);
 		threadsField.textProperty().addListener((observable, oldValue, newValue) -> {
 			if(!newValue.matches("[0-9]*"))
@@ -56,7 +58,7 @@ public class BarController {
 				proxiesField.setText(oldValue);
 		});*/
 		
-		checkOnFly.setOnAction(e ->  barModel.setCheckOnFly(checkOnFly.isSelected()));
+		checkOnFly.setOnAction(e ->  generalOptions.setCheckOnFly(checkOnFly.isSelected()));
 		
 		Interval.addAction("threads", var -> Platform.runLater(() -> threadsUsed.setText(var.toString())));
 		Interval.addAction("threadsMax", var -> Platform.runLater(() -> threadsMax.setText(var.toString())));

@@ -6,7 +6,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.scraper.main.MainLogger;
 import org.scraper.main.web.BrowserVersion;
-import org.scraper.main.web.Site;
+import org.scraper.main.data.Site;
 
 import java.io.IOException;
 import java.util.ArrayList;

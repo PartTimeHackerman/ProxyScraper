@@ -9,20 +9,29 @@ import java.util.List;
 
 public class OcrScraperConcurrentWQueue extends OcrScraper {
 	
-	@Override
-	protected List<Connection.Response> getResponses(List<Connection> connections) {
-		return ConcurrentConnectionExecutor.getInstance().execute(connections);
+	private ConcurrentConnectionExecutor concurrentConnectionExecutor;
+	
+	private QueuesManager queuesManager;
+	
+	public OcrScraperConcurrentWQueue(ConcurrentConnectionExecutor concurrentConnectionExecutor, QueuesManager queuesManager) {
+		this.concurrentConnectionExecutor = concurrentConnectionExecutor;
+		this.queuesManager = queuesManager;
 	}
 	
 	@Override
-	protected String doOcr(byte[] image){
-		OCR ocr = QueuesManager.getInstance()
+	protected List<Connection.Response> getResponses(List<Connection> connections) {
+		return concurrentConnectionExecutor.execute(connections);
+	}
+	
+	@Override
+	protected String doOcr(byte[] image) {
+		OCR ocr = queuesManager
 				.getOcrQueue()
 				.take();
 		
 		String imgText = ocr.read(image);
 		
-		QueuesManager.getInstance()
+		queuesManager
 				.getOcrQueue()
 				.put(ocr);
 		return imgText;

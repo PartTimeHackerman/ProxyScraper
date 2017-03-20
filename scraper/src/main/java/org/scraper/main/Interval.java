@@ -19,7 +19,7 @@ public class Interval {
 	private static final BehaviorSubject<Long> subject = BehaviorSubject.create(interval);
 	
 	
-	static {
+	public static void start() {
 		subject.switchMap(inter ->
 								  Observable.interval(0, inter, TimeUnit.MILLISECONDS)
 										  .publish()

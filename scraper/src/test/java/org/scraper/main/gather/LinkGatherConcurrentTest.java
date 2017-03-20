@@ -2,7 +2,7 @@ package org.scraper.main.gather;
 
 import org.junit.Test;
 import org.scraper.main.TestsUtils;
-import org.scraper.main.web.Site;
+import org.scraper.main.data.Site;
 
 import java.util.List;
 

@@ -2,7 +2,7 @@ package org.scraper.main.scraper;
 
 import org.scraper.main.web.Browser;
 import org.scraper.main.web.BrowserConcurrent;
-import org.scraper.main.web.Site;
+import org.scraper.main.data.Site;
 
 import static org.junit.Assert.assertTrue;
 

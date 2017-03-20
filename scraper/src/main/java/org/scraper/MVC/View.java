@@ -13,12 +13,9 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.scraper.MVC.control.*;
+import org.scraper.MVC.model.*;
 import org.scraper.main.Interval;
 import org.scraper.main.MainLogger;
-import org.scraper.MVC.model.BarModel;
-import org.scraper.MVC.model.MainModel;
-import org.scraper.MVC.model.ProxyModel;
-import org.scraper.MVC.model.SitesModel;
 
 
 public class View extends Application {
@@ -28,11 +25,11 @@ public class View extends Application {
 	
 	private static MainModel model;
 	
-	private static ProxyModel proxyModel;
+	private static ProxyModelFX proxyModel;
 	
-	private static SitesModel sitesModel;
+	private static SitesModelFX sitesModel;
 	
-	private static BarModel barModel;
+	private static GeneralOptions generalOptions;
 	
 	
 	private ProxyTableController proxyTableController;
@@ -57,12 +54,12 @@ public class View extends Application {
 		if (args.length == 0) {
 			model.setVarsInterval();
 			Interval.setInterval(100);
-			proxyModel = new ProxyModel(model.getChecker());
-			sitesModel = new SitesModel(model.getAssigner(), model.getScraper(), model.getGather(), model.getDataBase());
-			barModel = new BarModel(model.getProxyManager(), model.getCheckOnFly());
+			proxyModel = new ProxyModelFX(model.getChecker(), model.getPool());
+			sitesModel = new SitesModelFX(model.getAssigner(), model.getScraper(), model.getGather(), model.getPool());
+			generalOptions = new GeneralOptions(model.getProxyRepo(), model.getCheckOnFly(), model.getLimiter(), model.getPool());
 			
-			model.getProxyManager().setModel(proxyModel);
-			model.getSitesManager().setModel(sitesModel);
+			model.getProxyRepo().setModel(proxyModel);
+			model.getSitesRepo().setModel(sitesModel);
 			
 			launch();
 		}
@@ -126,7 +123,7 @@ public class View extends Application {
 		
 		scene.getStylesheets().add(String.valueOf(getClass().getResource("control/userAgent.css")));
 		
-		barController.initialize(barModel);
+		barController.initialize(generalOptions);
 		
 		sitesController.initialize(sitesModel, sitesTableController);
 		proxyController.initialize(proxyModel, proxyTableController);

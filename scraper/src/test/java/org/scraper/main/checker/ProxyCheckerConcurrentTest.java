@@ -1,6 +1,7 @@
 package org.scraper.main.checker;
 
 import org.junit.Test;
+import org.scraper.main.Pool;
 import org.scraper.main.Proxy;
 import org.scraper.main.TestsUtils;
 
@@ -11,7 +12,7 @@ import static org.junit.Assert.assertTrue;
 
 public class ProxyCheckerConcurrentTest {
 	
-	private final IProxyChecker checker = new ProxyCheckerConcurrent(3000, new ArrayList<>());
+	private final IProxyChecker checker = new ProxyCheckerConcurrent(3000, new ArrayList<>(), new Pool());
 	
 	@Test
 	public void checkProxies() throws Exception {

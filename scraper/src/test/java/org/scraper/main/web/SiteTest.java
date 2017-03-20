@@ -2,6 +2,8 @@ package org.scraper.main.web;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.scraper.main.data.Domain;
+import org.scraper.main.data.Site;
 import org.scraper.main.scraper.ScrapeType;
 
 import static org.junit.Assert.assertEquals;
@@ -60,14 +62,14 @@ public class SiteTest {
 	
 	@Test
 	public void getSetAvgWorking() throws Exception {
-		site.setAvgWorking(avg);
-		assertEquals(avg, site.getAvgWorking());
+		site.setAvgWorkingProxies(avg);
+		assertEquals(avg, site.getAvgWorkingProxies());
 	}
 	
 	@Test
 	public void getSetAvgSites() throws Exception {
-		site.setAvgSites(avg);
-		assertEquals(avg, site.getAvgSites());
+		site.setAvgProxies(avg);
+		assertEquals(avg, site.getAvgProxies());
 	}
 	
 }

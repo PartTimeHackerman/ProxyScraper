@@ -2,9 +2,9 @@ package org.scraper.main.assigner;
 
 import org.scraper.main.Proxy;
 import org.scraper.main.scraper.ScrapeType;
-import org.scraper.main.scraper.Scraper;
+import org.scraper.main.scraper.ScraperAbstract;
 import org.scraper.main.scraper.ScrapersFactory;
-import org.scraper.main.web.Site;
+import org.scraper.main.data.Site;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,19 +25,19 @@ public class BestOfAllFinder implements IScrapeMethodFinder {
 		
 		if (site.getType() != ScrapeType.UNCHECKED
 				&& site.getType() != ScrapeType.BLACK) {
-			Scraper scraper = scrapersFactory.get(site.getType());
+			ScraperAbstract scraper = scrapersFactory.get(site.getType());
 			scraper.scrape(site);
 			proxies = scraper.getScraped();
 			return scraper.getType();
 		}
 		
-		List<Scraper> scrapers = scrapersFactory.getAll();
+		List<ScraperAbstract> scrapers = scrapersFactory.getAll();
 		
 		scrapers.forEach(scraper ->
 								 scraper.scrape(site));
 		
 		Collections.sort(scrapers, Collections.reverseOrder());
-		Scraper winner = scrapers.get(0);
+		ScraperAbstract winner = scrapers.get(0);
 		proxies = winner.getScraped();
 		return winner.getType();
 	}

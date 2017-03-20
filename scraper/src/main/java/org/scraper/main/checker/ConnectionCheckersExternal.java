@@ -7,7 +7,7 @@ public class ConnectionCheckersExternal implements IConnectionCheckers {
 	private ConnectionCheck httpsCheck;
 	
 	public ConnectionCheckersExternal(){
-		httpsCheck = new ConnectionCheckHttps(Proxy.Type.HTTPS);
+		httpsCheck = new ConnectionCheckExternal(Proxy.Type.HTTPS);
 		ConnectionCheck httpCheck = new ConnectionCheckExternal(Proxy.Type.HTTP);
 		ConnectionCheck socksCheck = new ConnectionCheckExternal(Proxy.Type.SOCKS);
 		

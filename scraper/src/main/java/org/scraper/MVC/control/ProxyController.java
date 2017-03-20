@@ -5,8 +5,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
+import org.scraper.MVC.model.ProxyUtility;
 import org.scraper.main.Proxy;
-import org.scraper.MVC.model.ProxyModel;
 
 import java.io.File;
 import java.util.Arrays;
@@ -26,13 +26,13 @@ public class ProxyController implements ISaveable, ILoader {
 	@FXML
 	private Button check;
 	
-	private ProxyModel model;
+	private ProxyUtility model;
 	
 	private ISelectable<Proxy> selectable;
 	
 	
 	@FXML
-	public void initialize(ProxyModel model, ProxyTableController selectable) {
+	public void initialize(ProxyUtility model, ProxyTableController selectable) {
 		this.model = model;
 		this.selectable = selectable;
 		
@@ -47,7 +47,7 @@ public class ProxyController implements ISaveable, ILoader {
 		setupFilters();
 		
 		showBroken.setOnAction(event ->
-									   model.showBroken(showBroken.isSelected()));
+									   model.filterBroken(showBroken.isSelected()));
 		
 		check.setOnAction(event ->
 								  check());
@@ -65,7 +65,7 @@ public class ProxyController implements ISaveable, ILoader {
 								 typeFilter.getItems().add(type));
 		typeFilter.setValue(typeFilter.getItems().get(0));
 		typeFilter.setOnAction(event ->
-									   model.filterType(typeFilter.getSelectionModel().getSelectedItem()));
+									   model.filterByType(typeFilter.getSelectionModel().getSelectedItem()));
 	}
 	
 	private void setupAnonymityFilter() {
@@ -74,12 +74,12 @@ public class ProxyController implements ISaveable, ILoader {
 								 anonymityFilter.getItems().add(anonymity));
 		anonymityFilter.setValue(anonymityFilter.getItems().get(0));
 		anonymityFilter.setOnAction(event ->
-											model.filterAnonymity(anonymityFilter.getSelectionModel().getSelectedItem()));
+											model.filterByAnonymity(anonymityFilter.getSelectionModel().getSelectedItem()));
 	}
 	
 	private void setupTimeoutFilter() {
 		filterTimeoutField.setOnAction(event ->
-											   model.filterTimeout(Double.valueOf(filterTimeoutField.getText()).floatValue() * 1000));
+											   model.filterByTimeout(Double.valueOf(filterTimeoutField.getText()).floatValue() * 1000));
 	}
 	
 	

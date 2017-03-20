@@ -1,41 +1,48 @@
 package org.scraper.main.gather;
 
 import org.scraper.main.IConcurrent;
-import org.scraper.main.web.Site;
+import org.scraper.main.Pool;
+import org.scraper.main.data.Site;
+import org.scraper.main.data.SitesRepo;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Callable;
 
 public class LinkGatherConcurrent extends LinksGather implements IConcurrent {
 	
-	public LinkGatherConcurrent(){
-		super();
+	private Pool pool;
+	
+	public LinkGatherConcurrent(SitesRepo sitesRepo, Integer depth, Pool pool) {
+		super(sitesRepo, depth);
+		this.pool = pool;
 	}
 	
-	public LinkGatherConcurrent(Integer depth){
+	public LinkGatherConcurrent(Integer depth) {
 		super(depth);
 	}
 	
 	public List<Site> gather(Site site, Boolean wait) {
-		return send(() -> super.gather(site), wait);
+		return pool.sendTask(() -> super.gather(site), wait);
 	}
 	
 	@Override
-	public List<Site> gatherList(List<Site> sites) {
+	public List<Site> gatherSites(Collection<Site> sites) {
 		
 		List<Callable<List<Site>>> calls = new ArrayList<>();
-		List<List<Site>> proxyList;
+		List<List<Site>> gatheredSitesLists;
 		
 		sites.forEach(site ->
-							 calls.add(() ->
-											   gather(site)));
-		proxyList = sendTasks(calls);
+							  calls.add(() ->
+												gather(site)));
 		
-		List<Site> proxy = new ArrayList<>();
+		gatheredSitesLists = pool.sendTasks(calls);// sendToSubPool(sites, this::gather, MainPool.getInstance().getThreads() / 10);
 		
-		proxyList.forEach(proxy::addAll);
+		List<Site> gatheredSites = new ArrayList<>();
 		
-		return proxy;
+		gatheredSitesLists.forEach(gatheredSites::addAll);
+		
+		return gatheredSites;
 	}
 }

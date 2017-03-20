@@ -29,7 +29,7 @@ public abstract class Queue<T> {
 	}
 	
 	public Integer getMaxSize() {
-		return queue.size() + queue.remainingCapacity();
+		return queue.size() + remainingCapacity();
 	}
 	
 	public Integer remainingCapacity() {
@@ -53,7 +53,7 @@ public abstract class Queue<T> {
 		}
 	}
 	
-	abstract void create();
+	public abstract void create();
 	
-	abstract void shutdownAll();
+	abstract void shutdown();
 }

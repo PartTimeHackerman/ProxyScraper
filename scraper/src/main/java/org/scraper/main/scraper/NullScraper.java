@@ -2,12 +2,12 @@ package org.scraper.main.scraper;
 
 import org.scraper.main.MainLogger;
 import org.scraper.main.Proxy;
-import org.scraper.main.web.Site;
+import org.scraper.main.data.Site;
 
 import java.util.ArrayList;
 import java.util.List;
 
-class NullScraper extends Scraper {
+class NullScraper extends ScraperAbstract {
 	
 	NullScraper(){
 		type = ScrapeType.BLACK;

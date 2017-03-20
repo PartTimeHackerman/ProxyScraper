@@ -2,15 +2,18 @@ package org.scraper.main.checker;
 
 import org.scraper.main.MainLogger;
 import org.scraper.main.Proxy;
+import org.scraper.main.limiter.Switchable;
 
 import java.util.List;
 import java.util.Observable;
 
-public class ProxyChecker extends Observable implements IProxyChecker {
+public class ProxyChecker extends Observable implements IProxyChecker, Switchable {
 	
 	private Integer timeout = 30000;
 	
 	private List<Proxy> all;
+	
+	private Boolean on = true;
 	
 	public ProxyChecker(Integer timeout, List<Proxy> all) {
 		this.timeout = timeout;
@@ -18,21 +21,22 @@ public class ProxyChecker extends Observable implements IProxyChecker {
 	}
 	
 	@Override
-	public List<Proxy> checkProxies(List<Proxy> proxies) {
+	public void checkProxies(List<Proxy> proxies) {
 		MainLogger.log().info("Checking list of size {}", proxies.size());
 		
 		proxies.forEach(this::checkProxy);
-		
-		return proxies;
 	}
 	
 	@Override
-	public Proxy checkProxy(Proxy proxy) {
+	public void checkProxy(Proxy proxy) {
+		if (!isOn())
+			return;
+		
 		if (all.contains(proxy)) {
 			Proxy doubled = all.get(all.indexOf(proxy));
 			if (doubled.isChecked()) {
-				MainLogger.log().info("Proxy double {}", doubled);
-				return doubled;
+				MainLogger.log().info("Proxy doubled {}", doubled);
+				return;
 			}
 		}
 		
@@ -40,7 +44,7 @@ public class ProxyChecker extends Observable implements IProxyChecker {
 		Integer port = proxy.getPort();
 		if (port >= 69129) {
 			MainLogger.log().warn("Proxy {}:{} port out of range > 69129", ip, port);
-			return proxy;
+			return;
 		}
 		
 		setProxy(proxy);
@@ -51,12 +55,25 @@ public class ProxyChecker extends Observable implements IProxyChecker {
 		}
 		
 		proxy.setChecked(true);
-		return proxy;
 	}
 	
-	
 	private void setProxy(Proxy proxy) {
-		IConnectionCheckers handlers = new ConnectionCheckersScript();
+		IConnectionCheckers handlers = new ConnectionCheckersExternal();
 		proxy.setUpProxy(handlers.check(proxy, timeout));
+	}
+	
+	@Override
+	public void turnOn() {
+		on = true;
+	}
+	
+	@Override
+	public void turnOff() {
+		on = false;
+	}
+	
+	@Override
+	public Boolean isOn() {
+		return on;
 	}
 }

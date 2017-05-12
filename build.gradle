@@ -5,17 +5,12 @@ apply plugin: 'java'
 apply plugin: 'idea'
 apply plugin: 'application'
 
-//mainClassName = "org.scraper.MVC.View"
+mainClassName = "scraper.CommandInterpreter"
 applicationDefaultJvmArgs = ["-Dgreeting.language=en"]
 
-//sourceCompatibility = 1.5
 
 repositories {
     mavenCentral()
-}
-
-allprojects {
-    repositories { mavenCentral() }
 }
 
 jar {
@@ -34,62 +29,46 @@ jar {
     }
 
     manifest {
-        //attributes 'Main-Class': mainClassName
+        attributes 'Main-Class': mainClassName
     }
 
     exclude 'META-INF/*.RSA', 'META-INF/*.SF','META-INF/*.DSA'
 }
 
 dependencies {
-    compile project(':scraper')
+
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+
+    compile fileTree(dir: 'lib\\marvin\\framework', include: '*.jar')
+
+    compile group: 'org.bytedeco.javacpp-presets', name: 'tesseract', version: '3.04.01' + '-1.3'
+    compile group: 'org.bytedeco.javacpp-presets', name: 'tesseract', version: '3.04.01' + '-1.3', classifier: 'windows-x86_64'
+
+    compile group: 'org.bytedeco.javacpp-presets', name: 'leptonica', version: '1.73' + '-1.3'
+    compile group: 'org.bytedeco.javacpp-presets', name: 'leptonica', version: '1.73' + '-1.3', classifier: 'windows-x86_64'
+    //compile 'org.bytedeco:javacv:1.0'
+    //compile 'org.bytedeco.javacpp-presets:opencv:3.1.0-1.2:windows-x86_64'
+    //compile 'org.bytedeco.javacpp-presets:ffmpeg:3.0.2-1.2:windows-x86_64'
+
+    compile group: 'com.codeborne', name: 'phantomjsdriver', version: '1.3.0'
+
+    compile group: 'org.seleniumhq.selenium', name: 'selenium-java', version: '3.0.1'
+
+    compile group: 'org.jsoup', name: 'jsoup', version: '1.10.1'
+
+    compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.6.2'
+
+    compile group: 'commons-collections', name: 'commons-collections', version: '3.2.2'
+
+    compile group: 'io.reactivex', name: 'rxjava', version: '1.2.1'
+
+    compile group: 'org.hibernate', name: 'hibernate-core', version: '5.2.8.Final'
+
+    compile group: 'org.postgresql', name: 'postgresql', version: '9.4.1212.jre7'
+
+    compile group: 'commons-cli', name: 'commons-cli', version: '1.4'
 }
 
-project(":scraper") {
-    apply plugin: "java"
-
-    dependencies {
-
-        compile fileTree(dir: 'libs\\marvin\\framework', include: '*.jar')
-
-        testCompile group: 'junit', name: 'junit', version: '4.11'
-
-        compile group: 'org.bytedeco.javacpp-presets', name: 'tesseract', version: '3.04.01' + '-1.3'
-        compile group: 'org.bytedeco.javacpp-presets', name: 'tesseract', version: '3.04.01' + '-1.3', classifier: 'windows-x86_64'
-
-        compile group: 'org.bytedeco.javacpp-presets', name: 'leptonica', version: '1.73' + '-1.3'
-        compile group: 'org.bytedeco.javacpp-presets', name: 'leptonica', version: '1.73' + '-1.3', classifier: 'windows-x86_64'
-
-        //compile 'org.bytedeco:javacv:1.0'
-        //compile 'org.bytedeco.javacpp-presets:opencv:3.1.0-1.2:windows-x86_64'
-        //compile 'org.bytedeco.javacpp-presets:ffmpeg:3.0.2-1.2:windows-x86_64'
-
-
-        compile group: 'com.codeborne', name: 'phantomjsdriver', version: '1.3.0'
-
-        // https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-java
-        compile group: 'org.seleniumhq.selenium', name: 'selenium-java', version: '3.0.1'
-
-        // https://mvnrepository.com/artifact/org.jsoup/jsoup
-        compile group: 'org.jsoup', name: 'jsoup', version: '1.10.1'
-
-        // https://mvnrepository.com/artifact/org.slf4j/slf4j-api
-        //compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.21'
-
-        // https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core
-        compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.6.2'
-
-        // https://mvnrepository.com/artifact/commons-collections/commons-collections
-        compile group: 'commons-collections', name: 'commons-collections', version: '3.2.2'
-
-        // https://mvnrepository.com/artifact/io.reactivex/rxjava
-        compile group: 'io.reactivex', name: 'rxjava', version: '1.2.1'
-
-        compile group: 'org.hibernate', name: 'hibernate-core', version: '5.2.8.Final'
-
-        compile group: 'org.postgresql', name: 'postgresql', version: '9.4.1212.jre7'
-    }
-
-    configurations {
-        all*.exclude group: 'com.github.detro.ghostdriver', module: 'phantomjsdriver'
-    }
+configurations {
+    all*.exclude group: 'com.github.detro.ghostdriver', module: 'phantomjsdriver'
 }

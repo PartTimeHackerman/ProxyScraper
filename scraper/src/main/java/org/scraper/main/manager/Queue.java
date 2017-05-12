@@ -40,7 +40,7 @@ public abstract class Queue<T> {
 		try {
 			return queue.take();
 		} catch (InterruptedException e) {
-			MainLogger.log().warn("Can't take object from queue");
+			MainLogger.log(this).warn("Can't take object from queue");
 			return null;
 		}
 	}
@@ -49,7 +49,7 @@ public abstract class Queue<T> {
 		try {
 			queue.offer(o, 1000, TimeUnit.MILLISECONDS);
 		} catch (InterruptedException e) {
-			MainLogger.log().warn("Can't put object in queue");
+			MainLogger.log(this).warn("Can't put object in queue");
 		}
 	}
 	

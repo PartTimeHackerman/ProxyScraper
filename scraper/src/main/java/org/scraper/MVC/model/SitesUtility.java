@@ -48,6 +48,11 @@ public class SitesUtility implements IConcurrent {
 		addSite(site);
 	}
 	
+	public void scrape(Site site) {
+		pool.sendTask(() ->
+							  scraper.scrape(site), false);
+	}
+	
 	public void scrape(Collection<Site> sites) {
 		pool.sendTask(() ->
 					 scraper.scrapeList(sites), false);

@@ -9,7 +9,6 @@ import org.scraper.main.Proxy;
 import org.scraper.main.web.Browser;
 import org.scraper.main.data.Site;
 
-import java.util.ArrayList;
 import java.util.List;
 
 class CssScraper extends ScraperAbstract {
@@ -35,7 +34,7 @@ class CssScraper extends ScraperAbstract {
 	
 	public List<Proxy> scrapeByDriver(Site site) {
 		String url = site.getAddress();
-		MainLogger.log().info("CSS scraping {}", url);
+		MainLogger.log(this).info("CSS scraping {}", url);
 		
 		WebDriver driver = browser.getDriver();
 		driver.get(url);

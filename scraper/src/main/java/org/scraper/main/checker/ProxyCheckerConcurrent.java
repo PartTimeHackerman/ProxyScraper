@@ -3,17 +3,16 @@ package org.scraper.main.checker;
 import org.scraper.main.IConcurrent;
 import org.scraper.main.Pool;
 import org.scraper.main.Proxy;
+import org.scraper.main.data.ProxyRepo;
 
 import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.stream.Collectors;
 
 public class ProxyCheckerConcurrent extends ProxyChecker implements IConcurrent {
 	
 	private Pool pool;
 	
-	public ProxyCheckerConcurrent(Integer timeout, List<Proxy> all, Pool pool) {
-		super(timeout, all);
+	public ProxyCheckerConcurrent(Integer timeout, ProxyRepo proxyRepo, Pool pool) {
+		super(timeout, proxyRepo);
 		this.pool = pool;
 	}
 	

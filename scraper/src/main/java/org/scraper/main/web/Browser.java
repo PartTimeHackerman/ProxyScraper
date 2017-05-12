@@ -51,6 +51,7 @@ public class Browser {
 			java.util.logging.Logger.getLogger(PhantomJSDriverService.class.getName()).setLevel(Level.OFF);
 			java.util.logging.Logger.getLogger(PhantomJSDriver.class.getName()).setLevel(Level.OFF);
 			java.util.logging.Logger.getLogger("global").setLevel(Level.WARNING);
+			java.util.logging.Logger.getLogger("org.openqa.selenium.remote").setLevel(Level.OFF);
 		}
 		
 		DesiredCapabilities capabilities = new DesiredCapabilities();
@@ -77,7 +78,7 @@ public class Browser {
 		capabilities.setCapability(PhantomJSDriverService.PHANTOMJS_PAGE_SETTINGS_PREFIX + "javascriptEnabled", true);
 		capabilities.setCapability(PhantomJSDriverService.PHANTOMJS_PAGE_SETTINGS_PREFIX + "javascriptCanOpenWindows", false);
 		capabilities.setCapability(PhantomJSDriverService.PHANTOMJS_PAGE_SETTINGS_PREFIX + "javascriptCanCloseWindows", false);
-		capabilities.setCapability(PhantomJSDriverService.PHANTOMJS_PAGE_SETTINGS_PREFIX + "debug", debug);
+		capabilities.setCapability(PhantomJSDriverService.PHANTOMJS_PAGE_SETTINGS_PREFIX + "debug", debug ? "true" : "false");
 		
 		//capabilities.setCapability("marionette", false);
 		capabilities.setPlatform(version.pl());
@@ -256,7 +257,7 @@ public class Browser {
 		try {
 			Runtime.getRuntime().exec("taskkill /F /PID " + getPID((PhantomJSDriver) driver));
 		} catch (Exception e) {
-			MainLogger.log().fatal("Driver is already closed");
+			MainLogger.log(this).fatal("Driver is already closed");
 		}
 	}
 }

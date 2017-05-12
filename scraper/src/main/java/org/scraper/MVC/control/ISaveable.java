@@ -22,7 +22,7 @@ public interface ISaveable {
 			fileWriter.flush();
 			fileWriter.close();
 		} catch (IOException e) {
-			MainLogger.log().fatal("Failed to save a file {}!", file.getName());
+			MainLogger.log(this).fatal("Failed to save a file {}!", file.getName());
 		}
 	}
 	

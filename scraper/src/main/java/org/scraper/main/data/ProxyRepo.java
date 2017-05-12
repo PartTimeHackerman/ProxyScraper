@@ -1,22 +1,25 @@
 package org.scraper.main.data;
 
 import org.scraper.MVC.model.ProxyUtility;
-import org.scraper.main.Pool;
 import org.scraper.main.Proxy;
 import org.scraper.main.limiter.Limiter;
+import rx.Observable;
+import rx.subjects.PublishSubject;
+import rx.subjects.Subject;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Observable;
 
-public class ProxyRepo extends Observable {
+public class ProxyRepo{
 	
 	private List<Proxy> all = Collections.synchronizedList(new ArrayList<>());
 	
 	private List<Proxy> checked = Collections.synchronizedList(new ArrayList<>());
 	
 	private List<Proxy> working = Collections.synchronizedList(new ArrayList<>());
+	
+	private Subject<Proxy, Proxy> workingStream = PublishSubject.create();
 	
 	private ProxyUtility model;
 	
@@ -27,20 +30,21 @@ public class ProxyRepo extends Observable {
 	}
 	
 	public void addProxy(Proxy proxy) {
-		if (!all.contains(proxy)) {
+		
+		if (!all.contains(proxy))
 			all.add(proxy);
-			if (proxy.isWorking()) {
-				working.add(proxy);
-				limiter.incrementBy(1);
-			}
-			if (proxy.isChecked()) checked.add(proxy);
-			if (model != null) model.addProxy(proxy);
-			setChanged();
-			notifyObservers(proxy);
+		
+		if (proxy.isWorking()) {
+			working.add(proxy);
+			limiter.incrementBy(1);
+			workingStream.onNext(proxy);
 		}
-		/*if (limit != 0 && working.size() >= limit && Pool.getInstance().isEnabled()){
-			Pool.getInstance().pause();
-		}*/
+		
+		if (proxy.isChecked())
+			checked.add(proxy);
+		
+		if (model != null)
+			model.addProxy(proxy);
 	}
 	
 	public Proxy getIfPresent(Proxy proxy) {
@@ -71,5 +75,9 @@ public class ProxyRepo extends Observable {
 		all.clear();
 		checked.clear();
 		working.clear();
+	}
+	
+	public Observable<Proxy> getWorkingStream() {
+		return workingStream;
 	}
 }

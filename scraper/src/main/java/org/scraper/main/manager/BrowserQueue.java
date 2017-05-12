@@ -2,7 +2,6 @@ package org.scraper.main.manager;
 
 import org.scraper.main.MainLogger;
 import org.scraper.main.web.Browser;
-import org.scraper.main.web.BrowserConcurrent;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.stream.IntStream;
@@ -35,7 +34,7 @@ public class BrowserQueue extends Queue<Browser> {
 					   try {
 						   queue.put(new Browser());
 					   } catch (InterruptedException e) {
-						   MainLogger.log().error("Thread was interrupted");
+						   MainLogger.log(this).error("Thread was interrupted");
 					   }
 				   }).start();
 	}

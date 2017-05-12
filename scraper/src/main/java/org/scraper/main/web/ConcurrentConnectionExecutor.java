@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
-import java.util.stream.Collectors;
 
 public class ConcurrentConnectionExecutor extends ConnectionExecutor implements IConcurrent {
 	
@@ -34,7 +33,7 @@ public class ConcurrentConnectionExecutor extends ConnectionExecutor implements 
 		try {
 			return execute(connection).parse().text();
 		} catch (IOException e) {
-			MainLogger.log().fatal(e);
+			MainLogger.log(this).fatal(e);
 		}
 		return "";
 	}

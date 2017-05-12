@@ -2,62 +2,60 @@ package org.scraper.main.checker;
 
 import org.scraper.main.MainLogger;
 import org.scraper.main.Proxy;
+import org.scraper.main.data.ProxyRepo;
 import org.scraper.main.limiter.Switchable;
 
-import java.util.List;
-import java.util.Observable;
+import java.util.*;
 
 public class ProxyChecker extends Observable implements IProxyChecker, Switchable {
 	
-	private Integer timeout = 30000;
+	private static Vector<Proxy> checkedProxies = new Vector<>();
 	
-	private List<Proxy> all;
+	private Integer timeout = 30000;
 	
 	private Boolean on = true;
 	
-	public ProxyChecker(Integer timeout, List<Proxy> all) {
+	private ProxyRepo proxyRepo;
+	
+	public ProxyChecker(Integer timeout, ProxyRepo proxyRepo) {
 		this.timeout = timeout;
-		this.all = all;
+		this.proxyRepo = proxyRepo;
 	}
 	
 	@Override
 	public void checkProxies(List<Proxy> proxies) {
-		MainLogger.log().info("Checking list of size {}", proxies.size());
+		MainLogger.log(this).info("Checking list of size {}", proxies.size());
 		
 		proxies.forEach(this::checkProxy);
 	}
 	
 	@Override
 	public void checkProxy(Proxy proxy) {
-		if (!isOn())
+		
+		if (!isOn() || checkedProxies.contains(proxy))
 			return;
 		
-		if (all.contains(proxy)) {
-			Proxy doubled = all.get(all.indexOf(proxy));
-			if (doubled.isChecked()) {
-				MainLogger.log().info("Proxy doubled {}", doubled);
-				return;
-			}
-		}
+		proxy.setChecked(true);
+		checkedProxies.add(proxy);
 		
 		String ip = proxy.getIp();
 		Integer port = proxy.getPort();
 		if (port >= 69129) {
-			MainLogger.log().warn("Proxy {}:{} port out of range > 69129", ip, port);
+			MainLogger.log(this).warn("Proxy {}:{} port out of range > 69129", ip, port);
 			return;
 		}
 		
-		setProxy(proxy);
+		check(proxy);
 		if (proxy.isWorking()) {
-			MainLogger.log().info("Proxy {}", proxy);
+			MainLogger.log(this).info("Proxy {}", proxy);
+			proxyRepo.addProxy(proxy);
 		} else {
-			MainLogger.log().warn("Proxy {} not working!", proxy.getIpPort());
+			MainLogger.log(this).warn("Proxy {} not working!", proxy.getIpPort());
 		}
 		
-		proxy.setChecked(true);
 	}
 	
-	private void setProxy(Proxy proxy) {
+	private void check(Proxy proxy) {
 		IConnectionCheckers handlers = new ConnectionCheckersExternal();
 		proxy.setUpProxy(handlers.check(proxy, timeout));
 	}

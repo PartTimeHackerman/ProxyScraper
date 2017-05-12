@@ -22,7 +22,7 @@ class NormalScraper extends ScraperAbstract {
 	@Override
 	public List<Proxy> scrape(Site site) {
 		String url = site.getAddress();
-		MainLogger.log().info("Normal scraping {}", url);
+		MainLogger.log(this).info("Normal scraping {}", url);
 		
 		Document doc;
 		try {
@@ -32,7 +32,7 @@ class NormalScraper extends ScraperAbstract {
 					.userAgent(BrowserVersion.random().ua())
 					.get();
 		} catch (IOException e) {
-			MainLogger.log().info("Normal scraping {} failed!", url);
+			MainLogger.log(this).info("Normal scraping {} failed!", url);
 			return proxy;
 		}
 		

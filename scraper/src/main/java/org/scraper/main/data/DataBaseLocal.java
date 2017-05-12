@@ -24,7 +24,7 @@ public class DataBaseLocal implements IDataBase {
 	
 	@Override
 	public void postNew() {
-		MainLogger.log().info("Not avaiable in local DB");
+		MainLogger.log(this).info("Not avaiable in local DB");
 	}
 	
 	@Override

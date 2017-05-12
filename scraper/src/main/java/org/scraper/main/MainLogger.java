@@ -12,7 +12,9 @@ import org.apache.logging.log4j.core.layout.PatternLayout;
 
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 public class MainLogger {
@@ -22,7 +24,10 @@ public class MainLogger {
 	private final String name = MainLogger.class.getSimpleName();
 	
 	private final Logger log = LogManager.getLogger(name);
+	
 	private final LoggerOutputStream out = new LoggerOutputStream();
+	
+	private static final Map<Class, Logger> loggersMap = new HashMap<>();
 	
 	private MainLogger() {
 		addAppender(out, name);
@@ -38,8 +43,14 @@ public class MainLogger {
 		return logger;
 	}
 	
-	public static Logger log() {
-		return getInstance().log;
+	
+	
+	public static Logger log(Object o) {
+		return log(o.getClass());
+	}
+	
+	public static Logger log(Class clazz) {
+		return loggersMap.computeIfAbsent(clazz, c -> LogManager.getLogger(c.getName()));
 	}
 	
 	public static LoggerOutputStream out() {
@@ -61,7 +72,7 @@ public class MainLogger {
 		config.getRootLogger().addAppender(appender, null, null);
 	}
 	
-	public void setLevel(Level level){
+	public void setLevel(Level level) {
 		LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
 		Configuration config = ctx.getConfiguration();
 		LoggerConfig loggerConfig = config.getLoggerConfig(name);

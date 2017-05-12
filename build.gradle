@@ -47,8 +47,6 @@ dependencies {
 project(":scraper") {
     apply plugin: "java"
 
-
-
     dependencies {
 
         compile fileTree(dir: 'libs\\marvin\\framework', include: '*.jar')

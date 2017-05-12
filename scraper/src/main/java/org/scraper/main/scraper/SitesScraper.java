@@ -79,7 +79,7 @@ public class SitesScraper {
 							newAddrs.add(new Site(address, ScrapeType.UNCHECKED));
 					}
 				} catch (IOException e) {
-					MainLogger.log().error("Connection failed, url: {} error: {}", url, (e.getMessage()!=null?e.getMessage():"null"));
+					MainLogger.log(this).error("Connection failed, url: {} error: {}", url, (e.getMessage()!=null?e.getMessage():"null"));
 				}
 			}
 		}

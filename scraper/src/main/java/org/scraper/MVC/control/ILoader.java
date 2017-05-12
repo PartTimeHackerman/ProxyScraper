@@ -26,12 +26,12 @@ public interface ILoader {
 			}
 			
 		} catch (IOException e) {
-			MainLogger.log().fatal("Failed to load a file {}!", file.getName());
+			MainLogger.log(this).fatal("Failed to load a file {}!", file.getName());
 		} finally {
 			try {
 				bufferedReader.close();
 			} catch (Exception e) {
-				MainLogger.log().fatal("Failed to close a file {}!", file.getName());
+				MainLogger.log(this).fatal("Failed to close a file {}!", file.getName());
 			}
 		}
 		

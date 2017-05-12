@@ -1,26 +1,12 @@
 package org.scraper.main;
 
-import org.apache.commons.collections.ListUtils;
-import org.apache.commons.exec.DefaultExecutor;
-import org.apache.commons.exec.StreamPumper;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.openqa.selenium.net.UrlChecker;
-import org.scraper.main.data.Domain;
 import org.scraper.main.data.Site;
 import org.scraper.main.filters.SitesFilter;
-import org.scraper.main.manager.QueuesManager;
-import org.scraper.main.scraper.ScrapeType;
 
-import static org.junit.Assert.*;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.*;
 
 public class ScraperTest {
 	
@@ -43,21 +29,28 @@ public class ScraperTest {
 		
 		List<Site> sitesList = new ArrayList<>(sites);
 		sitesList.sort((o1, o2) -> o2.getAvgWorkingProxies() - o1.getAvgWorkingProxies());
+		Collections.reverse(sitesList);
+		scraper.getSitesUtility().scrape(sitesList.get(0));
 		
-		scraper.getSitesUtility().scrape(sitesList);
+		scraper.getProxyRepo().getWorkingStream().subscribe(p -> MainLogger.log(this).info("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!{}", p));
 		
-		Thread.sleep(20000);
-		
+		Thread.sleep(60000);
+		Thread.sleep(60000);
+		Thread.sleep(60000);
+		scraper.getSitesUtility().scrape(sitesList.get(1));
+		Thread.sleep(6000000);
+		/*
 		scraper.pause();
-		
-		Thread.sleep(30000);
-		
-		scraper.resume();
 		
 		Thread.sleep(10000);
 		
+		scraper.resume();
+		
+		Thread.sleep(10000);*/
+		
 		
 		scraper.dispose();
+		Thread.sleep(10000);
 		/*sites = sites.stream().filter(site -> site.getType() == ScrapeType.UNCHECKED).collect(Collectors.toList());
 		List<Domain> domains = scraper.getDomainsRepo().getAll();
 		

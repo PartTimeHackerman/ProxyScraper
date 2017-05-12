@@ -3,9 +3,7 @@ package org.scraper.main;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.Function;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 public class Pool implements IPool {
 	
@@ -45,23 +43,24 @@ public class Pool implements IPool {
 	}
 	
 	public void create(Integer threads, Long timeout) {
-		MainLogger.log().debug("Creating new pool");
+		MainLogger.log(this).debug("Creating new pool");
 		enabled = true;
 		this.executor = new ThreadPoolExecutor(threads, threads,
 											   timeout, TimeUnit.SECONDS,
 											   new LinkedBlockingQueue<>());
+		this.executor.allowCoreThreadTimeOut(true);
 	}
 	
 	public void shutdown() {
 		synchronized (this) {
 			if (isEnabled()) {
-				MainLogger.log().debug("Shuting down pool");
-				runnables = executor.shutdownNow();
+				MainLogger.log(this).debug("Shuting down pool");
+				executor.shutdownNow();
 				try {
 					if (!executor.awaitTermination(5, TimeUnit.SECONDS)) {
 						executor.shutdownNow();
 						if (!executor.awaitTermination(5, TimeUnit.SECONDS))
-							MainLogger.log().debug("Pool did not terminated");
+							MainLogger.log(this).debug("Pool did not terminated");
 					}
 				} catch (InterruptedException ie) {
 					executor.shutdownNow();
@@ -76,17 +75,18 @@ public class Pool implements IPool {
 	}
 	
 	public void pause() {
-		runnables = executor.getQueue().stream().collect(Collectors.toList());
+		runnables = new ArrayList<>(executor.getQueue());
 		executor.getQueue().clear();
-		executor.purge();
-		executor.setCorePoolSize(0);
-		executor.setMaximumPoolSize(1);
+		//executor.setCorePoolSize(0);
+		//executor.setMaximumPoolSize(1);
+		shutdown();
 		subPools.forEach(Pool::pause);
 	}
 	
 	public void resume() {
-		executor.setCorePoolSize(threads);
-		executor.setMaximumPoolSize(threads);
+		create();
+		//executor.setCorePoolSize(threads);
+		//executor.setMaximumPoolSize(threads);
 		runnables.forEach(executor::submit);
 		subPools.forEach(Pool::resume);
 	}
@@ -124,7 +124,7 @@ public class Pool implements IPool {
 		try {
 			return wait ? future.get() : null;
 		} catch (InterruptedException | ExecutionException e) {
-			MainLogger.log().fatal("Thread was interrupted!");
+			MainLogger.log(this).fatal("Thread was interrupted!");
 			return null;
 		}
 	}
@@ -137,11 +137,11 @@ public class Pool implements IPool {
 				try {
 					list.add(future.get());
 				} catch (InterruptedException | ExecutionException e) {
-					MainLogger.log().fatal(e);
+					MainLogger.log(this).fatal(e);
 				}
 			});
 		} catch (InterruptedException e) {
-			MainLogger.log().fatal("Thread was interrupted!");
+			MainLogger.log(this).fatal("Thread was interrupted!");
 		}
 		list.removeIf(Objects::isNull);
 		return list;
@@ -177,7 +177,7 @@ public class Pool implements IPool {
 			try {
 				completedFunc = completionService.take().get();
 			} catch (InterruptedException | ExecutionException ignored) {
-				MainLogger.log().fatal("Thread was interrupted!");
+				MainLogger.log(this).fatal("Thread was interrupted!");
 			}
 			
 			completed.add(completedFunc);

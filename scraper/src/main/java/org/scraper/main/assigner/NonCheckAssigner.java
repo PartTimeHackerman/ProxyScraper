@@ -18,7 +18,7 @@ public class NonCheckAssigner implements IAssigner {
 	@Override
 	public ScrapeType getType(Site site) {
 		String address = site.getAddress();
-		MainLogger.log().info("Getting non assgn {} scrapng type", address);
+		MainLogger.log(this).info("Getting non assign {} scraping type", address);
 		
 		ScrapeType type = methodFinder.findBest(site);
 		

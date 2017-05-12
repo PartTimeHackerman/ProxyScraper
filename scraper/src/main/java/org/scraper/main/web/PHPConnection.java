@@ -45,7 +45,7 @@ public class PHPConnection {
 					.execute();
 			parsed = response.parse().text();
 		} catch (IOException e) {
-			MainLogger.log().fatal("Can't connect to database!");
+			MainLogger.log(PHPConnection.class).fatal("Can't connect to database!");
 		}
 		return parsed;
 	}

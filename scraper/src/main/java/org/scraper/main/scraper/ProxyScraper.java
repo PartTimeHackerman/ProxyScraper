@@ -54,7 +54,7 @@ public class ProxyScraper extends Observable implements Switchable {
 		List<Proxy> proxy = new ArrayList<>();
 		proxyList.forEach(proxy::addAll);
 		
-		MainLogger.log().info("List scraping done");
+		MainLogger.log(this).info("List scraping done");
 		return proxy;
 	}
 	

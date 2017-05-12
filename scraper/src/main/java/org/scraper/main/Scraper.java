@@ -53,11 +53,15 @@ public class Scraper {
 	
 	private Boolean created;
 	private Boolean paused;
+	private Integer limit;
 	
 	public Scraper(Integer threads, Integer timeout, Integer limit, Boolean check, Integer browsers, Integer ocrs) {
 		
+		Pool.setDefaultThreads(threads);
+		
 		pool = new Pool(threads);
 		
+		this.limit = limit;
 		limiter = new Limiter(limit);
 		proxyRepo = new ProxyRepo(limiter);
 		sitesRepo = new SitesRepo();
@@ -69,9 +73,7 @@ public class Scraper {
 		Runtime.getRuntime().addShutdownHook(new Thread(this::dispose));
 		
 		if(!ConnectionChecker.hasConnection())
-			MainLogger.log().fatal("NO INTERNET CONNECTION!");
-		
-		Pool.setDefaultThreads(threads);
+			MainLogger.log(this).fatal("NO INTERNET CONNECTION!");
 		
 		queuesManager = new QueuesManager(browsers, ocrs);
 		concurrentConnectionExecutor = new ConcurrentConnectionExecutor(pool);
@@ -82,7 +84,7 @@ public class Scraper {
 		
 		ScrapersFactory scrapersFactory = new ScrapersFactory(queuesManager, concurrentConnectionExecutor);
 		
-		proxyChecker = new ProxyCheckerConcurrent(timeout, getProxyRepo().getAll(), pool);
+		proxyChecker = new ProxyCheckerConcurrent(timeout,proxyRepo, pool);
 		
 		assigner = new AssignManagerConcurrent(scrapersFactory, proxyChecker, checkOnFly, domainsRepo, pool);
 		
@@ -107,7 +109,7 @@ public class Scraper {
 		limiter.addSwitchable(proxyChecker);
 		limiter.addSwitchable(proxyScraper);
 		
-		MainLogger.log().info("Scraper initialized");
+		MainLogger.log(this).info("Scraper initialized");
 		//MainLogger.getInstance().setLevel(Level.FATAL);
 	}
 	
@@ -116,7 +118,7 @@ public class Scraper {
 	}
 	
 	public void create(){
-		MainLogger.log().debug("Creating scraper");
+		MainLogger.log(this).debug("Creating scraper");
 		pool.create();
 		synchronized (pool) {
 			while (!(pool.getExecutor().getActiveCount() == 0))
@@ -124,26 +126,30 @@ public class Scraper {
 		}
 		queuesManager.create();
 		created = true;
+		limiter.setLimit(limit);
 	}
 	
 	public void pause(){
-		MainLogger.log().debug("Pausing scraper");
+		MainLogger.log(this).debug("Pausing scraper");
 		pool.pause();
 		paused = true;
 	}
 	
 	public void resume(){
-		MainLogger.log().debug("Resuming scraper");
+		MainLogger.log(this).debug("Resuming scraper");
 		pool.resume();
 		paused = false;
 	}
 	
 	public void dispose(){
-		MainLogger.log().debug("Shutting down scraper");
+		MainLogger.log(this).debug("Shutting down scraper");
+		limit = limiter.getLimit();
+		limiter.setLimit(0);
 		pool.shutdown();
 		queuesManager.shutdown();
 		dataBase.postSitesAndDomains();
 		created = false;
+		
 	}
 	
 	public void setCheckOnFly(boolean checkOnFly) {
@@ -196,5 +202,13 @@ public class Scraper {
 	
 	public Boolean isPaused() {
 		return paused;
+	}
+	
+	public Pool getPool() {
+		return pool;
+	}
+	
+	public Limiter getLimiter() {
+		return limiter;
 	}
 }

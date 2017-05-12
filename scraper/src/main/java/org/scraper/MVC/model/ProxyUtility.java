@@ -36,7 +36,7 @@ public class ProxyUtility implements IConcurrent {
 	
 	public void addProxy(String proxyString) {
 		if (!proxyString.matches(proxyPattern)) {
-			MainLogger.log().warn("{} isn't a proxy", proxyString);
+			MainLogger.log(this).warn("{} isn't a proxy", proxyString);
 			return;
 		}
 		Proxy proxy = new Proxy(proxyString);

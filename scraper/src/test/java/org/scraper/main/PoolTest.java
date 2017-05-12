@@ -14,7 +14,7 @@ public class PoolTest {
 		IntStream.range(0,100).forEach(nums::add);
 		
 		Function<Integer, Integer> rootFunc = (val) -> {
-			MainLogger.log().debug("{} - {}", val, val*val);
+			MainLogger.log(this).debug("{} - {}", val, val*val);
 			try {
 				Thread.sleep(500);
 			} catch (InterruptedException e) {

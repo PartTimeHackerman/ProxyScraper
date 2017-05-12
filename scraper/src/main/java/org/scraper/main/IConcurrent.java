@@ -46,7 +46,7 @@ public interface IConcurrent {
 					}
 				}).collect(Collectors.toList());
 			} catch (Exception e) {
-				MainLogger.log().fatal(e);
+				MainLogger.log(this).fatal(e);
 				return null;
 			}
 	}

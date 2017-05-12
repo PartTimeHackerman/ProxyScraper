@@ -41,7 +41,7 @@ public class ProxyModelFX extends ProxyUtility implements IDeleter<Proxy>, IClip
 		visible.addListener((ListChangeListener<Proxy>) c -> {
 			while (c.next()) {
 				if (c.wasUpdated()) {
-					MainLogger.log().info(" updated");
+					MainLogger.log(this).info(" updated");
 				}
 			}
 		});

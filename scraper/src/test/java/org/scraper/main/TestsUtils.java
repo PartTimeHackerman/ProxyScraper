@@ -4,6 +4,8 @@ import org.scraper.main.assigner.BestOfAllFinder;
 import org.scraper.main.assigner.IScrapeMethodFinder;
 import org.scraper.main.checker.ProxyChecker;
 import org.scraper.main.checker.ProxyCheckerConcurrent;
+import org.scraper.main.data.ProxyRepo;
+import org.scraper.main.limiter.Limiter;
 import org.scraper.main.manager.QueuesManager;
 import org.scraper.main.scraper.ScrapeType;
 import org.scraper.main.scraper.ScrapersFactory;
@@ -23,7 +25,7 @@ public class TestsUtils {
 	public static final Proxy brokenProxy2 = new Proxy("222.222.222.222:2222");
 	public static final Proxy brokenProxy3 = new Proxy("333.333.333.333:3333");
 	
-	public static final ProxyChecker checker = new ProxyCheckerConcurrent(3000, new ArrayList<>(), new Pool(1));
+	public static final ProxyChecker checker = new ProxyCheckerConcurrent(3000, new ProxyRepo(new Limiter(1)), new Pool(1));
 	public static final ScrapersFactory scrapersFactory = new ScrapersFactory(new QueuesManager(1, 1), new ConcurrentConnectionExecutor(new Pool(1)));
 	public static final IScrapeMethodFinder methodFinder = new BestOfAllFinder(scrapersFactory);
 }

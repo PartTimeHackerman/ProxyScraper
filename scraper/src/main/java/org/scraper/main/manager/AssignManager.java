@@ -46,7 +46,7 @@ public class AssignManager extends Observable {
 		setChanged();
 		notifyObservers(proxy);
 		
-		MainLogger.log().info("Site ({}) assigned", site);
+		MainLogger.log(this).info("Site ({}) assigned", site);
 		
 		return proxy;
 	}
@@ -99,7 +99,7 @@ public class AssignManager extends Observable {
 		sites.forEach(site ->
 							  proxy.addAll(assign(site)));
 		
-		MainLogger.log().debug("List assign done");
+		MainLogger.log(this).debug("List assign done");
 		
 		return proxy;
 	}

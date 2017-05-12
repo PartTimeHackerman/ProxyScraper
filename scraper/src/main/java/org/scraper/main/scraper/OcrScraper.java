@@ -4,7 +4,6 @@ import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
-import org.scraper.main.IConcurrent;
 import org.scraper.main.MainLogger;
 import org.scraper.main.Proxy;
 import org.scraper.main.scraper.ocr.Image;
@@ -34,14 +33,14 @@ public class OcrScraper extends ScraperAbstract {
 		siteRoot = site.getRoot();
 		String url = site.getAddress();
 		
-		MainLogger.log().info("OCR scraping {}", url);
+		MainLogger.log(this).info("OCR scraping {}", url);
 		try {
 			document = Jsoup.connect(url)
 					.timeout(10000)
 					.userAgent(BrowserVersion.random().ua())
 					.get();
 		} catch (IOException e) {
-			MainLogger.log().info("OCR scraping {} failed!", url);
+			MainLogger.log(this).info("OCR scraping {} failed!", url);
 			return proxy;
 		}
 		
@@ -51,7 +50,7 @@ public class OcrScraper extends ScraperAbstract {
 		
 		ocrAndReplace(responses);
 		
-		MainLogger.log().info("OCR Done");
+		MainLogger.log(this).info("OCR Done");
 		
 		String txt = document.text();
 		
@@ -108,7 +107,7 @@ public class OcrScraper extends ScraperAbstract {
 			if (image.getHeight() > 0 && image.getWidth() / image.getHeight() >= 8) {
 				
 				String imgText = doOcr(bytes);
-				MainLogger.log().info(imgText);
+				MainLogger.log(this).info(imgText);
 				
 				String responseUrl = response.url().toString();
 				

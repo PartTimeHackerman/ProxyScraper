@@ -14,7 +14,7 @@ public class ConnectionExecutor implements IConnectionExecutor {
 		try {
 			return connection.execute();
 		} catch (IOException e) {
-			MainLogger.log().fatal(e);
+			MainLogger.log(this).fatal(e);
 			return null;
 		}
 	}
@@ -29,7 +29,7 @@ public class ConnectionExecutor implements IConnectionExecutor {
 		try {
 			return execute(connection).parse().text();
 		} catch (IOException e) {
-			MainLogger.log().fatal(e);
+			MainLogger.log(this).fatal(e);
 			return null;
 		}
 	}

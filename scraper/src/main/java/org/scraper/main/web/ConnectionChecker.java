@@ -22,7 +22,7 @@ public class ConnectionChecker {
 			
 			return true;
 		} catch (IOException e) {
-			MainLogger.log().fatal("No internet connection!");
+			MainLogger.log(ConnectionChecker.class).fatal("No internet connection!");
 			return false;
 		}
 	}

@@ -15,7 +15,7 @@ class NullScraper extends ScraperAbstract {
 	
 	@Override
 	public List<Proxy> scrape(Site site) {
-		MainLogger.log().warn("URL {} doesn't contain any proxies", site.getAddress());
+		MainLogger.log(this).warn("URL {} doesn't contain any proxies", site.getAddress());
 		return new ArrayList<>();
 	}
 	

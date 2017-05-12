@@ -62,6 +62,6 @@ project(":scraper") {
         // https://mvnrepository.com/artifact/io.reactivex/rxjava
         compile group: 'io.reactivex', name: 'rxjava', version: '1.2.1'
 
-        compile 'com.github.WorstCoder:ProxyScraper:master-SNAPSHOT'
+        compile group: 'com.github.WorstCoder:ProxyScraper:master-SNAPSHOT'
     }
 }

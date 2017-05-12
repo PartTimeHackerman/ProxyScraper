@@ -15,19 +15,19 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="scraper" scope="PROVIDED" />
-    <orderEntry type="module" module-name="scraper" scope="RUNTIME" />
-    <orderEntry type="module" module-name="scraper" scope="TEST" />
-    <orderEntry type="library" scope="PROVIDED" name="Gradle: org.apache.logging.log4j:log4j-core:2.6.2" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Gradle: commons-collections:commons-collections:3.2.2" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Gradle: io.reactivex:rxjava:1.2.1" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Gradle: org.apache.logging.log4j:log4j-api:2.6.2" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Gradle: org.apache.logging.log4j:log4j-core:2.6.2" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Gradle: commons-collections:commons-collections:3.2.2" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Gradle: io.reactivex:rxjava:1.2.1" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Gradle: org.apache.logging.log4j:log4j-api:2.6.2" level="project" />
-    <orderEntry type="library" scope="TEST" name="Gradle: org.apache.logging.log4j:log4j-core:2.6.2" level="project" />
-    <orderEntry type="library" scope="TEST" name="Gradle: commons-collections:commons-collections:3.2.2" level="project" />
-    <orderEntry type="library" scope="TEST" name="Gradle: io.reactivex:rxjava:1.2.1" level="project" />
     <orderEntry type="library" scope="TEST" name="Gradle: org.apache.logging.log4j:log4j-api:2.6.2" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: io.reactivex:rxjava:1.2.1" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: commons-collections:commons-collections:3.2.2" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: org.apache.logging.log4j:log4j-core:2.6.2" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: org.apache.logging.log4j:log4j-api:2.6.2" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: io.reactivex:rxjava:1.2.1" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: commons-collections:commons-collections:3.2.2" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: org.apache.logging.log4j:log4j-core:2.6.2" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Gradle: org.apache.logging.log4j:log4j-api:2.6.2" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Gradle: io.reactivex:rxjava:1.2.1" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Gradle: commons-collections:commons-collections:3.2.2" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Gradle: org.apache.logging.log4j:log4j-core:2.6.2" level="project" />
+    <orderEntry type="module" module-name="scraper" scope="TEST" />
+    <orderEntry type="module" module-name="scraper" scope="RUNTIME" />
   </component>
 </module>

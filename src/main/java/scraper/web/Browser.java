@@ -19,7 +19,7 @@ import java.util.logging.Level;
 
 public class Browser {
 	
-	private static String phantomJsPath = TempFileManager.loadResource(Browser.class, "phantomjs.exe").getAbsolutePath();
+	private static String phantomJsPath;
 	
 	private WebDriver driver;
 	
@@ -34,9 +34,11 @@ public class Browser {
 	}
 	
 	protected void setUp() {
-		File f = new File(phantomJsPath);
-		if(!f.exists() && f.isDirectory()) {
-			MainLogger.log(this).fatal("No PhantomJS executable in {}", phantomJsPath);
+		if (phantomJsPath == null)
+			phantomJsPath = TempFileManager.loadResource(Browser.class, "phantomjs.exe").getAbsolutePath();
+		File phantomJs = new File(phantomJsPath);
+		if(!phantomJs.exists() || phantomJs.isDirectory()) {
+			MainLogger.log(this).fatal("{} isn't exists or is a directory", phantomJs.getAbsolutePath());
 		}
 		driver = getBrowser(null, BrowserVersion.random(), false);
 	}
@@ -266,9 +268,7 @@ public class Browser {
 		
 		try {
 			Runtime.getRuntime().exec("taskkill /F /PID " + getPID((PhantomJSDriver) driver));
-		} catch (Exception e) {
-			MainLogger.log(this).fatal("Driver is already closed");
-		}
+		} catch (Exception e) {}
 	}
 }
 

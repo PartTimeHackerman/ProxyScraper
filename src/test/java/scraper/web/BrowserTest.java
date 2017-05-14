@@ -14,22 +14,12 @@ public class BrowserTest {
 	@BeforeClass
 	public static void setUp() throws Exception {
 		browser = new Browser();
+		assertNotNull(browser.getDriver());
     }
-	
-	@Test
-	public void changeProxy() throws Exception {
-		
-	}
-	
-	@Test
-	public void getDriver() throws Exception {
-		
-	}
 	
 	@Test
 	public void getPID() throws Exception {
 		Long pid = browser.getPID((PhantomJSDriver) browser.getDriver());
-		
 		assertNotNull(pid);
 	}
 	

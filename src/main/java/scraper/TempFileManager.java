@@ -22,7 +22,7 @@ public class TempFileManager {
 		
 		InputStream in = clazz.getResourceAsStream(name);
 		if (in == null) {
-			MainLogger.log(TempFileManager.class).fatal("Resource {} doesn't exists, add it to {} path", name, file.getAbsolutePath());
+			MainLogger.log(TempFileManager.class).fatal("Resource {} doesn't exists, you can add it to {} path", name, file.getAbsolutePath());
 			return null;
 		}
 		write(in, file);

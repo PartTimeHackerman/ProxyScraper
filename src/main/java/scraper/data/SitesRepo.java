@@ -66,7 +66,7 @@ public class SitesRepo implements IRepository<Site> {
 	}
 	
 	@Override
-	public void fetchAllFromDB() {
+	public void fetchAll() {
 		addSites(siteDAO.fetchAll());
 	}
 	
@@ -76,7 +76,7 @@ public class SitesRepo implements IRepository<Site> {
 	}
 	
 	@Override
-	public void postAllToDB() {
+	public void postAll() {
 		siteDAO.postAll(sites);
 	}
 	

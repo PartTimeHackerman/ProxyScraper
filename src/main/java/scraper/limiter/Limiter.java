@@ -12,7 +12,7 @@ public class Limiter {
 	private Vector<Switchable> switchables = new Vector<>();
 	
 	public Limiter(Integer limit) {
-		this.limit = limit;
+		setLimit(limit);
 	}
 	
 	public void addSwitchable(Switchable switchable) {
@@ -25,17 +25,20 @@ public class Limiter {
 	
 	public void incrementBy(Integer value) {
 		counter.addAndGet(value);
-		if(counter.get() >= limit)
+		if (counter.get() >= limit)
 			turnOffSwitchables();
 	}
 	
-	public void clear(){
+	public void clear() {
 		counter.set(0);
 		turnOnSwitchables();
 	}
 	
-	public void setLimit(Integer limit){
-		this.limit = limit;
+	public void setLimit(Integer limit) {
+		if (limit > 0)
+			this.limit = limit;
+		else
+			this.limit = Integer.MAX_VALUE;
 	}
 	
 	private void turnOffSwitchables() {
@@ -45,7 +48,7 @@ public class Limiter {
 		});
 	}
 	
-	private void turnOnSwitchables(){
+	private void turnOnSwitchables() {
 		switchables.forEach(switchable -> {
 			if (!switchable.isOn())
 				switchable.turnOn();

@@ -19,8 +19,9 @@ public class LinkGatherConcurrent extends LinksGather implements IConcurrent {
 		this.pool = pool;
 	}
 	
-	public LinkGatherConcurrent(Integer depth) {
+	public LinkGatherConcurrent(Integer depth, Pool pool) {
 		super(depth);
+		this.pool = pool;
 	}
 	
 	public List<Site> gather(Site site, Boolean wait) {

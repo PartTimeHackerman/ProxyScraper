@@ -66,7 +66,8 @@ public class LinksGather extends Observable {
 					tempLinks.clear();
 				});
 		
-		removeDuplicates(links);
+		if (sitesRepo != null)
+			removeDuplicates(links);
 		return links;
 	}
 	

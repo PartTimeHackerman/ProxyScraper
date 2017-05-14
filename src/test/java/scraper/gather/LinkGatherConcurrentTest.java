@@ -1,6 +1,7 @@
 package scraper.gather;
 
 import org.junit.Test;
+import scraper.Pool;
 import scraper.main.TestsUtils;
 import scraper.data.Site;
 
@@ -10,7 +11,7 @@ import static org.junit.Assert.assertTrue;
 
 public class LinkGatherConcurrentTest {
 	
-	LinksGather linksGather = new LinkGatherConcurrent(1);
+	LinksGather linksGather = new LinkGatherConcurrent(1, new Pool());
 	
 	@Test
 	public void gather() throws Exception {

@@ -18,8 +18,8 @@ public class DataBaseLocal implements IDataBase {
 	
 	@Override
 	public void getSitesAndDomains() {
-		sitesRepo.fetchAllFromDB();
-		domainsRepo.fetchAllFromDB();
+		sitesRepo.fetchAll();
+		domainsRepo.fetchAll();
 	}
 	
 	@Override
@@ -29,20 +29,20 @@ public class DataBaseLocal implements IDataBase {
 	
 	@Override
 	public void postSitesAndDomains() {
-		sitesRepo.postAllToDB();
-		domainsRepo.postAllToDB();
+		sitesRepo.postAll();
+		domainsRepo.postAll();
 	}
 	
 	@Override
 	public void postSites(List<Site> sites) {
 		sitesRepo.addAll(sites);
-		sitesRepo.postAllToDB();
+		sitesRepo.postAll();
 	}
 	
 	@Override
 	public void postDomains(List<Domain> domains) {
 		domainsRepo.addAll(domains);
-		domainsRepo.postAllToDB();
+		domainsRepo.postAll();
 	}
 	
 	@Override

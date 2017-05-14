@@ -42,7 +42,7 @@ public class DomainsRepo implements IRepository<Domain> {
 	}
 	
 	@Override
-	public void fetchAllFromDB() {
+	public void fetchAll() {
 		addAll(domainDAO.fetchAll());
 	}
 	
@@ -52,7 +52,7 @@ public class DomainsRepo implements IRepository<Domain> {
 	}
 	
 	@Override
-	public void postAllToDB() {
+	public void postAll() {
 		domainDAO.postAll(domains);
 	}
 }

@@ -11,9 +11,9 @@ public interface IRepository<T> {
 	
 	void addAll(Collection<T> ts);
 	
-	void fetchAllFromDB();
+	void fetchAll();
 	
 	void postOne(T t);
 	
-	void postAllToDB();
+	void postAll();
 }

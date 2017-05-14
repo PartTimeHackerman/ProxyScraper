@@ -18,31 +18,39 @@ public class SitesScraper {
 	
 	private List<Site> sites;
 	
-	private List<Site> newAddrs = new ArrayList<>();
-	
 	public SitesScraper(List<Site> sites) {
 		this.sites = sites;
 	}
 	
-	public static void main(String... args) throws Exception {
-		/*SitesScraper ss = new SitesScraper(DataBase.getAllSites());
-		
-		System.out.println(ss.getSearchURL(GGLang.PL));
-		ss.scrapeSites();
-		PHP.phpPost(PHPMethod.POST_SITES, PHP.gson.toJson(ss.newAddrs));
-		List<Integer> ints = new ArrayList<>();
-		for (int i = 0; i < 10000; i++) {
-			try {
-				Jsoup.connect("http://www.wykop.pl/").proxy("87.98.239.19", 8080).timeout(10000).userAgent("Mozilla").execute();
-				ints.add(i);
-				System.out.println(i + " 11111111111111111");
-			} catch (IOException e) {
-				System.out.println(i + " 0");
+	public void scrapeSites() {
+		String page = "&start=";
+		Map<String, String> cookies = new HashMap<>();
+		for (Lang lang : Lang.values()) {
+			String url = getSearchURL(lang);
+			for (int i = 0; i < 50; i += 10) {
+				url += page + i;
+				try {
+					Connection.Response response = Jsoup.connect(url)
+							.userAgent(BrowserVersion.CHROME_WIN.ua())
+							.method(Connection.Method.GET)
+							.cookies(cookies)
+							.execute();
+					cookies.putAll(response.cookies());
+					Elements sitesLinks = response.parse().getElementsByAttributeValue("class", "g");
+					for (Element siteLink : sitesLinks) {
+						String address = siteLink.child(0).child(0).child(0).child(0).attr("href");
+						
+						if (address != null && address.length()>5 && !sites.contains(address))
+							sites.add(new Site(address, ScrapeType.UNCHECKED));
+					}
+				} catch (IOException e) {
+					MainLogger.log(this).error("Connection failed, url: {} error: {}", url, (e.getMessage()!=null?e.getMessage():"null"));
+				}
 			}
-		}*/
+		}
 	}
 	
-	private String getSearchURL(GGLang lang) {
+	private String getSearchURL(Lang lang) {
 		String[] term = lang.lang.split(" ");
 		StringBuilder url = new StringBuilder("https://www.google.com/search?hl=en&as_q=");
 		for (int i = 0; i < term.length; i++) {
@@ -55,53 +63,11 @@ public class SitesScraper {
 		return url.toString();
 	}
 	
-	private void scrapeSites() {
-		String page = "&start=";
-		Map<String, String> cookies = new HashMap<>();
-		for (GGLang lang : GGLang.values()) {
-			String url = getSearchURL(lang);
-			for (int i = 0; i < 50; i += 10) {
-				url += page + i;
-				try {
-					Connection.Response response = Jsoup.connect(url)
-							.userAgent(BrowserVersion.CHROME_WIN.ua())
-							.method(Connection.Method.GET)
-							.cookies(cookies)
-							.execute();
-					cookies.putAll(response.cookies());
-					
-					Elements sitesLinks = response.parse().getElementsByAttributeValue("class", "g");
-					for (Element siteLink : sitesLinks) {
-						String address = siteLink.child(0).child(0).child(0).attr("href");
-						System.out.println(address);
-						
-						if (! sites.contains(address))
-							newAddrs.add(new Site(address, ScrapeType.UNCHECKED));
-					}
-				} catch (IOException e) {
-					MainLogger.log(this).error("Connection failed, url: {} error: {}", url, (e.getMessage()!=null?e.getMessage():"null"));
-				}
-			}
-		}
-	}
-	
 	public List<Site> getSites() {
 		return sites;
 	}
 	
-	public void setSites(List<Site> sites) {
-		this.sites = sites;
-	}
-	
-	public List<Site> getNewAddrs() {
-		return newAddrs;
-	}
-	
-	public void setNewAddrs(List<Site> newAddrs) {
-		this.newAddrs = newAddrs;
-	}
-	
-	enum GGLang {
+	enum Lang {
 		EN("proxy list"),
 		ES("lista de proxy"),
 		RU("список прокси"),
@@ -113,7 +79,7 @@ public class SitesScraper {
 		CN("代理列表");
 		public String lang;
 		
-		GGLang(String lang) {
+		Lang(String lang) {
 			this.lang = lang;
 		}
 	}

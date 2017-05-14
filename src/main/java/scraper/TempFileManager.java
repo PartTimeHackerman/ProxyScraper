@@ -14,16 +14,17 @@ import java.util.Collections;
 public class TempFileManager {
 	
 	public static <T> File loadResource(Class<T> clazz, String name) {
-		File file = null;
-		InputStream in = clazz.getResourceAsStream(name);
-		file = new File(System.getProperty("user.dir") + "/" + name);//File.createTempFile("scraper_", name);
+		File file = new File(System.getProperty("user.dir") + "/" + name);
 		if (file.exists())
 			return file;
 		
 		new File(file.getParent()).mkdirs();
-		file.deleteOnExit();
 		
-		System.out.println(file.getAbsolutePath() +"\n" + clazz.getResource(name));
+		InputStream in = clazz.getResourceAsStream(name);
+		if (in == null) {
+			MainLogger.log(TempFileManager.class).fatal("Resource {} doesn't exists, add it to {} path", name, file.getAbsolutePath());
+			return null;
+		}
 		write(in, file);
 		
 		return file;
@@ -47,10 +48,10 @@ public class TempFileManager {
 				Files.walkFileTree(myPath, new SimpleFileVisitor<Path>() {
 					@Override
 					public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-						String f11 = file.toString().replace('\\','/');
+						String f11 = file.toString().replace('\\', '/');
 						String[] f = f11.split("/");
-						String f1 = f[f.length-1];
-						write(clazz.getResourceAsStream("plugins/"+f1), new File(dst.getAbsolutePath() + "/" + f1));
+						String f1 = f[f.length - 1];
+						write(clazz.getResourceAsStream("plugins/" + f1), new File(dst.getAbsolutePath() + "/" + f1));
 						return FileVisitResult.CONTINUE;
 					}
 				});

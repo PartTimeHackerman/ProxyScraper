@@ -11,12 +11,15 @@ import scraper.MainLogger;
 import scraper.Proxy;
 import scraper.TempFileManager;
 
+import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
 public class Browser {
 	
-	private final static String PATH = TempFileManager.loadResource(Browser.class, "phantomjs.exe").getAbsolutePath();
+	private static String phantomJsPath = TempFileManager.loadResource(Browser.class, "phantomjs.exe").getAbsolutePath();
 	
 	private WebDriver driver;
 	
@@ -24,10 +27,17 @@ public class Browser {
 		setUp();
 	}
 	
-	protected Browser(Object explicit) {
+	protected Browser(Object explicit) {}
+	
+	public static void setPhantomJsPath(String phantomJsPath) {
+		Browser.phantomJsPath = phantomJsPath;
 	}
 	
 	protected void setUp() {
+		File f = new File(phantomJsPath);
+		if(!f.exists() && f.isDirectory()) {
+			MainLogger.log(this).fatal("No PhantomJS executable in {}", phantomJsPath);
+		}
 		driver = getBrowser(null, BrowserVersion.random(), false);
 	}
 	
@@ -65,7 +75,7 @@ public class Browser {
 			capabilities.setCapability(CapabilityType.PROXY, browserProxy);
 		}
 		
-		capabilities.setCapability(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, PATH);
+		capabilities.setCapability(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, phantomJsPath);
 		
 		capabilities.setCapability(PhantomJSDriverService.PHANTOMJS_CLI_ARGS, new String[]{"--webdriver-loglevel=" + (debug ? "INFO" : "OFF"), "--ignore-ssl-errors=true", "--ssl-protocol=any"});
 		

@@ -12,8 +12,6 @@ import java.util.List;
 
 public class ScraperCLI {
 	
-	private Scraper scraper;
-	
 	private Options options = new Options();
 	private CommandLineParser parser = new DefaultParser();
 	
@@ -27,7 +25,6 @@ public class ScraperCLI {
 	private String[] gather = {};
 	private String[] sites = {};
 	private String[] proxies = {};
-	private Mode mode = null;
 	
 	private Integer depth = 2;
 	
@@ -234,11 +231,5 @@ public class ScraperCLI {
 			sitesList.add(new Site(site, ScrapeType.UNCHECKED));
 		}
 		return sitesList;
-	}
-	
-	private enum Mode{
-		GATHER,
-		SCRAPER,
-		CHECKER
 	}
 }

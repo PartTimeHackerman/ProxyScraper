@@ -3,9 +3,9 @@ package org.scraper.view.control;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
-import org.scraper.view.model.SitesUtility;
-import org.scraper.main.scraper.ScrapeType;
-import org.scraper.main.data.Site;
+import scraper.SitesUtility;
+import scraper.data.Site;
+import scraper.scraper.ScrapeType;
 
 import java.io.File;
 import java.util.Arrays;

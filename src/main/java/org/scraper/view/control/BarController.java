@@ -6,7 +6,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import org.scraper.view.model.GeneralOptions;
-import org.scraper.main.Interval;
+import scraper.Interval;
 
 public class BarController {
 	@FXML

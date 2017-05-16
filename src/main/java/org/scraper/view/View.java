@@ -14,8 +14,9 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.scraper.view.control.*;
 import org.scraper.view.model.*;
-import org.scraper.main.Interval;
-import org.scraper.main.MainLogger;
+import scraper.Interval;
+import scraper.MainLogger;
+import scraper.Scraper;
 
 
 public class View extends Application {
@@ -23,7 +24,7 @@ public class View extends Application {
 	@FXML
 	private Label logBar;
 	
-	private static MainModel model;
+	private static Scraper scraper;
 	
 	private static ProxyModelFX proxyModel;
 	
@@ -48,21 +49,18 @@ public class View extends Application {
 	
 	
 	public static void main(String[] args) {
+		scraper = new Scraper();
 		
-		model = new MainModel();
+		Interval.setInterval(100);
 		
-		if (args.length == 0) {
-			model.setVarsInterval();
-			Interval.setInterval(100);
-			proxyModel = new ProxyModelFX(model.getChecker(), model.getPool());
-			sitesModel = new SitesModelFX(model.getAssigner(), model.getScraper(), model.getGather(), model.getPool());
-			generalOptions = new GeneralOptions(model.getProxyRepo(), model.getCheckOnFly(), model.getLimiter(), model.getPool());
-			
-			model.getProxyRepo().setModel(proxyModel);
-			model.getSitesRepo().setModel(sitesModel);
-			
-			launch();
-		}
+		proxyModel = new ProxyModelFX(scraper.getProxyChecker(), scraper.getPool());
+		sitesModel = new SitesModelFX(scraper.getAssigner(), scraper.getProxyScraper(), scraper.getLinksGather(), scraper.getPool());
+		generalOptions = new GeneralOptions(scraper.getProxyRepo(), scraper.getCheckOnFly(), scraper.getLimiter(), scraper.getPool());
+		
+		scraper.getProxyRepo().setModel(proxyModel);
+		scraper.getSitesRepo().setModel(sitesModel);
+		
+		launch();
 	}
 	
 	@Override
@@ -138,7 +136,6 @@ public class View extends Application {
 		primaryStage.setOnCloseRequest(e -> System.exit(0));
 		
 		
-		
 		primaryStage.setScene(scene);
 		primaryStage.show();
 		
@@ -147,7 +144,6 @@ public class View extends Application {
 		//primaryStage.setMinHeight(rootPane.getHeight());
 		
 	}
-	
 	
 	
 }

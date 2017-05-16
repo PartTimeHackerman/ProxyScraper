@@ -38,30 +38,21 @@ jar {
         //attributes 'Main-Class': mainClassName
     }
 
-    exclude 'META-INF/*.RSA', 'META-INF/*.SF','META-INF/*.DSA'
+    exclude 'META-INF/*.RSA', 'META-INF/*.SF', 'META-INF/*.DSA'
 }
 
 dependencies {
-    compile project(':scraper')
-}
 
-project(":scraper") {
-    
-    apply plugin: "java"
+    testCompile group: 'junit', name: 'junit', version: '4.11'
 
-    dependencies {
+    // https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core
+    compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.6.2'
 
-        testCompile group: 'junit', name: 'junit', version: '4.11'
+    // https://mvnrepository.com/artifact/commons-collections/commons-collections
+    compile group: 'commons-collections', name: 'commons-collections', version: '3.2.2'
 
-        // https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core
-        compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.6.2'
+    // https://mvnrepository.com/artifact/io.reactivex/rxjava
+    compile group: 'io.reactivex', name: 'rxjava', version: '1.2.1'
 
-        // https://mvnrepository.com/artifact/commons-collections/commons-collections
-        compile group: 'commons-collections', name: 'commons-collections', version: '3.2.2'
-
-        // https://mvnrepository.com/artifact/io.reactivex/rxjava
-        compile group: 'io.reactivex', name: 'rxjava', version: '1.2.1'
-
-        compile group: 'com.github.WorstCoder:ProxyScraper:master-SNAPSHOT'
-    }
+    compile 'com.github.PartTimeHackerman:ProxyScraper:master-SNAPSHOT'
 }

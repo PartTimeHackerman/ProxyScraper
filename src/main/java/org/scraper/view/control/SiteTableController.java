@@ -13,7 +13,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import org.scraper.view.model.SitesModelFX;
-import org.scraper.main.data.Site;
+import scraper.data.Site;
 
 import java.util.List;
 

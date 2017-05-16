@@ -12,7 +12,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import org.scraper.view.model.ProxyModelFX;
-import org.scraper.main.Proxy;
+import scraper.Proxy;
 
 import java.util.List;
 

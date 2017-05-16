@@ -1,6 +1,6 @@
 package org.scraper.view.control;
 
-import org.scraper.main.MainLogger;
+import scraper.MainLogger;
 
 import java.io.File;
 import java.io.FileWriter;

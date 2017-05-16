@@ -1,8 +1,9 @@
 package org.scraper.view.model;
 
-import org.scraper.main.Pool;
-import org.scraper.main.data.ProxyRepo;
-import org.scraper.main.limiter.Limiter;
+
+import scraper.Pool;
+import scraper.data.ProxyRepo;
+import scraper.limiter.Limiter;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 

@@ -5,8 +5,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
-import org.scraper.view.model.ProxyUtility;
-import org.scraper.main.Proxy;
+import scraper.Proxy;
+import scraper.ProxyUtility;
 
 import java.io.File;
 import java.util.Arrays;

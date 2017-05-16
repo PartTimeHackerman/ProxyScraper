@@ -12,10 +12,11 @@ import javafx.collections.ObservableList;
 import javafx.util.Callback;
 import org.scraper.view.control.IClipboard;
 import org.scraper.view.control.IDeleter;
-import org.scraper.main.MainLogger;
-import org.scraper.main.Pool;
-import org.scraper.main.Proxy;
-import org.scraper.main.checker.IProxyChecker;
+import scraper.MainLogger;
+import scraper.Pool;
+import scraper.Proxy;
+import scraper.ProxyUtility;
+import scraper.checker.IProxyChecker;
 
 import java.util.Collection;
 import java.util.List;

@@ -5,11 +5,12 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.scraper.view.control.IClipboard;
 import org.scraper.view.control.IDeleter;
-import org.scraper.main.Pool;
-import org.scraper.main.data.Site;
-import org.scraper.main.gather.LinksGather;
-import org.scraper.main.manager.AssignManager;
-import org.scraper.main.scraper.ProxyScraper;
+import scraper.Pool;
+import scraper.SitesUtility;
+import scraper.data.Site;
+import scraper.gather.LinksGather;
+import scraper.manager.AssignManager;
+import scraper.scraper.ProxyScraper;
 
 import java.util.Collection;
 import java.util.List;

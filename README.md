@@ -20,11 +20,11 @@ View build in JavaFx for [ProxyScraper]
             Most of options are self explanatory and similar to Proxy tab.
             Scrape - scrape and don't save any scraping stats. (Scraped proxies will be in Proxy tab)
             Check Sites - scrape and save scraping stats like avg. sites and avg. working.
-            Gather - checks all links of site,\n if linked site has proxies saves it and do the gather to self etc. until max depth is reached.
+            Gather - checks all links of site, if linked site has proxies saves it and do the gather to self etc. until max depth is reached.
 		
 ##### Some tips:
             Don't use too many threads, it can freeze Your computer
             ALWAYS close Scraper through X in upper left corner due to running browsers (it needs to be repaired)
-            Refresh tables by sorting them if they won't autorefresh\
+            Refresh tables by sorting them if they won't autorefresh
 
    [ProxyScraper]: <https://github.com/PartTimeHackerman/ProxyScraper>

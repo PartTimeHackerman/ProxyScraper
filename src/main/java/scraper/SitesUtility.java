@@ -58,7 +58,7 @@ public class SitesUtility implements IConcurrent {
 					 scraper.scrapeList(sites), false);
 	}
 	
-	public void assgn(Collection<Site> sites) {
+	public void assign(Collection<Site> sites) {
 		pool.sendTask(() ->
 					 assigner.assignList(sites), false);
 	}

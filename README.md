@@ -1,6 +1,7 @@
 ###View build in JavaFx for [ProxyScraper]
-
+===
 ####Manual (it's also shown after program startup):
+
 #####Upper menu bar:
             Threads input - set number of avaiable threads
             Check on fly button - assgn proxies right after scrape

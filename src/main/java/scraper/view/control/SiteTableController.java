@@ -1,4 +1,4 @@
-package org.scraper.view.control;
+package scraper.view.control;
 
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.ReadOnlyIntegerWrapper;
@@ -12,7 +12,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import org.scraper.view.model.SitesModelFX;
+import scraper.view.model.SitesModelFX;
 import scraper.data.Site;
 
 import java.util.List;

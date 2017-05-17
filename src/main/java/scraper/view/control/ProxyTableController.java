@@ -1,4 +1,4 @@
-package org.scraper.view.control;
+package scraper.view.control;
 
 import javafx.beans.property.ReadOnlyDoubleWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
@@ -11,7 +11,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import org.scraper.view.model.ProxyModelFX;
+import scraper.view.model.ProxyModelFX;
 import scraper.Proxy;
 
 import java.util.List;

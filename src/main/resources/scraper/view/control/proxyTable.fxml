@@ -3,7 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<HBox id="textBox" fx:id="textBox" alignment="TOP_CENTER" minWidth="620.0" stylesheets="@userAgent.css" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.scraper.view.control.ProxyTableController">
+<HBox id="textBox" fx:id="textBox" alignment="TOP_CENTER" minWidth="620.0" stylesheets="@userAgent.css" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="scraper.view.control.ProxyTableController">
     <children>
       <VBox spacing="3.0">
          <children>

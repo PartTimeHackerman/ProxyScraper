@@ -1,4 +1,4 @@
-package org.scraper.view.model;
+package scraper.view.model;
 
 import javafx.application.Platform;
 import javafx.beans.Observable;
@@ -10,8 +10,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.util.Callback;
-import org.scraper.view.control.IClipboard;
-import org.scraper.view.control.IDeleter;
+import scraper.view.control.IClipboard;
+import scraper.view.control.IDeleter;
 import scraper.MainLogger;
 import scraper.Pool;
 import scraper.Proxy;

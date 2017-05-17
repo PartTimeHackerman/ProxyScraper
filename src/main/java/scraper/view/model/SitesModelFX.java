@@ -1,10 +1,10 @@
-package org.scraper.view.model;
+package scraper.view.model;
 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.scraper.view.control.IClipboard;
-import org.scraper.view.control.IDeleter;
+import scraper.view.control.IClipboard;
+import scraper.view.control.IDeleter;
 import scraper.Pool;
 import scraper.SitesUtility;
 import scraper.data.Site;

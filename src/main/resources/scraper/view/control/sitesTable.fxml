@@ -3,7 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<HBox id="textBox" fx:id="textBox" maxWidth="620.0" prefWidth="620.0" stylesheets="@userAgent.css" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.scraper.view.control.SiteTableController">
+<HBox id="textBox" fx:id="textBox" maxWidth="620.0" prefWidth="620.0" stylesheets="@userAgent.css" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="scraper.view.control.SiteTableController">
     <children>
       <VBox alignment="TOP_CENTER" spacing="3.0">
          <children>

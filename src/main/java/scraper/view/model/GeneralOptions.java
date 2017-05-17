@@ -1,4 +1,4 @@
-package org.scraper.view.model;
+package scraper.view.model;
 
 
 import scraper.Pool;

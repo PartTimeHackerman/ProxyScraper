@@ -1,4 +1,4 @@
-package org.scraper.view;
+package scraper.view;
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -12,8 +12,8 @@ import javafx.scene.control.TabPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import org.scraper.view.control.*;
-import org.scraper.view.model.*;
+import scraper.view.control.*;
+import scraper.view.model.*;
 import scraper.Interval;
 import scraper.MainLogger;
 import scraper.Scraper;

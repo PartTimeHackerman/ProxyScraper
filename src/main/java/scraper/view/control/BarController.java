@@ -1,11 +1,11 @@
-package org.scraper.view.control;
+package scraper.view.control;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
-import org.scraper.view.model.GeneralOptions;
+import scraper.view.model.GeneralOptions;
 import scraper.Interval;
 
 public class BarController {

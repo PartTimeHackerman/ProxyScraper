@@ -3,7 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<VBox alignment="TOP_CENTER" fillWidth="false" minWidth="-Infinity" prefWidth="220.0" spacing="10.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.scraper.view.control.ProxyController">
+<VBox alignment="TOP_CENTER" fillWidth="false" minWidth="-Infinity" prefWidth="220.0" spacing="10.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="scraper.view.control.ProxyController">
    <children>
       <GridPane alignment="TOP_CENTER" hgap="5.0" vgap="5.0">
         <columnConstraints>

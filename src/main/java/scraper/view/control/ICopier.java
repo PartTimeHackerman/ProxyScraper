@@ -1,4 +1,4 @@
-package org.scraper.view.control;
+package scraper.view.control;
 
 public interface ICopier {
 	

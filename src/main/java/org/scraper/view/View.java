@@ -50,6 +50,7 @@ public class View extends Application {
 	
 	public static void main(String[] args) {
 		scraper = new Scraper();
+		scraper.create();
 		
 		Interval.setInterval(100);
 		

@@ -32,10 +32,10 @@ public class SitesController implements ISaveable, ILoader {
 	private TextField depthField;
 	
 	@FXML
-	private TextField avgSites;
+	private TextField avgProxies;
 	
 	@FXML
-	private TextField avgWorking;
+	private TextField avgWorkingProxies;
 	
 	private SitesUtility model;
 	
@@ -61,11 +61,11 @@ public class SitesController implements ISaveable, ILoader {
 				depthField.setText(oldValue);
 		});
 		
-		avgSites.setOnAction(event ->
-									 model.filterAvgProxies(parseToInt(avgSites.getText())));
+		avgProxies.setOnAction(event ->
+									 model.filterAvgProxies(parseToInt(avgProxies.getText())));
 		
-		avgWorking.setOnAction(event ->
-									   model.filterAvgWorking(parseToInt(avgWorking.getText())));
+		avgWorkingProxies.setOnAction(event ->
+									   model.filterAvgWorking(parseToInt(avgWorkingProxies.getText())));
 		
 	}
 	

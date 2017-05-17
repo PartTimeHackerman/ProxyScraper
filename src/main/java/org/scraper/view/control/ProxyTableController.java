@@ -73,12 +73,9 @@ public class ProxyTableController implements ISelectable<Proxy> {
 				model.handlePaste();
 		});
 		
-		table.getItems().addListener(new ListChangeListener<Proxy>() {
-			@Override
-			public void onChanged(Change<? extends Proxy> c) {
-				table.refresh();
-				//MainLogger.log().info("table changed");
-			}
+		table.getItems().addListener((ListChangeListener<Proxy>) c -> {
+			table.refresh();
+			//MainLogger.log().info("table changed");
 		});
 		
 		String help =

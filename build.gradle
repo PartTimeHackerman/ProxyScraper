@@ -5,7 +5,7 @@ apply plugin: 'java'
 apply plugin: 'idea'
 apply plugin: 'application'
 
-//mainClassName = "org.scraper.MVC.View"
+mainClassName = "org.scraper.view.View"
 applicationDefaultJvmArgs = ["-Dgreeting.language=en"]
 
 //sourceCompatibility = 1.5

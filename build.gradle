@@ -1,4 +1,4 @@
-group 'Scraper'
+group 'ProxyScraper'
 version '1.0'
 
 apply plugin: 'java'
@@ -21,7 +21,7 @@ allprojects {
 
 jar {
 
-    archiveName = "Scraper.jar"
+    archiveName = "ProxyScraper.jar"
 
     from {
 
@@ -54,5 +54,5 @@ dependencies {
     // https://mvnrepository.com/artifact/io.reactivex/rxjava
     compile group: 'io.reactivex', name: 'rxjava', version: '1.2.1'
 
-    compile 'com.github.PartTimeHackerman:ProxyScraper:master-SNAPSHOT'
+    compile 'com.github.PartTimeHackerman:ProxyScraper:with-PhantomJS-SNAPSHOT'
 }

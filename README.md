@@ -45,4 +45,4 @@ scraper.getProxyChecker().checkProxies(proxyList);
 Before running You must add phantomjs.exe to executable path or set path to it like ```Browser.setPhantomJsPath("C:/some/path/phantomjs.exe");```
 You can also use [branch] which already has PhantomJS bundled.
 
-[branch]: <https://github.com/PartTimeHackerman/ProxyScraper>
+[branch]: <https://github.com/PartTimeHackerman/ProxyScraper/tree/with-PhantomJS>

@@ -18,6 +18,10 @@ public class SitesScraper {
 	
 	private List<Site> sites;
 	
+	public SitesScraper() {
+		this(new ArrayList<>());
+	}
+	
 	public SitesScraper(List<Site> sites) {
 		this.sites = sites;
 	}

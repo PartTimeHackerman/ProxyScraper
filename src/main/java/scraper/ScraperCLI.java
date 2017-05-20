@@ -8,6 +8,7 @@ import scraper.scraper.ScrapeType;
 import scraper.scraper.SitesScraper;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class ScraperCLI {
@@ -195,9 +196,9 @@ public class ScraperCLI {
 	}
 	
 	private void gatherNewSites() {
-		List<Site> sitesList = new ArrayList<>();
-		SitesScraper sitesScraper = new SitesScraper(sitesList);
+		SitesScraper sitesScraper = new SitesScraper();
 		sitesScraper.scrapeSites();
+		List<Site> sitesList = sitesScraper.getSites();
 		sitesList.forEach(System.out::println);
 	}
 	

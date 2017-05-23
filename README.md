@@ -1,6 +1,6 @@
 ProxyScraper
 ===
-ProxyScraper is fairly simple public proxy scraper that allows following: 
+ProxyScraper is fairly simple public proxy scraper that allows the following: 
 - gathering sites that contain proxy, 
 - scraping proxies from sites,
 - checking if proxy is working, what anonimity it's providing and with what speed it's working.
@@ -42,7 +42,11 @@ List<Proxy> proxyList = new ArrayList<>(Collections.singleton(new Proxy("192.168
 Scraper scraper = new Scraper(threads, timeout, limit, check, browsers, ocrs);
 scraper.getProxyChecker().checkProxies(proxyList);
 ````
-Before running You must add phantomjs.exe to executable path or set path to it like ```Browser.setPhantomJsPath("C:/some/path/phantomjs.exe");```
+Before running You must add phantomjs.exe to executable path or set path to it like ```Browser.setPhantomJsPath("C:/some/path/phantomjs.exe");``` 
+
 You can also use [branch] which already has PhantomJS bundled.
 
+There's also branch with [view made in JavaFx].
+
 [branch]: <https://github.com/PartTimeHackerman/ProxyScraper/tree/with-PhantomJS>
+[view made in JavaFx]: <https://github.com/PartTimeHackerman/ProxyScraper/tree/javaFx>

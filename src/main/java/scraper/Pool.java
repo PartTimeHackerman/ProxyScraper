@@ -2,6 +2,7 @@ package scraper;
 
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -11,6 +12,7 @@ public class Pool implements IPool {
 	
 	private static Long defaultPoolTimeout = 60L;
 	
+	private String name;
 	
 	private Set<Pool> subPools = new HashSet<>();
 	
@@ -37,17 +39,28 @@ public class Pool implements IPool {
 		this.timeout = timeout;
 	}
 	
-	
-	public void create() {
-		create(threads, timeout);
+	public void create(String name) {
+		create(threads, timeout, name);
 	}
 	
-	public void create(Integer threads, Long timeout) {
+	public void create() {
+		create(threads, timeout, "ProxyScraperPool");
+	}
+	
+	public void create(Integer threads, Long timeout, String name) {
 		MainLogger.log(this).debug("Creating new pool");
+		this.name = name;
 		enabled = true;
 		this.executor = new ThreadPoolExecutor(threads, threads,
 											   timeout, TimeUnit.SECONDS,
-											   new LinkedBlockingQueue<>());
+											   new LinkedBlockingQueue<>(), new ThreadFactory() {
+			private final AtomicInteger counter = new AtomicInteger();
+			
+			@Override
+			public Thread newThread(Runnable r) {
+				return new Thread(r, name + "-" + counter.getAndIncrement());
+			}
+		});
 		this.executor.allowCoreThreadTimeOut(true);
 	}
 	
@@ -205,7 +218,7 @@ public class Pool implements IPool {
 	
 	public Pool getNewSubPool(Integer threads, Long timeout) {
 		Pool newSubPool = new Pool(threads, timeout);
-		newSubPool.create();
+		newSubPool.create(this.name + "SubPool-" + (subPools.size() + 1));
 		subPools.add(newSubPool);
 		return newSubPool;
 	}

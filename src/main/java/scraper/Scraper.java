@@ -28,13 +28,13 @@ public class Scraper {
 	private final ProxyRepo proxyRepo;
 	private final SitesRepo sitesRepo;
 	private final DomainsRepo domainsRepo;
-	        
+	
 	private final ProxyChecker proxyChecker;
 	private final ProxyScraper proxyScraper;
-	        
+	
 	private final AssignManager assigner;
 	private final LinksGather linksGather;
-	        
+	
 	private final ProxyUtility proxyUtility;
 	private final SitesUtility sitesUtility;
 	
@@ -47,7 +47,7 @@ public class Scraper {
 	private final Pool pool;
 	
 	private final Limiter limiter;
-	        
+	
 	private final AtomicBoolean checkOnFly = new AtomicBoolean(false);
 	private final String ip;
 	
@@ -72,7 +72,7 @@ public class Scraper {
 		
 		Runtime.getRuntime().addShutdownHook(new Thread(this::dispose));
 		
-		if(!ConnectionChecker.hasConnection())
+		if (!ConnectionChecker.hasConnection())
 			MainLogger.log(this).fatal("NO INTERNET CONNECTION!");
 		
 		queuesManager = new QueuesManager(browsers, ocrs);
@@ -84,7 +84,7 @@ public class Scraper {
 		
 		ScrapersFactory scrapersFactory = new ScrapersFactory(queuesManager, concurrentConnectionExecutor);
 		
-		proxyChecker = new ProxyCheckerConcurrent(timeout,proxyRepo, pool);
+		proxyChecker = new ProxyCheckerConcurrent(timeout, proxyRepo, pool);
 		
 		assigner = new AssignManagerConcurrent(scrapersFactory, proxyChecker, checkOnFly, domainsRepo, pool);
 		
@@ -105,7 +105,6 @@ public class Scraper {
 		sitesUtility = new SitesUtility(assigner, proxyScraper, linksGather, pool);
 		
 		
-		
 		limiter.addSwitchable(proxyChecker);
 		limiter.addSwitchable(proxyScraper);
 		
@@ -113,15 +112,15 @@ public class Scraper {
 		//MainLogger.getInstance().setLevel(Level.FATAL);
 	}
 	
-	public Scraper(Integer threads, Integer timeout, Integer limit, Boolean check){
+	public Scraper(Integer threads, Integer timeout, Integer limit, Boolean check) {
 		this(threads, timeout, limit, check, threads / 10, threads / 10 / 2);
 	}
 	
-	public Scraper(){
+	public Scraper() {
 		this(50, 10000, 0, true);
 	}
 	
-	public void create(){
+	public void create() {
 		MainLogger.log(this).debug("Creating scraper");
 		pool.create();
 		synchronized (pool) {
@@ -133,31 +132,26 @@ public class Scraper {
 		limiter.setLimit(limit);
 	}
 	
-	public void pause(){
+	public void pause() {
 		MainLogger.log(this).debug("Pausing scraper");
 		pool.pause();
 		paused = true;
 	}
 	
-	public void resume(){
+	public void resume() {
 		MainLogger.log(this).debug("Resuming scraper");
 		pool.resume();
 		paused = false;
 	}
 	
-	public void dispose(){
+	public void dispose() {
 		MainLogger.log(this).debug("Shutting down scraper");
 		limit = limiter.getLimit();
-		limiter.setLimit(0);
+		limiter.setLimit(-1);
 		pool.shutdown();
 		queuesManager.shutdown();
 		dataBase.postSitesAndDomains();
 		created = false;
-		
-	}
-	
-	public void setCheckOnFly(boolean checkOnFly) {
-		this.checkOnFly.set(checkOnFly);
 	}
 	
 	public IProxyChecker getProxyChecker() {
@@ -186,6 +180,10 @@ public class Scraper {
 	
 	public AtomicBoolean getCheckOnFly() {
 		return checkOnFly;
+	}
+	
+	public void setCheckOnFly(boolean checkOnFly) {
+		this.checkOnFly.set(checkOnFly);
 	}
 	
 	public ProxyUtility getProxyUtility() {

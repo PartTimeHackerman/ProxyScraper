@@ -28,11 +28,10 @@ public class ByNextMatcher implements IProxyMatcher {
 		Pattern firstPattern;
 		Pattern secondPattern;
 		
-		if(reversed){
+		if (reversed) {
 			firstPattern = portPattern;
 			secondPattern = ipPattern;
-		}
-		else {
+		} else {
 			firstPattern = ipPattern;
 			secondPattern = portPattern;
 		}
@@ -70,7 +69,7 @@ public class ByNextMatcher implements IProxyMatcher {
 	}
 	
 	@Override
-	public  Proxy matchOne(String text) {
+	public Proxy matchOne(String text) {
 		List<Proxy> proxies;
 		if (!(proxies = patternMatch(text, false)).isEmpty()) {
 			return proxies.get(0);

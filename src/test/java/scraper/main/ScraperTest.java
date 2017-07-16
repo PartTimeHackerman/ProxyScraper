@@ -8,7 +8,10 @@ import scraper.Scraper;
 import scraper.data.Site;
 import scraper.filters.SitesFilter;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 public class ScraperTest {
 	
@@ -17,6 +20,11 @@ public class ScraperTest {
 	@BeforeClass
 	public static void setUp() {
 		scraper = new Scraper(50, 10000, Integer.MAX_VALUE, true, 5, 2);
+	}
+	
+	@AfterClass
+	public static void tearDown() {
+		scraper.dispose();
 	}
 	
 	@Test
@@ -74,11 +82,6 @@ public class ScraperTest {
 		
 		//System.in.read();
 		//assertTrue(!scraper.getProxyRepo().getAll().isEmpty());
-	}
-	
-	@AfterClass
-	public static void tearDown() {
-		scraper.dispose();
 	}
 	
 }

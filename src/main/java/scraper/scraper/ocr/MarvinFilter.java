@@ -16,7 +16,7 @@ import static marvin.MarvinPluginCollection.thresholding;
 
 public class MarvinFilter implements IOcrFilter {
 	static {
-		MarvinDefinitions.setImagePluginPath(TempFileManager.loadDir(MarvinFilter.class, "plugins/").getAbsolutePath()+"/");
+		MarvinDefinitions.setImagePluginPath(TempFileManager.loadDir(MarvinFilter.class, "plugins/").getAbsolutePath() + "/");
 	}
 	
 	@Override
@@ -26,7 +26,7 @@ public class MarvinFilter implements IOcrFilter {
 			MarvinImage marvinImage = new MarvinImage(bufferedImage);
 			
 			double sizeMult = 300 / (double) marvinImage.getHeight();
-			scale(marvinImage.clone(), marvinImage,(int) (marvinImage.getWidth() * sizeMult),(int) (marvinImage.getHeight() * sizeMult));
+			scale(marvinImage.clone(), marvinImage, (int) (marvinImage.getWidth() * sizeMult), (int) (marvinImage.getHeight() * sizeMult));
 			
 			//grayScale(marvinImage.clone(), marvinImage);
 			
@@ -37,8 +37,7 @@ public class MarvinFilter implements IOcrFilter {
 			int[] values = marvinImage.getIntColorArray();
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			DataOutputStream dos = new DataOutputStream(baos);
-			for(int i=0; i < values.length; ++i)
-			{
+			for (int i = 0; i < values.length; ++i) {
 				dos.writeInt(values[i]);
 			}
 			

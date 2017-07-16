@@ -1,7 +1,7 @@
 package scraper.gather;
 
-import scraper.scraper.ProxyScraper;
 import scraper.data.Site;
+import scraper.scraper.ProxyScraper;
 
 import java.util.List;
 import java.util.Objects;
@@ -21,7 +21,7 @@ public class GatheredChecker {
 							 scraper.scrape(site).size() > 0 ? site : null)
 				.filter(Objects::nonNull)
 				.collect(Collectors.toList());
-
+		
 		return checked;
 	}
 	

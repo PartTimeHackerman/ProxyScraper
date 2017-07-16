@@ -13,7 +13,7 @@ public class SiteDAO implements DAO<Site> {
 	
 	private SessionFactory sessionFactory;
 	
-	public SiteDAO(){
+	public SiteDAO() {
 		sessionFactory = SessionFactoryBuilder.get().getSessionFactory();
 	}
 	

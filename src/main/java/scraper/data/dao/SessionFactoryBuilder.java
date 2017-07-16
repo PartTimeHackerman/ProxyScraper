@@ -12,13 +12,13 @@ public class SessionFactoryBuilder {
 	
 	private SessionFactory sessionFactory;
 	
-	private SessionFactoryBuilder(){
+	private SessionFactoryBuilder() {
 		setUp();
 	}
 	
-	public static SessionFactoryBuilder get(){
-		if(sessionFactoryBuilder == null){
-			synchronized (SessionFactoryBuilder.class){
+	public static SessionFactoryBuilder get() {
+		if (sessionFactoryBuilder == null) {
+			synchronized (SessionFactoryBuilder.class) {
 				if (sessionFactoryBuilder == null) {
 					sessionFactoryBuilder = new SessionFactoryBuilder();
 				}

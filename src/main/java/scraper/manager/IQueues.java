@@ -4,13 +4,13 @@ import scraper.scraper.ocr.OCR;
 import scraper.web.Browser;
 
 public interface IQueues {
-	void setBrowsersNumber(int browsersNumber);
-	
-	void setOcrNumber(int ocrNumber);
-	
 	Integer getBrowsersNumber();
 	
+	void setBrowsersNumber(int browsersNumber);
+	
 	Integer getOcrNumber();
+	
+	void setOcrNumber(int ocrNumber);
 	
 	void shutdownAll();
 	

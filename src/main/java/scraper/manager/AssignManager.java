@@ -7,11 +7,11 @@ import scraper.assigner.CheckingAssigner;
 import scraper.assigner.IAssigner;
 import scraper.assigner.NonCheckAssigner;
 import scraper.checker.IProxyChecker;
+import scraper.data.Domain;
 import scraper.data.DomainsRepo;
+import scraper.data.Site;
 import scraper.scraper.ScrapeType;
 import scraper.scraper.ScrapersFactory;
-import scraper.data.Domain;
-import scraper.data.Site;
 
 import java.util.ArrayList;
 import java.util.Collection;

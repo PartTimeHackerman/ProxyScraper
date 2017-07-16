@@ -1,14 +1,12 @@
 package scraper;
 
-import scraper.IConcurrent;
-import scraper.Pool;
-import scraper.filters.*;
+import scraper.data.Site;
+import scraper.filters.SitesFilter;
 import scraper.gather.LinksGather;
 import scraper.manager.AssignManager;
 import scraper.scraper.ProxyScraper;
 import scraper.scraper.ScrapeType;
 import scraper.web.LanguageCheck;
-import scraper.data.Site;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -16,17 +14,12 @@ import java.util.List;
 
 public class SitesUtility implements IConcurrent {
 	
-	private ProxyScraper scraper;
-	
-	private AssignManager assigner;
-	
-	private LinksGather gather;
-	
-	protected List<Site> all = new ArrayList<>();
-	
-	private SitesFilter sitesFilter = new SitesFilter();
-	
 	private static String sitePattern = ".*\\.[a-z]{2,3}.*";
+	protected List<Site> all = new ArrayList<>();
+	private ProxyScraper scraper;
+	private AssignManager assigner;
+	private LinksGather gather;
+	private SitesFilter sitesFilter = new SitesFilter();
 	private Pool pool;
 	
 	public SitesUtility(AssignManager assigner, ProxyScraper scraper, LinksGather gather, Pool pool) {
@@ -55,20 +48,20 @@ public class SitesUtility implements IConcurrent {
 	
 	public void scrape(Collection<Site> sites) {
 		pool.sendTask(() ->
-					 scraper.scrapeList(sites), false);
+							  scraper.scrapeList(sites), false);
 	}
 	
 	public void assgn(Collection<Site> sites) {
 		pool.sendTask(() ->
-					 assigner.assignList(sites), false);
+							  assigner.assignList(sites), false);
 	}
 	
 	public void gather(Collection<Site> sites, Integer depth) {
 		pool.sendTask(() ->
-			 {
-				 gather.setDepth(depth);
-				 gather.gatherSites(sites);
-			 }, false);
+					  {
+						  gather.setDepth(depth);
+						  gather.gatherSites(sites);
+					  }, false);
 	}
 	
 	public Collection<Site> filterAvgProxies(Integer minSites) {

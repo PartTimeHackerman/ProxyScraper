@@ -8,7 +8,6 @@ import scraper.scraper.ScrapeType;
 import scraper.scraper.SitesScraper;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class ScraperCLI {
@@ -29,13 +28,13 @@ public class ScraperCLI {
 	
 	private Integer depth = 2;
 	
-	public static void main(String[] args) {
-		ScraperCLI cli = new ScraperCLI(args);
-	}
-	
 	public ScraperCLI(String[] args) {
 		buildOptions();
 		setUpOptions(args);
+	}
+	
+	public static void main(String[] args) {
+		ScraperCLI cli = new ScraperCLI(args);
 	}
 	
 	private void buildOptions() {
@@ -170,7 +169,7 @@ public class ScraperCLI {
 			
 			if (cmd.hasOption("g"))
 				gather(gather);
-			else if(cmd.hasOption("s"))
+			else if (cmd.hasOption("s"))
 				scrapeSites(sites);
 			else if (cmd.hasOption("c"))
 				checkProxies(proxies);
@@ -216,7 +215,7 @@ public class ScraperCLI {
 		proxies.forEach(System.out::println);
 	}
 	
-	private void checkProxies(String[] proxies){
+	private void checkProxies(String[] proxies) {
 		List<Proxy> proxyList = new ArrayList<>();
 		for (String proxy : proxies) {
 			proxyList.add(new Proxy(proxy));
@@ -226,7 +225,7 @@ public class ScraperCLI {
 		proxyList.forEach(System.out::println);
 	}
 	
-	private List<Site> getSitesList(String[] sites){
+	private List<Site> getSitesList(String[] sites) {
 		List<Site> sitesList = new ArrayList<>();
 		for (String site : sites) {
 			sitesList.add(new Site(site, ScrapeType.UNCHECKED));

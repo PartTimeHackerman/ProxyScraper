@@ -3,16 +3,13 @@ package scraper.assigner;
 import org.junit.BeforeClass;
 import scraper.main.TestsUtils;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 public class NonCheckAssignerTest {
 	
 	
 	private static IAssigner assigner;
 	
 	@BeforeClass
-	public static void setUp(){
+	public static void setUp() {
 		assigner = new NonCheckAssigner(TestsUtils.methodFinder);
 	}
 	

@@ -11,7 +11,7 @@ public class DataBaseLocal implements IDataBase {
 	
 	private DomainsRepo domainsRepo;
 	
-	public DataBaseLocal(SitesRepo sitesRepo, DomainsRepo domainsRepo){
+	public DataBaseLocal(SitesRepo sitesRepo, DomainsRepo domainsRepo) {
 		this.sitesRepo = sitesRepo;
 		this.domainsRepo = domainsRepo;
 	}

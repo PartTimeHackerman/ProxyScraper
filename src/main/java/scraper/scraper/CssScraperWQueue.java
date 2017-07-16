@@ -1,8 +1,8 @@
 package scraper.scraper;
 
 import scraper.Proxy;
-import scraper.manager.QueuesManager;
 import scraper.data.Site;
+import scraper.manager.QueuesManager;
 
 import java.util.List;
 

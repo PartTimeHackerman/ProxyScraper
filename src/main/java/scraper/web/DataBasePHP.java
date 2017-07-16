@@ -58,7 +58,7 @@ public class DataBasePHP implements IDataBase {
 		gotSites = true;
 	}
 	
-	protected  void getDomains(List<Domain> domains) {
+	protected void getDomains(List<Domain> domains) {
 		PHPConnection.get(domains, PHPMethod.GET_DOMAINS);
 	}
 	

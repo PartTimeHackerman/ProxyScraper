@@ -2,8 +2,8 @@ package scraper.main;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
-import scraper.Interval;
 import rx.functions.Action1;
+import scraper.Interval;
 
 import java.util.concurrent.Callable;
 
@@ -12,11 +12,10 @@ import static org.junit.Assert.assertTrue;
 
 public class IntervalTest {
 	
-	private static Integer accumulator = 0;
-	
 	private static final Callable<Integer> test = () -> 1;
-	private static final Action1<Integer> testAction = var -> accumulator += var;
 	private static final String name = "test";
+	private static Integer accumulator = 0;
+	private static final Action1<Integer> testAction = var -> accumulator += var;
 	
 	@BeforeClass
 	public static void setUpClass() throws Exception {

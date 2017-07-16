@@ -12,8 +12,6 @@ import scraper.Proxy;
 import scraper.TempFileManager;
 
 import java.io.File;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
@@ -27,7 +25,8 @@ public class Browser {
 		setUp();
 	}
 	
-	protected Browser(Object explicit) {}
+	protected Browser(Object explicit) {
+	}
 	
 	public static void setPhantomJsPath(String phantomJsPath) {
 		Browser.phantomJsPath = phantomJsPath;
@@ -37,7 +36,7 @@ public class Browser {
 		if (phantomJsPath == null)
 			phantomJsPath = TempFileManager.loadResource(Browser.class, "phantomjs.exe").getAbsolutePath();
 		File phantomJs = new File(phantomJsPath);
-		if(!phantomJs.exists() || phantomJs.isDirectory()) {
+		if (!phantomJs.exists() || phantomJs.isDirectory()) {
 			MainLogger.log(this).fatal("{} isn't exists or is a directory", phantomJs.getAbsolutePath());
 		}
 		driver = getBrowser(null, BrowserVersion.random(), false);
@@ -268,7 +267,8 @@ public class Browser {
 		
 		try {
 			Runtime.getRuntime().exec("taskkill /F /PID " + getPID((PhantomJSDriver) driver));
-		} catch (Exception e) {}
+		} catch (Exception e) {
+		}
 	}
 }
 

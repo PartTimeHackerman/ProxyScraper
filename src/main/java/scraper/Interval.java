@@ -13,9 +13,9 @@ import java.util.concurrent.TimeUnit;
 
 public class Interval {
 	
-	private static Long interval = 500L;
 	private static final HashMap<String, Callable> vars = new HashMap<>();
 	private static final HashMap<String, List<Action1>> actions = new HashMap<>();
+	private static Long interval = 500L;
 	private static final BehaviorSubject<Long> subject = BehaviorSubject.create(interval);
 	
 	
@@ -27,16 +27,16 @@ public class Interval {
 				.subscribe(getSubscriber());
 	}
 	
+	public static Long getInterval() {
+		return interval;
+	}
+	
 	public static void setInterval(long interval) {
 		subject.onNext(interval);
 		Interval.interval = interval;
 	}
 	
-	public static Long getInterval(){
-		return interval;
-	}
-	
-	private static <T> Subscriber<T> getSubscriber(){
+	private static <T> Subscriber<T> getSubscriber() {
 		return new Subscriber<T>() {
 			@Override
 			public void onCompleted() {

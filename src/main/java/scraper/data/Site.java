@@ -27,7 +27,8 @@ public class Site {
 	@Transient
 	private boolean assignedAvgWorking = false;
 	
-	public Site(){}
+	public Site() {
+	}
 	
 	public Site(String address, ScrapeType type) {
 		setAddress(address);
@@ -36,6 +37,14 @@ public class Site {
 	
 	public String getAddress() {
 		return address;
+	}
+	
+	private void setAddress(String address) {
+		this.address = address.substring(0, 5).equals("https")
+				? address
+				: address.substring(0, 4).equals("http")
+				? address
+				: "http://" + address + "/";
 	}
 	
 	public ScrapeType getType() {
@@ -56,14 +65,6 @@ public class Site {
 		return address.contains("https") ? "https://" + domain : "http://" + domain;
 	}
 	
-	private void setAddress(String address){
-		this.address = address.substring(0,5).equals("https")
-				? address
-				: address.substring(0,4).equals("http")
-					? address
-					: "http://" + address + "/";
-	}
-	
 	@Override
 	public boolean equals(Object o) {
 		return (o instanceof Site && ((Site) o).address.equals(address));
@@ -75,7 +76,7 @@ public class Site {
 	}
 	
 	@Override
-	public String toString(){
+	public String toString() {
 		StringBuilder siteString = new StringBuilder(address);
 		siteString.append(" Type: ").append(type);
 		siteString.append(" Avg. sites: ").append(isAvgSitesAssigned() ? avgProxies : "UNKNOWN");

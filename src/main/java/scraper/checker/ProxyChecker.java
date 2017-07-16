@@ -5,7 +5,9 @@ import scraper.Proxy;
 import scraper.data.ProxyRepo;
 import scraper.limiter.Switchable;
 
-import java.util.*;
+import java.util.List;
+import java.util.Observable;
+import java.util.Vector;
 
 public class ProxyChecker extends Observable implements IProxyChecker, Switchable {
 	

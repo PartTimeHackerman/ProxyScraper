@@ -13,7 +13,7 @@ public class DomainDAO implements DAO<Domain> {
 	
 	private SessionFactory sessionFactory;
 	
-	public DomainDAO(){
+	public DomainDAO() {
 		sessionFactory = SessionFactoryBuilder.get().getSessionFactory();
 	}
 	

@@ -4,29 +4,24 @@ import org.junit.Before;
 import org.junit.Test;
 import scraper.Proxy;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class ProxyTest {
 	
-	private Proxy proxy;
-	
 	private final String ip = "111.111.111.111";
 	private final String secondIP = "222.222.222.222";
-	
 	private final Integer port = 8080;
 	private final Integer secondPort = 1234;
-	
 	private final String ipPort = ip + ":" + port;
-	
-	
+	private Proxy proxy;
 	
 	@Before
-	public void setUp(){
+	public void setUp() {
 		proxy = new Proxy(ip, port);
 	}
 	
 	@Test
-	public void constructorTest(){
+	public void constructorTest() {
 		proxy = new Proxy(ip, port);
 		assertEquals(ipPort, proxy.getIpPort());
 		proxy = new Proxy(ipPort);

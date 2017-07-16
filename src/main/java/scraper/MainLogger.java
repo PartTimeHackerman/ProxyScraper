@@ -19,15 +19,11 @@ import java.util.function.Consumer;
 
 public class MainLogger {
 	
-	private static MainLogger logger;
-	
-	private final String name = MainLogger.class.getSimpleName();
-	
-	private final Logger log = LogManager.getLogger(name);
-	
-	private final LoggerOutputStream out = new LoggerOutputStream();
-	
 	private static final Map<Class, Logger> loggersMap = new HashMap<>();
+	private static MainLogger logger;
+	private final String name = MainLogger.class.getSimpleName();
+	private final Logger log = LogManager.getLogger(name);
+	private final LoggerOutputStream out = new LoggerOutputStream();
 	
 	private MainLogger() {
 		addAppender(out, name);
@@ -42,7 +38,6 @@ public class MainLogger {
 		}
 		return logger;
 	}
-	
 	
 	
 	public static Logger log(Object o) {

@@ -7,7 +7,7 @@ import scraper.scraper.ocr.OCR;
 
 import static org.junit.Assert.assertEquals;
 
-public class MarvinFilterTest extends FilterTest{
+public class MarvinFilterTest extends FilterTest {
 	
 	@Test
 	public void filter() throws Exception {

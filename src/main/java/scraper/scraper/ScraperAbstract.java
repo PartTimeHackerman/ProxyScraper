@@ -27,12 +27,13 @@ public abstract class ScraperAbstract implements Comparable<ScraperAbstract> {
 	private Integer getScrapedNum() {
 		return proxy.size();
 	}
+	
 	@Override
 	
-	public int compareTo(ScraperAbstract o){
+	public int compareTo(ScraperAbstract o) {
 		int compare = getScrapedNum() - o.getScrapedNum();
-		if(compare==0 && getType().ordinal() > o.getType().ordinal()) return -1;
-		if(compare==0 && getType().ordinal() < o.getType().ordinal()) return 1;
+		if (compare == 0 && getType().ordinal() > o.getType().ordinal()) return -1;
+		if (compare == 0 && getType().ordinal() < o.getType().ordinal()) return 1;
 		return compare;
 	}
 	

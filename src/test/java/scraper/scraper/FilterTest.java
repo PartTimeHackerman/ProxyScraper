@@ -18,7 +18,7 @@ public class FilterTest {
 	public static void setUpClass() throws IOException {
 		BufferedImage bufferedImage = ImageIO.read(new File("97-77-104-22.png"));
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-		ImageIO.write(bufferedImage, "bmp", outputStream );
+		ImageIO.write(bufferedImage, "bmp", outputStream);
 		outputStream.flush();
 		image = outputStream.toByteArray();
 		outputStream.close();

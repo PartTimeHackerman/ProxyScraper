@@ -86,10 +86,10 @@ public class LanguageCheck {
 	}
 	
 	public static boolean isFromOtherLang(Site site, List<Site> sites) {
-			return isFromOtherLang(site.getAddress(),
-								   sites.stream()
-										   .map(Site::getAddress)
-										   .collect(Collectors.toList()));
+		return isFromOtherLang(site.getAddress(),
+							   sites.stream()
+									   .map(Site::getAddress)
+									   .collect(Collectors.toList()));
 	}
 	
 	public static boolean isFromOtherLang(String url, List<String> links) {
@@ -114,6 +114,6 @@ public class LanguageCheck {
 				}
 			}
 		}
-		return new String(a2).replace("#","");
+		return new String(a2).replace("#", "");
 	}
 }

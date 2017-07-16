@@ -7,13 +7,12 @@ import scraper.TempFileManager;
 
 public class OCR {
 	
-	private TessBaseAPI api = new TessBaseAPI();
-	
-	private IOcrFilter filter = new MarvinFilter();
-	
 	static {
 		TempFileManager.loadResource(OCR.class, "tessdata/eng.traineddata");
 	}
+	
+	private TessBaseAPI api = new TessBaseAPI();
+	private IOcrFilter filter = new MarvinFilter();
 	
 	public OCR() {
 		if (api.Init("", "eng", tesseract.OEM_DEFAULT) != 0) {

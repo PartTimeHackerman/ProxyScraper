@@ -13,12 +13,12 @@ import java.util.Arrays;
 
 
 public class PHPConnection {
-
+	
 	public static final String URL = "http://lifechangertoworse.ga/prx.php";
-
+	
 	public static final Gson gson = new Gson();
-
-	public static <T> void post(T data, PHPMethod method){
+	
+	public static <T> void post(T data, PHPMethod method) {
 		String json = gson.toJson(data);
 		phpPost(method, json);
 	}
@@ -35,7 +35,7 @@ public class PHPConnection {
 			e.printStackTrace();
 		}
 	}
-
+	
 	public static String phpGet(PHPMethod method) {
 		String parsed = "[]";
 		try {
@@ -49,8 +49,8 @@ public class PHPConnection {
 		}
 		return parsed;
 	}
-
-
+	
+	
 	public static void get(java.util.Collection list, PHPMethod method) {
 		list.clear();
 		
@@ -63,7 +63,7 @@ public class PHPConnection {
 				break;
 			default:
 				list.addAll(new ArrayList<>(Arrays.asList(new Gson().fromJson(phpGet(method), String[].class))));
-
+			
 		}
 	}
 	

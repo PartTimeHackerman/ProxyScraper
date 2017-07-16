@@ -10,15 +10,11 @@ import java.net.InetSocketAddress;
 
 public abstract class ConnectionCheck extends ConnectionHandler implements IConnectionCheck {
 	
-	private long time;
-	
-	private String URL;
-	
-	private String siteTitle;
-	
 	protected Document response;
-	
 	protected Proxy.Type type;
+	private long time;
+	private String URL;
+	private String siteTitle;
 	
 	ConnectionCheck(Proxy.Type type, String URL) {
 		this(type, URL, null);

@@ -3,11 +3,11 @@ package scraper.gather;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
+import scraper.data.Site;
 import scraper.data.SitesRepo;
 import scraper.scraper.ScrapeType;
 import scraper.web.BrowserVersion;
 import scraper.web.LanguageCheck;
-import scraper.data.Site;
 
 import java.io.IOException;
 import java.util.ArrayList;

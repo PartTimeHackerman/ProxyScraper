@@ -5,7 +5,8 @@ import scraper.Proxy;
 
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class PairMatcherTest {
 	private final String ip = "111.111.111.111";

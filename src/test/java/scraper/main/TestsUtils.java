@@ -7,11 +7,11 @@ import scraper.assigner.IScrapeMethodFinder;
 import scraper.checker.ProxyChecker;
 import scraper.checker.ProxyCheckerConcurrent;
 import scraper.data.ProxyRepo;
+import scraper.data.Site;
 import scraper.limiter.Limiter;
 import scraper.manager.QueuesManager;
 import scraper.scraper.ScrapeType;
 import scraper.scraper.ScrapersFactory;
-import scraper.data.Site;
 import scraper.web.ConcurrentConnectionExecutor;
 
 public class TestsUtils {

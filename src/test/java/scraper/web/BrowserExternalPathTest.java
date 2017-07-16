@@ -18,14 +18,14 @@ public class BrowserExternalPathTest {
 		assertNotNull(browser.getDriver());
 	}
 	
+	@AfterClass
+	public static void shutdown() throws Exception {
+		browser.shutdown();
+	}
+	
 	@Test
 	public void getPID() throws Exception {
 		Long pid = browser.getPID((PhantomJSDriver) browser.getDriver());
 		assertNotNull(pid);
-	}
-	
-	@AfterClass
-	public static void shutdown() throws Exception {
-		browser.shutdown();
 	}
 }

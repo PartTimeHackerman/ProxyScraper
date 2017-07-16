@@ -1,11 +1,7 @@
 package scraper;
 
-import scraper.IConcurrent;
-import scraper.MainLogger;
-import scraper.Pool;
-import scraper.Proxy;
 import scraper.checker.IProxyChecker;
-import scraper.filters.*;
+import scraper.filters.ProxiesFilter;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -13,14 +9,10 @@ import java.util.List;
 
 public class ProxyUtility implements IConcurrent {
 	
-	private IProxyChecker checker;
-	
-	private List<Proxy> all = new ArrayList<>();
-	
 	protected String proxyPattern = "[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}.*[0-9]";
-	
 	protected Boolean showBroken = false;
-	
+	private IProxyChecker checker;
+	private List<Proxy> all = new ArrayList<>();
 	private ProxiesFilter proxiesFilter = new ProxiesFilter();
 	private Pool pool;
 	

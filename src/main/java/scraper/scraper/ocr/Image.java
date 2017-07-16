@@ -22,7 +22,8 @@ public class Image {
 		BufferedImage image = null;
 		try {
 			image = ImageIO.read(in);
-		} catch (IOException ignored) {}
+		} catch (IOException ignored) {
+		}
 		
 		width = image.getWidth();
 		height = image.getHeight();

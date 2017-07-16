@@ -11,21 +11,22 @@ public abstract class Queue<T> {
 	
 	BlockingQueue<T> queue;
 	
+	public Integer getSize() {
+		return queue.size();
+	}
+	
 	public synchronized void setSize(Integer size) {
 		BlockingQueue<T> newQueue = new ArrayBlockingQueue<>(size);
 		
 		queue.forEach(browser -> {
 			try {
 				newQueue.put(browser);
-			} catch (InterruptedException ignored) {}
+			} catch (InterruptedException ignored) {
+			}
 		});
 		
 		queue.drainTo(new ArrayList<>(), 0);
 		queue = newQueue;
-	}
-	
-	public Integer getSize() {
-		return queue.size();
 	}
 	
 	public Integer getMaxSize() {

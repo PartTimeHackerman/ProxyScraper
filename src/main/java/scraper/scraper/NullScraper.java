@@ -9,7 +9,7 @@ import java.util.List;
 
 class NullScraper extends ScraperAbstract {
 	
-	NullScraper(){
+	NullScraper() {
 		type = ScrapeType.BLACK;
 	}
 	

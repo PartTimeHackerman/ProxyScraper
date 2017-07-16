@@ -39,6 +39,14 @@ public class Pool implements IPool {
 		this.timeout = timeout;
 	}
 	
+	public static void setDefaultThreads(Integer threads) {
+		Pool.defaultPoolThreads = threads;
+	}
+	
+	public static void setDefaultTimeout(Long timeout) {
+		Pool.defaultPoolTimeout = timeout;
+	}
+	
 	public void create(String name) {
 		create(threads, timeout, name);
 	}
@@ -242,21 +250,6 @@ public class Pool implements IPool {
 		return new ExecutorCompletionService<>(executor);
 	}
 	
-	public static void setDefaultThreads(Integer threads) {
-		Pool.defaultPoolThreads = threads;
-	}
-	
-	@Override
-	public void setThreads(Integer threads) {
-		this.threads = threads;
-		executor.setCorePoolSize(threads);
-		executor.setMaximumPoolSize(threads);
-	}
-	
-	public static void setDefaultTimeout(Long timeout) {
-		Pool.defaultPoolTimeout = timeout;
-	}
-	
 	private void setTimeout(Long timeout) {
 		this.timeout = timeout;
 		executor.setKeepAliveTime(timeout, TimeUnit.SECONDS);
@@ -270,10 +263,16 @@ public class Pool implements IPool {
 		return executor.getPoolSize();
 	}
 	
-	
 	@Override
 	public Integer getThreads() {
 		return defaultPoolThreads;
+	}
+	
+	@Override
+	public void setThreads(Integer threads) {
+		this.threads = threads;
+		executor.setCorePoolSize(threads);
+		executor.setMaximumPoolSize(threads);
 	}
 	
 	@Override

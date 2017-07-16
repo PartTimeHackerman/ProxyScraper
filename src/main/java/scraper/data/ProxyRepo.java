@@ -1,17 +1,17 @@
 package scraper.data;
 
-import scraper.ProxyUtility;
-import scraper.Proxy;
-import scraper.limiter.Limiter;
 import rx.Observable;
 import rx.subjects.PublishSubject;
 import rx.subjects.Subject;
+import scraper.Proxy;
+import scraper.ProxyUtility;
+import scraper.limiter.Limiter;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class ProxyRepo{
+public class ProxyRepo {
 	
 	private List<Proxy> all = Collections.synchronizedList(new ArrayList<>());
 	

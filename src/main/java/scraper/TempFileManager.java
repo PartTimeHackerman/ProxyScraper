@@ -43,7 +43,7 @@ public class TempFileManager {
 			
 			URI uri = clazz.getResource(name).toURI();
 			
-			try (FileSystem fileSystem = (uri.getScheme().equals("jar") ? FileSystems.newFileSystem(uri, Collections.<String, Object>emptyMap()) : null)) {
+			try (FileSystem fileSystem = (uri.getScheme().equals("jar") ? FileSystems.newFileSystem(uri, Collections.emptyMap()) : null)) {
 				Path myPath = Paths.get(uri);
 				Files.walkFileTree(myPath, new SimpleFileVisitor<Path>() {
 					@Override

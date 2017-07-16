@@ -83,32 +83,32 @@ public class Proxy {
 		return type;
 	}
 	
+	public void setType(Type type) {
+		this.type = type;
+	}
+	
 	public String getTypeString() {
 		return type != null
 				? type.name()
 				: isChecked()
-					? "BROKEN"
-					: "UNKNOWN";
-	}
-	
-	public void setType(Type type) {
-		this.type = type;
+				? "BROKEN"
+				: "UNKNOWN";
 	}
 	
 	public Anonymity getAnonymity() {
 		return anonymity;
 	}
 	
+	public void setAnonymity(Anonymity anonymity) {
+		this.anonymity = anonymity;
+	}
+	
 	public String getAnonymityString() {
 		return anonymity != null
 				? anonymity.name()
 				: isChecked()
-					? "BROKEN"
-					: "UNKNOWN";
-	}
-	
-	public void setAnonymity(Anonymity anonymity) {
-		this.anonymity = anonymity;
+				? "BROKEN"
+				: "UNKNOWN";
 	}
 	
 	public Long getSpeed() {

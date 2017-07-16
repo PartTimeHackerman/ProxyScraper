@@ -6,8 +6,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import scraper.MainLogger;
 import scraper.Proxy;
-import scraper.web.BrowserVersion;
 import scraper.data.Site;
+import scraper.web.BrowserVersion;
 
 import java.io.IOException;
 import java.util.List;
@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 
 class NormalScraper extends ScraperAbstract {
 	
-	NormalScraper(){
+	NormalScraper() {
 		type = ScrapeType.NORMAL;
 	}
 	

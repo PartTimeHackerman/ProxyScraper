@@ -1,10 +1,10 @@
 package scraper.assigner;
 
 import scraper.Proxy;
+import scraper.data.Site;
 import scraper.scraper.ScrapeType;
 import scraper.scraper.ScraperAbstract;
 import scraper.scraper.ScrapersFactory;
-import scraper.data.Site;
 
 import java.util.ArrayList;
 import java.util.List;

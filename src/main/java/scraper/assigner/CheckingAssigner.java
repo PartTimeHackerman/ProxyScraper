@@ -1,8 +1,8 @@
 package scraper.assigner;
 
 import scraper.checker.IProxyChecker;
-import scraper.scraper.ScrapeType;
 import scraper.data.Site;
+import scraper.scraper.ScrapeType;
 
 public class CheckingAssigner extends NonCheckAssigner {
 	

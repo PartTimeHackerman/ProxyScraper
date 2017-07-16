@@ -35,7 +35,7 @@ public class PairMatcher implements IProxyMatcher {
 	}
 	
 	@Override
-	public  Proxy matchOne(String text) {
+	public Proxy matchOne(String text) {
 		List<Proxy> proxies;
 		if (!(proxies = match(text)).isEmpty()) {
 			return proxies.get(0);

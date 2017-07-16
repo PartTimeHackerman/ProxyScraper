@@ -6,10 +6,10 @@ import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import scraper.MainLogger;
 import scraper.Proxy;
+import scraper.data.Site;
 import scraper.scraper.ocr.Image;
 import scraper.scraper.ocr.OCR;
 import scraper.web.BrowserVersion;
-import scraper.data.Site;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -122,12 +122,12 @@ public class OcrScraper extends ScraperAbstract {
 		responses.forEach(response -> replace.apply(response));
 	}
 	
-	private String getImageUrl(String url){
+	private String getImageUrl(String url) {
 		return url.contains("://") || url.contains("www.")
 				? url
 				: url.charAt(0) == '/'
-					? siteRoot + url
-					: siteRoot + "/" + url;
+				? siteRoot + url
+				: siteRoot + "/" + url;
 	}
 	
 	protected String doOcr(byte[] image) {

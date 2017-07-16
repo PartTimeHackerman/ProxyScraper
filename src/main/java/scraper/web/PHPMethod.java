@@ -1,7 +1,7 @@
 package scraper.web;
 
 public enum PHPMethod {
-
+	
 	POST_SITES("post_sites"),
 	GET_SITES("get_sites"),
 	
@@ -9,12 +9,12 @@ public enum PHPMethod {
 	GET_DOMAINS("get_domains");
 	
 	private String cmd;
-
-	PHPMethod(String cmd){
-		this.cmd=cmd;
+	
+	PHPMethod(String cmd) {
+		this.cmd = cmd;
 	}
-
-	public String cmd(){
+	
+	public String cmd() {
 		return cmd;
 	}
 }

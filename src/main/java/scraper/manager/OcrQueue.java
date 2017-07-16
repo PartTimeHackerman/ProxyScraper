@@ -7,7 +7,7 @@ import java.util.stream.IntStream;
 
 public class OcrQueue extends Queue<OCR> {
 	
-	public OcrQueue(Integer size){
+	public OcrQueue(Integer size) {
 		queue = new ArrayBlockingQueue<>(size);
 		create();
 	}

@@ -2,7 +2,7 @@ package scraper.checker;
 
 import scraper.Proxy;
 
-public class ConnectionCheckHttps extends ConnectionCheck{
+public class ConnectionCheckHttps extends ConnectionCheck {
 	
 	private static final String URL = "https://www.google.cat/";
 	private static final String TITLE = "Google";

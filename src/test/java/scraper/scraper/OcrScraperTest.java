@@ -18,7 +18,7 @@ public class OcrScraperTest {
 	public void scrape() throws Exception {
 		
 		assertTrue(ConnectionChecker.hasConnection());
-		ScraperAbstract cssScraper = new OcrScraperConcurrentWQueue(new ConcurrentConnectionExecutor(new Pool()), new QueuesManager(1,1));
+		ScraperAbstract cssScraper = new OcrScraperConcurrentWQueue(new ConcurrentConnectionExecutor(new Pool()), new QueuesManager(1, 1));
 		List<Proxy> proxies = cssScraper.scrape(TestsUtils.ocrSite);
 		assertTrue(!proxies.isEmpty());
 	}

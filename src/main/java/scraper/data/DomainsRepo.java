@@ -14,15 +14,15 @@ public class DomainsRepo implements IRepository<Domain> {
 	
 	private final DomainDAO domainDAO = new DomainDAO();
 	
-	public DomainsRepo(){
+	public DomainsRepo() {
 		//domains.addAll(domainDAO.fetchAll());
 	}
 	
-	public boolean contains(Domain domain){
+	public boolean contains(Domain domain) {
 		return domains.contains(domain);
 	}
 	
-	public ScrapeType getDomainScrapeType(Domain domain){
+	public ScrapeType getDomainScrapeType(Domain domain) {
 		return domains.get(domains.indexOf(domain)).getType();
 	}
 	

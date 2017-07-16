@@ -35,21 +35,21 @@ public class ConnectionExecutor implements IConnectionExecutor {
 	}
 	
 	@Override
-	public List<Connection.Response> execute(List<Connection> connections){
+	public List<Connection.Response> execute(List<Connection> connections) {
 		List<Connection.Response> responses = new ArrayList<>();
 		connections.forEach(this::execute);
 		return responses;
 	}
 	
 	@Override
-	public List<byte[]> executeAsBytes(List<Connection> connections){
+	public List<byte[]> executeAsBytes(List<Connection> connections) {
 		List<byte[]> responses = new ArrayList<>();
 		connections.forEach(this::executeAsBytes);
 		return responses;
 	}
 	
 	@Override
-	public List<String> executeParse(List<Connection> connections){
+	public List<String> executeParse(List<Connection> connections) {
 		List<String> responses = new ArrayList<>();
 		connections.forEach(this::executeParse);
 		return responses;

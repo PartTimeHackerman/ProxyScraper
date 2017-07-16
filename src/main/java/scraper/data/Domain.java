@@ -18,9 +18,10 @@ public class Domain {
 	@Column(name = "type")
 	private ScrapeType type;
 	
-	public Domain(){}
+	public Domain() {
+	}
 	
-	public Domain(String domain, ScrapeType type){
+	public Domain(String domain, ScrapeType type) {
 		this.domain = domain;
 		this.type = type;
 	}
@@ -34,7 +35,7 @@ public class Domain {
 	}
 	
 	@Override
-	public boolean equals(Object o){
-		return (o instanceof Domain && ((Domain)o).domain.equals(domain));
+	public boolean equals(Object o) {
+		return (o instanceof Domain && ((Domain) o).domain.equals(domain));
 	}
 }

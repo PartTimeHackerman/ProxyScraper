@@ -3,9 +3,9 @@ package scraper.checker;
 import org.junit.Test;
 import scraper.Pool;
 import scraper.Proxy;
-import scraper.main.TestsUtils;
 import scraper.data.ProxyRepo;
 import scraper.limiter.Limiter;
+import scraper.main.TestsUtils;
 
 import java.util.ArrayList;
 import java.util.List;

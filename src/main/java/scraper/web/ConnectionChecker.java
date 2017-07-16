@@ -10,9 +10,10 @@ public class ConnectionChecker {
 	
 	private static ConnectionChecker connectionChecker = new ConnectionChecker();
 	
-	private ConnectionChecker(){}
+	private ConnectionChecker() {
+	}
 	
-	public static boolean hasConnection(){
+	public static boolean hasConnection() {
 		try {
 			Jsoup
 					.connect("http://www.google.cat/")
@@ -27,7 +28,7 @@ public class ConnectionChecker {
 		}
 	}
 	
-	public static String getIp(){
+	public static String getIp() {
 		try {
 			Connection.Response response = Jsoup
 					.connect("http://tell-my-ip.com/")
@@ -45,8 +46,8 @@ public class ConnectionChecker {
 		}
 	}
 	
-	public static ConnectionChecker get(){
-		if(connectionChecker==null) connectionChecker = new ConnectionChecker();
+	public static ConnectionChecker get() {
+		if (connectionChecker == null) connectionChecker = new ConnectionChecker();
 		return connectionChecker;
 	}
 }

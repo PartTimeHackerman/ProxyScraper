@@ -23,9 +23,9 @@ public interface IPool {
 	
 	ThreadPoolExecutor getExecutor();
 	
-	void setThreads(Integer threads);
-	
 	Integer getThreads();
+	
+	void setThreads(Integer threads);
 	
 	Integer getActiveThreads();
 }

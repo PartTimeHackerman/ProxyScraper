@@ -1,10 +1,8 @@
 package scraper.scraper;
 
+import scraper.data.Site;
 import scraper.web.Browser;
 import scraper.web.BrowserConcurrent;
-import scraper.data.Site;
-
-import static org.junit.Assert.assertTrue;
 
 public class CssScraperTest {
 	

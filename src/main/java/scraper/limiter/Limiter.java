@@ -34,13 +34,6 @@ public class Limiter {
 		turnOnSwitchables();
 	}
 	
-	public void setLimit(Integer limit) {
-		if (limit > 0)
-			this.limit = limit;
-		else
-			this.limit = Integer.MAX_VALUE;
-	}
-	
 	private void turnOffSwitchables() {
 		switchables.forEach(switchable -> {
 			if (switchable.isOn())
@@ -57,5 +50,14 @@ public class Limiter {
 	
 	public Integer getLimit() {
 		return limit;
+	}
+	
+	public void setLimit(Integer limit) {
+		if (limit > 0)
+			this.limit = limit;
+		else if (limit == 0)
+			this.limit = Integer.MAX_VALUE;
+		else
+			this.limit = 0;
 	}
 }

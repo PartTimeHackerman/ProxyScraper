@@ -4,7 +4,7 @@ import scraper.IConcurrent;
 
 public class BrowserConcurrent extends Browser implements IConcurrent {
 	
-	public BrowserConcurrent(){
+	public BrowserConcurrent() {
 		//Explicitly call a constructor from a super class
 		super();
 		

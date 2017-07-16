@@ -2,8 +2,8 @@ package scraper.assigner;
 
 import scraper.MainLogger;
 import scraper.Proxy;
-import scraper.scraper.ScrapeType;
 import scraper.data.Site;
+import scraper.scraper.ScrapeType;
 
 import java.util.List;
 

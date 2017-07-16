@@ -5,8 +5,8 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import scraper.MainLogger;
-import scraper.web.BrowserVersion;
 import scraper.data.Site;
+import scraper.web.BrowserVersion;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -44,11 +44,11 @@ public class SitesScraper {
 					for (Element siteLink : sitesLinks) {
 						String address = siteLink.child(0).child(0).child(0).child(0).attr("href");
 						
-						if (address != null && address.length()>5 && !sites.contains(address))
+						if (address != null && address.length() > 5 && !sites.contains(address))
 							sites.add(new Site(address, ScrapeType.UNCHECKED));
 					}
 				} catch (IOException e) {
-					MainLogger.log(this).error("Connection failed, url: {} error: {}", url, (e.getMessage()!=null?e.getMessage():"null"));
+					MainLogger.log(this).error("Connection failed, url: {} error: {}", url, (e.getMessage() != null ? e.getMessage() : "null"));
 				}
 			}
 		}

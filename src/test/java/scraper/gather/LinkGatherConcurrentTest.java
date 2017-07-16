@@ -2,8 +2,8 @@ package scraper.gather;
 
 import org.junit.Test;
 import scraper.Pool;
-import scraper.main.TestsUtils;
 import scraper.data.Site;
+import scraper.main.TestsUtils;
 
 import java.util.List;
 

@@ -16,7 +16,7 @@ public class CheckingAssignerTest {
 	private static IAssigner checkingAssigner;
 	
 	@BeforeClass
-	public static void setUp(){
+	public static void setUp() {
 		checkingAssigner = new CheckingAssigner(TestsUtils.methodFinder, TestsUtils.checker);
 	}
 	

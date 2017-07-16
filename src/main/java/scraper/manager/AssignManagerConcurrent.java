@@ -5,8 +5,8 @@ import scraper.Pool;
 import scraper.Proxy;
 import scraper.checker.IProxyChecker;
 import scraper.data.DomainsRepo;
-import scraper.scraper.ScrapersFactory;
 import scraper.data.Site;
+import scraper.scraper.ScrapersFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;

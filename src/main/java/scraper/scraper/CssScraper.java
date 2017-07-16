@@ -6,8 +6,8 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import scraper.MainLogger;
 import scraper.Proxy;
-import scraper.web.Browser;
 import scraper.data.Site;
+import scraper.web.Browser;
 
 import java.util.List;
 

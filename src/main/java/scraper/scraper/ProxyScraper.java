@@ -2,10 +2,10 @@ package scraper.scraper;
 
 import scraper.MainLogger;
 import scraper.Proxy;
-import scraper.limiter.Switchable;
 import scraper.assigner.AvgAssigner;
-import scraper.manager.AssignManager;
 import scraper.data.Site;
+import scraper.limiter.Switchable;
+import scraper.manager.AssignManager;
 
 import java.util.ArrayList;
 import java.util.Collection;

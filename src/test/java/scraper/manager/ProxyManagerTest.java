@@ -9,19 +9,17 @@ import scraper.limiter.Limiter;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class ProxyManagerTest {
 	
+	private final Integer limit = 1000;
 	ProxyRepo proxyRepo;
 	Proxy proxy = new Proxy("111.111.111.111:1111");
 	Proxy proxy2 = new Proxy("222.222.222.222:2222");
 	
-	private final Integer limit = 1000;
-	
 	@Before
-	public void setUp(){
+	public void setUp() {
 		proxyRepo = new ProxyRepo(new Limiter(0));
 	}
 	

@@ -1,5 +1,9 @@
 ProxyScraper
 ===
+[![Build Status](https://travis-ci.org/PartTimeHackerman/ProxyScraper.svg?branch=master)](https://travis-ci.org/PartTimeHackerman/ProxyScraper)
+[![codebeat badge](https://codebeat.co/badges/dc40fe4c-9d36-4345-a74b-d65f08cf7a12)](https://codebeat.co/projects/github-com-parttimehackerman-proxyscraper-no-phantomjs)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/0188904a8bf64f37b741204700553ccf)](https://www.codacy.com/app/kuriozalnie/ProxyScraper?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=PartTimeHackerman/ProxyScraper&amp;utm_campaign=Badge_Grade)
+
 ProxyScraper is fairly simple public proxy scraper that allows the following: 
 - gathering sites that contain proxy, 
 - scraping proxies from sites,
